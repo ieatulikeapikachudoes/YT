@@ -1,0 +1,9 @@
+node_modules/
+kokoro-model/
+.hyperframes/
+package-lock.json
+shorts/*/project/assets/voice.wav
+shorts/*/project/index.html
+shorts/*/project/renders/
+*.png
+!docs/**/*.png

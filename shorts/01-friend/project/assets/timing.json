@@ -1,0 +1,144 @@
+{
+ "voice": "am_michael",
+ "total": 61.592,
+ "lines": [
+  {
+   "key": "claim",
+   "text": "You are never going to make another close friend, ever again.",
+   "start": 0.3,
+   "end": 3.954
+  },
+  {
+   "key": "hear",
+   "text": "Hear me out.",
+   "start": 4.404,
+   "end": 5.404
+  },
+  {
+   "key": "prof",
+   "text": "A professor in Kansas actually counted.",
+   "start": 6.204,
+   "end": 8.95
+  },
+  {
+   "key": "fifty",
+   "text": "Fifty hours to get to casual.",
+   "start": 9.35,
+   "end": 11.502
+  },
+  {
+   "key": "ninety",
+   "text": "Around ninety, and you'd call the person a friend.",
+   "start": 11.802,
+   "end": 14.891
+  },
+  {
+   "key": "two00",
+   "text": "Two hundred, before they're the one you call from the hospital.",
+   "start": 15.191,
+   "end": 18.948
+  },
+  {
+   "key": "think",
+   "text": "Now think about where you got your friends.",
+   "start": 19.748,
+   "end": 22.289
+  },
+  {
+   "key": "school",
+   "text": "School.",
+   "start": 22.639,
+   "end": 23.405
+  },
+  {
+   "key": "pick",
+   "text": "You didn't pick those people.",
+   "start": 23.905,
+   "end": 25.471
+  },
+  {
+   "key": "six",
+   "text": "Six hours a day, for years, whether you liked it or not.",
+   "start": 25.771,
+   "end": 29.631
+  },
+  {
+   "key": "thats",
+   "text": "That's your two hundred hours.",
+   "start": 29.981,
+   "end": 31.775
+  },
+  {
+   "key": "building",
+   "text": "The building did it for you.",
+   "start": 32.075,
+   "end": 33.686
+  },
+  {
+   "key": "grad",
+   "text": "Then you graduate, and suddenly friendship is an appointment.",
+   "start": 34.486,
+   "end": 38.175
+  },
+  {
+   "key": "dinner",
+   "text": "Dinner.",
+   "start": 38.525,
+   "end": 39.207
+  },
+  {
+   "key": "month",
+   "text": "Once a month, if everyone's free.",
+   "start": 39.557,
+   "end": 41.645
+  },
+  {
+   "key": "hours",
+   "text": "Two hours, maybe.",
+   "start": 41.945,
+   "end": 43.261
+  },
+  {
+   "key": "math",
+   "text": "I did the math.",
+   "start": 43.761,
+   "end": 45.021
+  },
+  {
+   "key": "kind",
+   "text": "It's the kind of thing I do.",
+   "start": 45.321,
+   "end": 47.036
+  },
+  {
+   "key": "eight",
+   "text": "Eight years.",
+   "start": 47.536,
+   "end": 48.471
+  },
+  {
+   "key": "fix",
+   "text": "You could fix that.",
+   "start": 49.471,
+   "end": 50.7
+  },
+  {
+   "key": "two00b",
+   "text": "Two hundred hours, on purpose, with one person.",
+   "start": 51.15,
+   "end": 54.318
+  },
+  {
+   "key": "nobody",
+   "text": "Nobody's stopping you.",
+   "start": 54.718,
+   "end": 56.203
+  },
+  {
+   "key": "lazy",
+   "text": "You are too lazy to put in the effort to make a friend.",
+   "start": 57.203,
+   "end": 60.292
+  }
+ ]
+}

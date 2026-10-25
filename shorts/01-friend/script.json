@@ -1,0 +1,121 @@
+{
+ "voice": "am_michael",
+ "speed": 0.92,
+ "lines": [
+  [
+   "claim",
+   "You are never going to make another close friend, ever again.",
+   0.45
+  ],
+  [
+   "hear",
+   "Hear me out.",
+   0.8
+  ],
+  [
+   "prof",
+   "A professor in Kansas actually counted.",
+   0.4
+  ],
+  [
+   "fifty",
+   "Fifty hours to get to casual.",
+   0.3
+  ],
+  [
+   "ninety",
+   "Around ninety, and you'd call the person a friend.",
+   0.3
+  ],
+  [
+   "two00",
+   "Two hundred, before they're the one you call from the hospital.",
+   0.8
+  ],
+  [
+   "think",
+   "Now think about where you got your friends.",
+   0.35
+  ],
+  [
+   "school",
+   "School.",
+   0.5
+  ],
+  [
+   "pick",
+   "You didn't pick those people.",
+   0.3
+  ],
+  [
+   "six",
+   "Six hours a day, for years, whether you liked it or not.",
+   0.35
+  ],
+  [
+   "thats",
+   "That's your two hundred hours.",
+   0.3
+  ],
+  [
+   "building",
+   "The building did it for you.",
+   0.8
+  ],
+  [
+   "grad",
+   "Then you graduate, and suddenly friendship is an appointment.",
+   0.35
+  ],
+  [
+   "dinner",
+   "Dinner.",
+   0.35
+  ],
+  [
+   "month",
+   "Once a month, if everyone's free.",
+   0.3
+  ],
+  [
+   "hours",
+   "Two hours, maybe.",
+   0.5
+  ],
+  [
+   "math",
+   "I did the math.",
+   0.3
+  ],
+  [
+   "kind",
+   "It's the kind of thing I do.",
+   0.5
+  ],
+  [
+   "eight",
+   "Eight years.",
+   1.0
+  ],
+  [
+   "fix",
+   "You could fix that.",
+   0.45
+  ],
+  [
+   "two00b",
+   "Two hundred hours, on purpose, with one person.",
+   0.4
+  ],
+  [
+   "nobody",
+   "Nobody's stopping you.",
+   1.0
+  ],
+  [
+   "lazy",
+   "You are too lazy to put in the effort to make a friend.",
+   1.3
+  ]
+ ]
+}

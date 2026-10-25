@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="vendor/gsap.min.js"></script>
+    <script src="assets/timing.js"></script>
+    <style>
+      :root {
+        --paper: #f3eee4;
+        --ink: #1c1c1c;
+        --suit: #262830;
+        --mute: #8c8677;
+        --accent: #c8102e;
+        --gold: #d9a93b;
+        --font: "Inter", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 100%; height: 100%; font-family: var(--font); color: var(--ink); }
+      .clip { position: absolute; inset: 0; }
+
+      /* ---------- Scene A: the claim ---------- */
+      #sA-claim { position: absolute; top: 230px; left: 80px; right: 80px; font-size: 92px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; }
+      #sA-claim .ln { display: block; overflow: hidden; padding-bottom: 6px; }
+      #sA-claim .ln span { display: inline-block; }
+      #sA-claim .hot { color: var(--accent); }
+
+      /* ---------- Scene B: the count ---------- */
+      #sB-src { position: absolute; top: 230px; left: 80px; font-size: 30px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mute); }
+      #sB-head { position: absolute; top: 290px; left: 80px; right: 80px; font-size: 76px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+      .step { position: absolute; bottom: 360px; width: 200px; background: var(--ink); border-radius: 10px 10px 0 0; transform-origin: bottom center; }
+      #sB-s1 { left: 400px; height: 190px; }
+      #sB-s2 { left: 620px; height: 360px; }
+      #sB-s3 { left: 840px; height: 600px; background: var(--accent); }
+      .step-num { position: absolute; width: 200px; text-align: center; font-size: 96px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+      .step-lab { position: absolute; width: 220px; text-align: center; font-size: 30px; font-weight: 600; color: var(--mute); line-height: 1.15; }
+      #sB-n1 { left: 400px; bottom: 568px; }
+      #sB-l1 { left: 390px; bottom: 672px; }
+      #sB-n2 { left: 620px; bottom: 738px; }
+      #sB-l2 { left: 610px; bottom: 842px; }
+      #sB-n3 { left: 840px; bottom: 978px; color: var(--accent); }
+      #sB-l3 { left: 830px; bottom: 1082px; color: var(--ink); }
+
+      /* ---------- Scene C: school ---------- */
+      #sC-box { position: absolute; left: 60px; top: 420px; width: 640px; height: 780px; border: 10px solid var(--ink); border-radius: 18px; background: #ece6d8; transform-origin: center; }
+      #sC-label { position: absolute; left: 60px; top: 340px; width: 640px; text-align: center; font-size: 56px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; }
+      #sC-grid { position: absolute; inset: 40px 30px 30px 30px; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); }
+      #sC-grid svg { width: 100%; height: 100%; }
+      .kid { fill: none; stroke: #a79f8d; stroke-width: 7; stroke-linecap: round; }
+      .kid.you { stroke: var(--ink); }
+      #sC-clock { position: absolute; left: 760px; top: 420px; width: 260px; height: 260px; }
+      #sC-clock .face { fill: var(--paper); stroke: var(--ink); stroke-width: 12; }
+      #sC-clock .tick { stroke: var(--ink); stroke-width: 8; stroke-linecap: round; }
+      #sC-hand { stroke: var(--accent); stroke-width: 12; stroke-linecap: round; transform-origin: 130px 130px; }
+      #sC-hours { position: absolute; left: 740px; top: 700px; width: 300px; text-align: center; font-size: 46px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+      #sC-years { position: absolute; left: 740px; top: 820px; width: 300px; text-align: center; font-size: 46px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: var(--mute); }
+      #sC-stamp { position: absolute; left: 120px; top: 720px; padding: 18px 40px; border: 12px solid var(--accent); border-radius: 16px; color: var(--accent); font-size: 120px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; background: rgba(243,238,228,0.85); transform-origin: center; }
+
+      /* ---------- Scene D: appointment ---------- */
+      #sD-cal { position: absolute; left: 400px; top: 400px; width: 620px; background: #fff; border: 8px solid var(--ink); border-radius: 18px; overflow: hidden; transform-origin: center; }
+      #sD-month { height: 110px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; letter-spacing: 0.1em; }
+      #sD-days { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 86px; gap: 0; padding: 14px; }
+      #sD-days div { border: 2px solid #e4ddcf; position: relative; }
+      #sD-dot { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: var(--accent); }
+      #sD-dinner { position: absolute; left: 400px; top: 1030px; font-size: 44px; font-weight: 800; letter-spacing: -0.02em; }
+      #sD-dinner .tag { display: inline-block; padding: 10px 26px; border-radius: 999px; background: var(--ink); color: var(--paper); }
+      #sD-hrs { position: absolute; left: 700px; top: 1030px; font-size: 44px; font-weight: 800; }
+      #sD-hrs .tag { display: inline-block; padding: 10px 26px; border-radius: 999px; border: 5px solid var(--ink); }
+      #sD-math { position: absolute; left: 400px; top: 1140px; font-size: 54px; font-weight: 700; font-style: italic; letter-spacing: -0.02em; color: var(--ink); }
+      #sD-years { position: absolute; left: 80px; right: 80px; top: 560px; text-align: center; font-size: 230px; font-weight: 900; letter-spacing: -0.06em; line-height: 0.9; color: var(--accent); transform-origin: center; }
+      #sD-years small { display: block; font-size: 90px; letter-spacing: 0.05em; margin-top: 10px; }
+
+      /* ---------- Scene E: the turn ---------- */
+      #sE-friend { position: absolute; left: 790px; top: 1080px; width: 220px; height: 440px; transform-origin: bottom center; }
+      #sE-friend svg { width: 100%; height: 100%; overflow: visible; }
+      .fr { fill: none; stroke: #a79f8d; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+      #sE-tag { position: absolute; left: 720px; top: 980px; padding: 10px 26px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 40px; font-weight: 800; letter-spacing: -0.02em; }
+      #sE-claim { position: absolute; top: 230px; left: 80px; right: 80px; font-size: 96px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; }
+      #sE-claim .ln { display: block; overflow: hidden; padding-bottom: 6px; }
+      #sE-claim .ln span { display: inline-block; }
+      #sE-claim .hot { color: var(--accent); }
+
+      /* ---------- The guy ---------- */
+      #guy-inner { position: absolute; left: 0; top: 0; width: 300px; height: 600px; }
+      #guy-inner svg { width: 100%; height: 100%; overflow: visible; }
+      .ink { fill: none; stroke: var(--ink); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+      .thin { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; }
+
+      /* ---------- Captions ---------- */
+      #captions { position: absolute; inset: 0; }
+      .cap { position: absolute; left: 70px; right: 70px; bottom: 110px; text-align: center; font-size: 58px; font-weight: 700; line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+
+      <audio id="vo" src="assets/voice.wav" data-start="0" data-duration="__TOTAL__"></audio>
+
+      <!-- Scene A -->
+      <div id="sA" class="clip" data-start="0" data-duration="__SA_DUR__" data-track-index="0">
+        <h1 id="sA-claim">
+          <span class="ln"><span>You are never going</span></span>
+          <span class="ln"><span>to make another</span></span>
+          <span class="ln"><span>close friend,</span></span>
+          <span class="ln"><span class="hot">ever again.</span></span>
+        </h1>
+      </div>
+
+      <!-- Scene B -->
+      <div id="sB" class="clip" data-start="__SB_START__" data-duration="__SB_DUR__" data-track-index="0">
+        <div id="sB-src">University of Kansas, 2018</div>
+        <div id="sB-head">Hours it takes to make a friend</div>
+        <div id="sB-s1" class="step"></div>
+        <div id="sB-s2" class="step"></div>
+        <div id="sB-s3" class="step"></div>
+        <div id="sB-n1" class="step-num">50</div>
+        <div id="sB-l1" class="step-lab">casual</div>
+        <div id="sB-n2" class="step-num">90</div>
+        <div id="sB-l2" class="step-lab">a friend</div>
+        <div id="sB-n3" class="step-num">200</div>
+        <div id="sB-l3" class="step-lab">the hospital call</div>
+      </div>
+
+      <!-- Scene C -->
+      <div id="sC" class="clip" data-start="__SC_START__" data-duration="__SC_DUR__" data-track-index="0">
+        <div id="sC-label">School</div>
+        <div id="sC-box"><div id="sC-grid"></div></div>
+        <svg id="sC-clock" viewBox="0 0 260 260">
+          <circle class="face" cx="130" cy="130" r="118" />
+          <line class="tick" x1="130" y1="26" x2="130" y2="46" />
+          <line class="tick" x1="234" y1="130" x2="214" y2="130" />
+          <line class="tick" x1="130" y1="234" x2="130" y2="214" />
+          <line class="tick" x1="26" y1="130" x2="46" y2="130" />
+          <line id="sC-hand" x1="130" y1="130" x2="130" y2="52" />
+          <circle cx="130" cy="130" r="10" fill="#1c1c1c" />
+        </svg>
+        <div id="sC-hours">6 hours<br />a day</div>
+        <div id="sC-years">for 12<br />years</div>
+        <div id="sC-stamp">= 200 hrs</div>
+      </div>
+
+      <!-- Scene D -->
+      <div id="sD" class="clip" data-start="__SD_START__" data-duration="__SD_DUR__" data-track-index="0">
+        <div id="sD-cal">
+          <div id="sD-month">MONTH 1</div>
+          <div id="sD-days"></div>
+        </div>
+        <div id="sD-dinner"><span class="tag">dinner</span></div>
+        <div id="sD-hrs"><span class="tag">2 hrs</span></div>
+        <div id="sD-math">200 ÷ 2 = 100 months</div>
+        <div id="sD-years">8<small>YEARS</small></div>
+      </div>
+
+      <!-- Scene E -->
+      <div id="sE" class="clip" data-start="__SE_START__" data-duration="__SE_DUR__" data-track-index="0">
+        <div id="sE-friend">
+          <svg viewBox="0 0 220 440">
+            <circle class="fr" cx="110" cy="60" r="44" />
+            <path class="fr" d="M110 104 L110 290" />
+            <path class="fr" d="M110 140 L50 240" />
+            <path class="fr" d="M110 140 L170 240" />
+            <path class="fr" d="M110 290 L70 420" />
+            <path class="fr" d="M110 290 L150 420" />
+            <path class="fr" d="M96 72 L124 72" style="stroke-width:5" />
+          </svg>
+        </div>
+        <div id="sE-tag">200 hrs</div>
+        <h1 id="sE-claim">
+          <span class="ln"><span>You are</span></span>
+          <span class="ln"><span class="hot">too lazy</span></span>
+          <span class="ln"><span>to put in the effort</span></span>
+          <span class="ln"><span>to make a friend.</span></span>
+        </h1>
+      </div>
+
+      <!-- The guy: persistent actor -->
+      <div id="guy" class="clip" data-start="__GUY_START__" data-duration="__GUY_DUR__" data-track-index="1">
+        <div id="guy-inner">
+          <svg viewBox="0 0 300 600">
+            <g id="guy-armL">
+              <path class="ink" d="M72 186 L40 330 L52 350" />
+              <circle cx="54" cy="352" r="12" fill="#f3eee4" stroke="#1c1c1c" stroke-width="7" />
+            </g>
+            <g id="guy-legs">
+              <path d="M118 420 L112 560" stroke="#262830" stroke-width="20" stroke-linecap="round" />
+              <path d="M182 420 L188 560" stroke="#262830" stroke-width="20" stroke-linecap="round" />
+              <rect x="80" y="556" width="62" height="22" rx="10" fill="#1c1c1c" />
+              <rect x="158" y="556" width="62" height="22" rx="10" fill="#1c1c1c" />
+            </g>
+            <g id="guy-jacket">
+              <path d="M70 172 L230 172 L242 420 L58 420 Z" fill="#262830" />
+              <path d="M118 172 L150 268 L182 172 Z" fill="#f3eee4" />
+              <path d="M150 180 L140 194 L150 258 L160 194 Z" fill="#7a1a2a" />
+              <path d="M118 172 L150 268" stroke="#4a4d59" stroke-width="4" />
+              <path d="M182 172 L150 268" stroke="#4a4d59" stroke-width="4" />
+              <circle cx="110" cy="210" r="10" fill="#c8102e" stroke="#d9a93b" stroke-width="3" />
+              <circle cx="110" cy="210" r="2.5" fill="#d9a93b" />
+            </g>
+            <g id="guy-armR">
+              <path class="ink" d="M228 186 L262 320 L252 342" />
+              <circle cx="250" cy="346" r="12" fill="#f3eee4" stroke="#1c1c1c" stroke-width="7" />
+            </g>
+            <g id="guy-head">
+              <path class="ink" d="M150 140 L150 166" />
+              <circle cx="150" cy="84" r="58" fill="#f3eee4" stroke="#1c1c1c" stroke-width="8" />
+              <path class="ink" d="M96 70 Q90 96 100 118" />
+              <path class="ink" d="M204 70 Q210 96 200 118" />
+              <path class="thin" d="M120 60 L138 56" />
+              <path class="thin" d="M162 56 L180 60" />
+              <circle class="thin" cx="128" cy="86" r="19" />
+              <circle class="thin" cx="172" cy="86" r="19" />
+              <path class="thin" d="M147 86 L153 86" />
+              <path class="thin" d="M109 84 L96 80" />
+              <path class="thin" d="M191 84 L204 80" />
+              <path class="thin" d="M138 120 L162 120" />
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Captions -->
+      <div id="captions" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="2"></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const T = window.__T;
+      const LINES = window.__LINES;
+
+      /* ---- static bits ---- */
+      const grid = document.getElementById("sC-grid");
+      for (let i = 0; i < 20; i++) {
+        const you = i === 9;
+        grid.insertAdjacentHTML("beforeend",
+          `<svg viewBox="0 0 100 140"><circle class="kid${you ? " you" : ""}" cx="50" cy="26" r="18"/>` +
+          (you ? `<circle class="kid you" cx="43" cy="27" r="6" style="stroke-width:3"/><circle class="kid you" cx="57" cy="27" r="6" style="stroke-width:3"/>` : "") +
+          `<path class="kid${you ? " you" : ""}" d="M50 44 L50 96 M50 56 L30 82 M50 56 L70 82 M50 96 L36 128 M50 96 L64 128"/></svg>`);
+      }
+      const days = document.getElementById("sD-days");
+      for (let i = 0; i < 35; i++) days.insertAdjacentHTML("beforeend", `<div${i === 17 ? ' id="sD-cell"' : ""}></div>`);
+      document.getElementById("sD-cell").insertAdjacentHTML("beforeend", '<div id="sD-dot"></div>');
+
+      /* ---- captions (skip lines that are already headlines) ---- */
+      const caps = document.getElementById("captions");
+      const SKIP = new Set([0, LINES.length - 1]);
+      LINES.forEach((l, i) => {
+        if (SKIP.has(i)) return;
+        caps.insertAdjacentHTML("beforeend", `<div class="cap" id="cap-${i}">${l[1].replace(/,(?=\s(?:and|before|ever|on|with))/g, "")}</div>`);
+        const start = l[0] - 0.08;
+        const end = (i + 1 < LINES.length ? LINES[i + 1][0] : T.end) - 0.1;
+        tl.fromTo(`#cap-${i}`, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, start);
+        tl.to(`#cap-${i}`, { opacity: 0, duration: 0.08 }, end);
+      });
+
+      /* ---- Scene A ---- */
+      tl.fromTo("#sA-claim .ln span", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power3.out", stagger: 0.6 }, T.claim);
+      tl.to("#sA-claim", { opacity: 0, duration: 0.25 }, T.prof - 0.25);
+
+      /* ---- The guy ---- */
+      const guy = "#guy-inner";
+      gsap.set("#guy-armR", { svgOrigin: "228 186" });
+      gsap.set("#guy-armL", { svgOrigin: "72 186" });
+      gsap.set("#guy-head", { svgOrigin: "150 150" });
+      tl.set(guy, { x: 390, y: 1750 }, 0);
+      tl.to(guy, { y: 960, duration: 0.55, ease: "back.out(1.3)" }, T.hear);
+      tl.fromTo("#guy-armR", { rotate: 0 }, { rotate: -75, duration: 0.35, ease: "power2.out" }, T.hear + 0.25);
+      tl.to("#guy-armR", { rotate: 0, duration: 0.4, ease: "power2.inOut" }, T.prof);
+      tl.to(guy, { x: 90, duration: 0.6, ease: "power2.inOut" }, T.prof);
+      tl.to("#guy-armR", { rotate: -40, duration: 0.3, ease: "power2.out" }, T.fifty);
+      tl.to("#guy-armR", { rotate: -70, duration: 0.3, ease: "power2.out" }, T.ninety);
+      tl.to("#guy-armR", { rotate: -125, duration: 0.35, ease: "power2.out" }, T.two00);
+      tl.to("#guy-head", { rotate: -6, duration: 0.3, yoyo: true, repeat: 1 }, T.two00 + 0.4);
+      tl.to("#guy-armR", { rotate: 0, duration: 0.4, ease: "power2.inOut" }, T.think - 0.3);
+      tl.to(guy, { x: 740, duration: 0.7, ease: "power2.inOut" }, T.think);
+      tl.to("#guy-armL", { rotate: 60, duration: 0.3, ease: "power2.out" }, T.school);
+      tl.to("#guy-armL", { rotate: 0, duration: 0.4, ease: "power2.inOut" }, T.pick);
+      tl.to("#guy-head", { rotate: 5, duration: 0.3, yoyo: true, repeat: 1 }, T.building);
+      tl.to(guy, { x: 70, duration: 0.7, ease: "power2.inOut" }, T.grad);
+      tl.to("#guy-armR", { rotate: -55, duration: 0.3, ease: "power2.out" }, T.dinner);
+      tl.to("#guy-armR", { rotate: 0, duration: 0.4, ease: "power2.inOut" }, T.hours);
+      tl.to("#guy-head", { rotate: -5, duration: 0.25, yoyo: true, repeat: 3 }, T.math);
+      // Scene E: center and closer, then the turn
+      tl.to(guy, { x: 300, y: 820, scale: 1.2, transformOrigin: "50% 100%", duration: 0.8, ease: "power2.inOut" }, T.fix);
+      tl.to("#guy-armR", { rotate: -60, duration: 0.35, ease: "power2.out" }, T.two00b + 0.3);
+      tl.to("#guy-armR", { rotate: 0, duration: 0.4, ease: "power2.inOut" }, T.nobody);
+      tl.to(guy, { x: 390, duration: 0.6, ease: "power2.inOut" }, T.lazy - 0.2);
+      tl.to("#guy-head", { rotate: 4, duration: 0.5, ease: "power2.inOut" }, T.lazy + 0.6);
+
+      /* ---- Scene B ---- */
+      tl.fromTo("#sB-src", { opacity: 0 }, { opacity: 1, duration: 0.3 }, T.prof + 0.1);
+      tl.fromTo("#sB-head", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, T.prof + 0.4);
+      [["#sB-s1", "#sB-n1", "#sB-l1", T.fifty], ["#sB-s2", "#sB-n2", "#sB-l2", T.ninety], ["#sB-s3", "#sB-n3", "#sB-l3", T.two00]].forEach(([s, n, l, t]) => {
+        tl.fromTo(s, { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "power3.out" }, t);
+        tl.fromTo(n, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.3);
+        tl.fromTo(l, { opacity: 0 }, { opacity: 1, duration: 0.3 }, t + 0.5);
+      });
+      tl.fromTo("#sB-n3", { scale: 1 }, { scale: 1.18, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.inOut" }, T.two00 + 1.4);
+      tl.to("#sB", { opacity: 0, duration: 0.25 }, T.think - 0.28);
+
+      /* ---- Scene C ---- */
+      tl.fromTo("#sC-box", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.5)" }, T.school);
+      tl.fromTo("#sC-label", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.3 }, T.school + 0.1);
+      tl.fromTo("#sC-grid svg", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.25, stagger: { each: 0.03, from: "start" } }, T.school + 0.3);
+      tl.fromTo("#sC-clock", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, T.six);
+      tl.to("#sC-hand", { rotate: 360 * 5, duration: 3.6, ease: "power1.inOut" }, T.six + 0.2);
+      tl.fromTo("#sC-hours", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3 }, T.six + 0.6);
+      tl.fromTo("#sC-years", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3 }, T.six + 1.9);
+      tl.fromTo("#sC-stamp", { opacity: 0, scale: 2.4, rotate: -8 }, { opacity: 1, scale: 1, rotate: -8, duration: 0.3, ease: "power4.out" }, T.thats + 0.2);
+      tl.to("#sC-box", { rotate: -1.5, duration: 0.12, yoyo: true, repeat: 5, ease: "power1.inOut" }, T.building + 0.2);
+      tl.to("#sC", { opacity: 0, duration: 0.25 }, T.grad - 0.28);
+
+      /* ---- Scene D ---- */
+      tl.fromTo("#sD-cal", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, T.grad + 0.3);
+      tl.fromTo("#sD-dot", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2)" }, T.dinner);
+      tl.fromTo("#sD-dinner", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" }, T.dinner + 0.1);
+      const monthCounter = { v: 1 };
+      const monthEl = document.getElementById("sD-month");
+      tl.to(monthCounter, { v: 100, duration: T.eight - T.month - 0.2, ease: "power2.in", onUpdate: () => { monthEl.textContent = "MONTH " + Math.round(monthCounter.v); } }, T.month);
+      tl.fromTo("#sD-hrs", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" }, T.hours + 0.1);
+      tl.fromTo("#sD-math", { opacity: 0 }, { opacity: 1, duration: 0.35 }, T.math + 0.2);
+      tl.to("#sD-cal", { scale: 0.55, opacity: 0.18, duration: 0.4, ease: "power2.in" }, T.eight);
+      tl.to("#sD-dinner, #sD-hrs, #sD-math", { opacity: 0, duration: 0.3 }, T.eight);
+      tl.fromTo("#sD-years", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.3)" }, T.eight + 0.1);
+      tl.to("#sD", { opacity: 0, duration: 0.3 }, T.fix - 0.3);
+
+      /* ---- Scene E ---- */
+      tl.fromTo("#sE-friend", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.4)" }, T.two00b + 0.9);
+      tl.fromTo("#sE-tag", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, T.two00b + 0.2);
+      tl.to("#sE-friend, #sE-tag", { opacity: 0, duration: 0.3 }, T.lazy - 0.2);
+      tl.fromTo("#sE-claim .ln span", { yPercent: 110 }, { yPercent: 0, duration: 0.45, ease: "power3.out", stagger: 0.45 }, T.lazy);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
