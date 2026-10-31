@@ -10,6 +10,7 @@ The thinking (style brief, reference teardowns, scripts in progress) lives in th
 pipeline/          shared scripts
   make_voice.py    script.json -> voice.wav + per-line timings (Kokoro, local TTS)
   build.py         template.html + timings -> project/index.html
+  venice.py        Venice AI client (OpenAI-compatible, GLM 5.2); key from .env
   setup.sh         one-time install (hyperframes, gsap, kokoro, model files)
 docs/
   style-brief.md   what is fixed, what the style agent decides
@@ -20,6 +21,10 @@ shorts/
     project/       the HyperFrames project (index.html is generated; voice.wav is not committed)
     renders/       published versions
 ```
+
+## Setup
+
+Copy `.env.example` to `.env` and add `VENICE_API_KEY`. `.env` is gitignored. Then `python3 pipeline/venice.py` to confirm the API works.
 
 ## Make a short
 

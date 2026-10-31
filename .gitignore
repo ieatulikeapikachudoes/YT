@@ -7,3 +7,4 @@ shorts/*/project/index.html
 shorts/*/project/renders/
 *.png
 !docs/**/*.png
+.env
