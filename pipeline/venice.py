@@ -27,6 +27,9 @@ if not _key:
 
 client = OpenAI(api_key=_key, base_url=BASE_URL)
 
+# Venice prepends its own system prompt (~1.6k tokens) unless told not to.
+NO_VENICE_PROMPT = {"venice_parameters": {"include_venice_system_prompt": False}}
+
 
 def chat(prompt, system=None, model=MODEL, **kwargs):
     """One-shot chat completion. Returns the reply text."""
@@ -34,6 +37,7 @@ def chat(prompt, system=None, model=MODEL, **kwargs):
     if system:
         messages.append({"role": "system", "content": system})
     messages.append({"role": "user", "content": prompt})
+    kwargs.setdefault("extra_body", NO_VENICE_PROMPT)
     resp = client.chat.completions.create(model=model, messages=messages, **kwargs)
     return resp.choices[0].message.content
 
@@ -43,6 +47,7 @@ if __name__ == "__main__":
         model=MODEL,
         messages=[{"role": "user", "content": "Reply with exactly: Venice is working."}],
         max_tokens=20,
+        extra_body=NO_VENICE_PROMPT,
     )
     print("model:", resp.model)
     print("reply:", resp.choices[0].message.content)
