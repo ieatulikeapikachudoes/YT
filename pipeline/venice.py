@@ -28,6 +28,7 @@ if not _key:
 client = OpenAI(api_key=_key, base_url=BASE_URL)
 
 # Venice prepends its own system prompt (~1.6k tokens) unless told not to.
+# GLM 5.2 reasons before answering (reasoning_content), so give max_tokens room or the reply comes back empty.
 NO_VENICE_PROMPT = {"venice_parameters": {"include_venice_system_prompt": False}}
 
 
@@ -46,7 +47,7 @@ if __name__ == "__main__":
     resp = client.chat.completions.create(
         model=MODEL,
         messages=[{"role": "user", "content": "Reply with exactly: Venice is working."}],
-        max_tokens=20,
+        max_tokens=400,
         extra_body=NO_VENICE_PROMPT,
     )
     print("model:", resp.model)
