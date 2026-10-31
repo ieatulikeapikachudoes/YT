@@ -8,3 +8,4 @@ shorts/*/project/renders/
 *.png
 !docs/**/*.png
 .env
+__pycache__/
