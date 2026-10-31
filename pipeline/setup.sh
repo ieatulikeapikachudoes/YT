@@ -3,7 +3,7 @@
 set -e
 
 npm install --no-audit --no-fund hyperframes gsap@3.14.2
-pip install --break-system-packages -q kokoro-onnx soundfile openai python-dotenv
+pip install --break-system-packages -q kokoro-onnx soundfile openai python-dotenv requests
 
 # Kokoro model files (GitHub release downloads; ~340MB total)
 mkdir -p kokoro-model
