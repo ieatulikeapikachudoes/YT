@@ -9,3 +9,6 @@ shorts/*/project/renders/
 !docs/**/*.png
 .env
 __pycache__/
+pipeline/factory/runs/
+pipeline/factory/costs.jsonl
+pipeline/factory/models.json

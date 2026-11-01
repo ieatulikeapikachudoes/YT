@@ -4,6 +4,18 @@ Faceless YouTube channel. One stick figure explains how the world actually is. T
 
 The thinking (style brief, reference teardowns, scripts in progress) lives in the Claude Project. This repo is the code and the finished shorts.
 
+## The factory (current pipeline, Nov 2026)
+
+`pipeline/factory/` runs a whole batch of shorts with one command, DeepSeek on Venice doing every step:
+
+```bash
+cd pipeline/factory && bash run_batch.sh <batch-name> 5
+```
+
+plan the batch as one experiment (`orchestrate.py`) -> research, script, 2 judge loops, fact check (`chain.py`) -> Kokoro voice with word timings (`voice.py`) -> storyboard code from the kit, vision judges, frame checks (`storyboard.py`, `kit/`) -> render, cover, titles (`package.py`). Model per step lives in `routing.json` (`router.py` regenerates it). Rules every run reads: `channel.md`, `lessons.md`, `results.json`. Full walkthrough: `claude/make-videos-handoff.md`.
+
+The sections below describe the original hand-built pipeline used for the first short.
+
 ## Layout
 
 ```

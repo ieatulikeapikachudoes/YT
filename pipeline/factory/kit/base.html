@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="vendor/gsap.min.js"></script>
+    <script src="assets/timing.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; src: url("fonts/geist.woff2") format("woff2"); font-weight: 100 900; }
+      @font-face { font-family: "Patrick"; src: url("fonts/patrick.woff2") format("woff2"); }
+      @font-face { font-family: "Caveat"; src: url("fonts/caveat.woff2") format("woff2"); font-weight: 400 700; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #111; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; }
+      .clip { position: absolute; inset: 0; }
+      .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+      .bg { position: absolute; inset: -60px; }
+      .cam, .punch { position: absolute; inset: 0; transform-origin: 50% 45%; }
+      .scene svg { position: absolute; overflow: visible; }
+      #captions { position: absolute; inset: 0; }
+      .cap { position: absolute; left: 80px; right: 80px; bottom: 390px; text-align: center; text-wrap: balance; }
+      #fx { position: absolute; inset: 0; pointer-events: none; }
+      #vig { position: absolute; inset: 0; }
+      /*STYLECSS*/
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+      <svg width="0" height="0" style="position:absolute"><defs>
+        <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="26" /></filter>
+        <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9" /></filter>
+        <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" /><feDisplacementMap in="SourceGraphic" scale="4" /></filter>
+      </defs></svg>
+      <audio id="vo" src="assets/voice.wav" data-start="0" data-duration="__TOTAL__"></audio>
+      <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0"></div>
+      <div id="fx" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"></div>
+      <div id="captions" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="2"></div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const T = window.__T, E = window.__E, LINES = window.__LINES;
+      const D = k => E[k] - T[k];
+      /* WT(key, "word"): the exact time that word is spoken inside that line */
+      const WT = (k, w) => { const f = w.toLowerCase().split(/\s+/)[0].replace(/[^a-z0-9]/g, ""); const hit = (window.__W || []).find(x => x[1] >= T[k] - 0.15 && x[1] <= E[k] + 0.1 && (x[0] === f || (f.length >= 4 && x[0].startsWith(f.slice(0, 4))))); if (hit) return hit[1]; const t = LINES.find(l => l[3] === k)[1].toLowerCase(); const i = t.indexOf(w.toLowerCase()); return T[k] + D(k) * Math.max(0, i) / t.length; };
+      let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+
+      /*STYLEJS*/
+
+      /* ---------- KIT: every helper returns an SVG/HTML string ---------- */
+      /* F(inner): a full-frame 1080x1920 SVG layer. Draw everything in these coordinates. */
+      const F = (inner, id = "") => `<svg ${id ? `id="${id}"` : ""} viewBox="0 0 1080 1920" style="left:0; top:0; width:1080px; height:1920px">${inner}</svg>`;
+      const STARS = (n = 30, op = 0.5, col = C.fg) => { let s = ""; for (let i = 0; i < n; i++) s += `<circle cx="${(rnd() * 1080).toFixed(0)}" cy="${(rnd() * 1100).toFixed(0)}" r="${(1.5 + rnd() * 2.5).toFixed(1)}" fill="${col}" opacity="${(0.15 + rnd() * op).toFixed(2)}" />`; return s; };
+      const GLOW = (x, y, r, col = C.fg, op = 0.18) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op}" filter="url(#glow)" />`;
+      const GROUND = (y = 1250, col = C.ground) => `<path d="M-80 ${y} Q300 ${y - 40} 600 ${y - 10} T1160 ${y - 20} L1160 2000 L-80 2000 Z" fill="${col}" />`;
+      const TXT = (x, y, text, size = 48, col = C.fg, weight = 800, anchor = "middle", id = "", cls = "") => `<text ${id ? `id="${id}"` : ""} ${cls ? `class="${cls}"` : ""} x="${x}" y="${y}" text-anchor="${anchor}" font-family="${FONT.label}" font-size="${size}" font-weight="${weight}" fill="${col}">${text}</text>`;
+      const G = (id, inner, x = 0, y = 0, s = 1, cls = "") => `<g ${id ? `id="${id}"` : ""} ${cls ? `class="${cls}"` : ""} transform="translate(${x} ${y}) scale(${s})"><g class="in">${inner}</g></g>`;
+
+      const FACES = {
+        neutral: (c) => `<circle cx="-18" cy="-6" r="7" fill="${c}" /><circle cx="18" cy="-6" r="7" fill="${c}" /><path d="M-14 22 L14 22" stroke="${c}" stroke-width="6" stroke-linecap="round" />`,
+        happy: (c) => `<circle cx="-18" cy="-6" r="7" fill="${c}" /><circle cx="18" cy="-6" r="7" fill="${c}" /><path d="M-18 16 Q0 34 18 16" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" />`,
+        sad: (c) => `<path d="M-26 -12 L-12 -6 M26 -12 L12 -6" stroke="${c}" stroke-width="5" stroke-linecap="round" /><circle cx="-18" cy="2" r="6" fill="${c}" /><circle cx="18" cy="2" r="6" fill="${c}" /><path d="M-16 30 Q0 18 16 30" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" />`,
+        shocked: (c) => `<circle cx="-18" cy="-6" r="10" fill="none" stroke="${c}" stroke-width="5" /><circle cx="18" cy="-6" r="10" fill="none" stroke="${c}" stroke-width="5" /><circle cx="-18" cy="-6" r="4" fill="${c}" /><circle cx="18" cy="-6" r="4" fill="${c}" /><ellipse cx="0" cy="28" rx="10" ry="13" fill="${c}" />`,
+        angry: (c) => `<path d="M-30 -22 L-8 -12 M30 -22 L8 -12" stroke="${c}" stroke-width="6" stroke-linecap="round" /><circle cx="-18" cy="-2" r="6" fill="${c}" /><circle cx="18" cy="-2" r="6" fill="${c}" /><path d="M-16 28 Q0 18 16 28" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" />`,
+        smug: (c) => `<path d="M-26 -6 L-10 -6 M10 -6 L26 -6" stroke="${c}" stroke-width="6" stroke-linecap="round" /><path d="M-14 22 Q6 30 20 14" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" />`,
+        sleep: (c) => `<path d="M-26 -4 Q-18 4 -10 -4 M10 -4 Q18 4 26 -4" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" /><circle cx="0" cy="24" r="6" fill="${c}" />`,
+      };
+      /* arm end points relative to shoulders, for poses */
+      const POSE = { down: [[-60, 150], [60, 150]], up: [[-80, -60], [80, -60]], point: [[-55, 150], [150, 10]], shrug: [[-110, 20], [110, 20]], hold: [[-40, 90], [40, 90]], cross: [[40, 80], [-40, 80]], wave: [[-55, 150], [100, -80]] };
+
+      /* PERSON: filled flat character. Feet at (x,y). ~ 420*s tall. opts: {shirt, skin, hair, pants, face, pose, id, cls} */
+      const PERSON = (x, y, s = 1, o = {}) => { const sh = o.shirt || C.a1, sk = o.skin || C.skin, ha = o.hair || C.ink, pa = o.pants || C.ink, fc = o.face || "neutral", [l, r] = POSE[o.pose || "down"];
+        return `<g ${o.id ? `id="${o.id}"` : ""} ${o.cls ? `class="${o.cls}"` : ""} transform="translate(${x} ${y}) scale(${s})"><g class="in">
+          <ellipse cx="0" cy="0" rx="90" ry="14" fill="#000" opacity="0.25" />
+          <rect x="-44" y="-170" width="38" height="170" rx="18" fill="${pa}" /><rect x="6" y="-170" width="38" height="170" rx="18" fill="${pa}" />
+          <path d="M-62 -300 L${-62 + l[0]} ${-300 + l[1]}" stroke="${sh}" stroke-width="34" stroke-linecap="round" /><path d="M62 -300 L${62 + r[0]} ${-300 + r[1]}" stroke="${sh}" stroke-width="34" stroke-linecap="round" />
+          <circle cx="${-62 + l[0]}" cy="${-300 + l[1]}" r="18" fill="${sk}" /><circle cx="${62 + r[0]}" cy="${-300 + r[1]}" r="18" fill="${sk}" />
+          <path d="M-70 -310 Q-70 -330 -40 -330 L40 -330 Q70 -330 70 -310 L66 -150 L-66 -150 Z" fill="${sh}" /><path d="M0 -330 L40 -330 Q70 -330 70 -310 L66 -150 L0 -150 Z" fill="#000" opacity="0.12" />
+          <g transform="translate(0 -400)"><circle cx="0" cy="0" r="62" fill="${sk}" /><path d="M-62 -6 Q-66 -70 0 -70 Q66 -70 62 -10 Q40 -44 0 -42 Q-36 -44 -62 -6 Z" fill="${ha}" />${FACES[fc](C.ink)}</g></g></g>`; };
+
+      /* STICK: line-drawn figure (ink and paper styles). Feet at (x,y), ~ 400*s tall. opts: {col, face, pose, id, cls, w} */
+      const STICK = (x, y, s = 1, o = {}) => { const c = o.col || C.fg, w = o.w || 9, fc = o.face || "neutral", [l, r] = POSE[o.pose || "down"];
+        return `<g ${o.id ? `id="${o.id}"` : ""} ${o.cls ? `class="${o.cls}"` : ""} transform="translate(${x} ${y}) scale(${s})"><g class="in" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M-40 0 L0 -150 L40 0" /><path d="M0 -150 L0 -300" />
+          <path d="M0 -280 L${l[0] * 0.8} ${-280 + l[1] * 0.75}" /><path d="M0 -280 L${r[0] * 0.8} ${-280 + r[1] * 0.75}" />
+          <circle cx="0" cy="-350" r="50" fill="${C.bgSolid}" />
+          <g transform="translate(0 -350) scale(0.8)" stroke="none">${FACES[fc](c)}</g></g></g>`; };
+
+      const PHONE = (x, y, s = 1, screen = "", id = "") => G(id, `<rect x="-90" y="-170" width="180" height="340" rx="28" fill="${C.ink}" stroke="${C.fg}" stroke-opacity="0.3" stroke-width="4" /><rect x="-76" y="-148" width="152" height="296" rx="14" fill="${C.panel}" /><g>${screen}</g>`, x, y, s);
+      const LAPTOP = (x, y, s = 1, screen = "", id = "") => G(id, `<rect x="-170" y="-220" width="340" height="220" rx="14" fill="${C.ink}" /><rect x="-152" y="-204" width="304" height="188" rx="6" fill="${C.panel}" /><g>${screen}</g><path d="M-210 0 L210 0 L190 26 L-190 26 Z" fill="${C.muted}" />`, x, y, s);
+      const COIN = (x, y, s = 1, label = "$", id = "", col = C.a2) => G(id, `<circle r="60" fill="${col}" /><circle r="46" fill="none" stroke="#000" stroke-opacity="0.18" stroke-width="6" /><text y="18" text-anchor="middle" font-family="${FONT.label}" font-size="52" font-weight="900" fill="#000" opacity="0.55">${label}</text>`, x, y, s);
+      const STACK = (x, y, n = 5, s = 1, id = "", col = C.a2) => G(id, Array.from({ length: n }, (_, i) => `<ellipse cx="0" cy="${-i * 18}" rx="60" ry="16" fill="${col}" stroke="#000" stroke-opacity="0.25" stroke-width="3" />`).join(""), x, y, s);
+      /* CARD: rounded panel with up to 3 lines of text, centred on (x,y) */
+      const CARD = (x, y, w, h, lines = [], o = {}) => G(o.id, `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="22" fill="${o.fill || C.panel}" stroke="${o.stroke || C.fg}" stroke-opacity="0.25" stroke-width="4" />${lines.map((t, i) => `<text x="0" y="${-((lines.length - 1) * (o.size || 44) * 0.6) + i * (o.size || 44) * 1.2 + (o.size || 44) * 0.35}" text-anchor="middle" font-family="${FONT.label}" font-size="${o.size || 44}" font-weight="800" fill="${o.col || C.fg}">${t}</text>`).join("")}`, x, y, 1, o.cls);
+      /* BUBBLE: speech/chat bubble, tail at bottom-left. text lines. */
+      const BUBBLE = (x, y, w, lines = [], o = {}) => { const h = 40 + lines.length * 54; return G(o.id, `<path d="M${-w / 2} ${-h / 2} h${w} v${h} h${-w + 90} l-40 40 l0 -40 h-50 Z" fill="${o.fill || C.fg}" />${lines.map((t, i) => `<text x="${-w / 2 + 34}" y="${-h / 2 + 62 + i * 54}" font-family="${FONT.label}" font-size="42" font-weight="700" fill="${o.col || C.bgSolid}">${t}</text>`).join("")}`, x, y, 1, o.cls); };
+      const ARROW = (x, y, s = 1, rot = 0, col = C.fg, id = "", cls = "") => `<g ${id ? `id="${id}"` : ""} ${cls ? `class="${cls}"` : ""} transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M-60 -18 L10 -18 L10 -44 L64 0 L10 44 L10 18 L-60 18 Z" fill="${col}" /></g>`;
+      const HEART = (x, y, s = 1, col = C.a3, id = "", cls = "") => `<g ${id ? `id="${id}"` : ""} ${cls ? `class="${cls}"` : ""} transform="translate(${x} ${y}) scale(${s})"><path d="M0 40 C-70 -10 -60 -70 -20 -70 C-5 -70 0 -58 0 -50 C0 -58 5 -70 20 -70 C60 -70 70 -10 0 40 Z" fill="${col}" /></g>`;
+      /* RING: progress ring with id for its arc; animate with tl.to("#id-arc", {attr:{"stroke-dashoffset": ...}}). circumference = 2*PI*r */
+      const RING = (x, y, r, id, col = C.a1) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${C.fg}" stroke-opacity="0.15" stroke-width="${r * 0.22}" /><circle id="${id}-arc" cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${col}" stroke-width="${r * 0.22}" stroke-dasharray="${(2 * Math.PI * r).toFixed(1)}" stroke-dashoffset="${(2 * Math.PI * r).toFixed(1)}" transform="rotate(-90 ${x} ${y})" stroke-linecap="round" />`;
+      /* BARS: bar chart on a baseline at y; vals 0..1; each bar has class "bar" inside group id. Animate scaleY from 0 with transformOrigin "50% 100%" */
+      const BARS = (x, y, vals, w = 90, h = 400, id = "bars", cols = []) => `<g id="${id}">${vals.map((v, i) => `<rect class="bar" x="${x + i * (w * 1.4)}" y="${y - v * h}" width="${w}" height="${v * h}" rx="10" fill="${cols[i] || C.a1}" />`).join("")}<path d="M${x - 30} ${y} L${x + vals.length * w * 1.4} ${y}" stroke="${C.fg}" stroke-opacity="0.4" stroke-width="5" /></g>`;
+      const HOUSE = (x, y, s = 1, col = C.a1, id = "") => G(id, `<path d="M-120 0 L-120 -160 L0 -260 L120 -160 L120 0 Z" fill="${col}" /><path d="M-150 -150 L0 -280 L150 -150" fill="none" stroke="${C.ink}" stroke-width="22" stroke-linejoin="round" /><rect x="-30" y="-100" width="60" height="100" fill="${C.ink}" /><rect x="50" y="-130" width="44" height="44" fill="${C.panel}" />`, x, y, s);
+      const CITY = (y = 1250, n = 12, col = C.ground) => { let s = ""; for (let i = 0; i < n; i++) { const w = 70 + rnd() * 60, h = 150 + rnd() * 380, x = i * (1160 / n) - 40; s += `<rect x="${x.toFixed(0)}" y="${(y - h).toFixed(0)}" width="${w.toFixed(0)}" height="${h.toFixed(0)}" fill="${col}" />`; for (let k = 0; k < 6; k++) if (rnd() > 0.5) s += `<rect class="win" x="${(x + 14 + (k % 2) * 30).toFixed(0)}" y="${(y - h + 24 + Math.floor(k / 2) * 46).toFixed(0)}" width="16" height="22" fill="${C.a2}" opacity="0.7" />`; } return s; };
+      const CLOCK = (x, y, r = 120, id = "clock") => `<g id="${id}"><circle cx="${x}" cy="${y}" r="${r}" fill="${C.panel}" stroke="${C.fg}" stroke-width="10" /><path id="${id}-h" d="M${x} ${y} L${x} ${y - r * 0.5}" stroke="${C.fg}" stroke-width="12" stroke-linecap="round" /><path id="${id}-m" d="M${x} ${y} L${x} ${y - r * 0.8}" stroke="${C.a1}" stroke-width="8" stroke-linecap="round" /></g>`;
+      const CHAIN = (x1, y1, x2, y2, col = C.muted, id = "") => { const n = Math.max(2, Math.round(Math.hypot(x2 - x1, y2 - y1) / 46)); let s = ""; for (let i = 0; i < n; i++) { const t = i / (n - 1), x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t; s += `<ellipse cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" rx="28" ry="16" fill="none" stroke="${col}" stroke-width="9" transform="rotate(${(Math.atan2(y2 - y1, x2 - x1) * 57.3 + (i % 2) * 90).toFixed(0)} ${x.toFixed(0)} ${y.toFixed(0)})" />`; } return `<g ${id ? `id="${id}"` : ""}>${s}</g>`; };
+
+      /* ---------- SCENES (written by the storyboard model) ---------- */
+      /*SCENES*/
+
+      const KEYS = LINES.map(l => l[3]);
+      const ORDER = []; KEYS.forEach(k => { const s = SCENE_OF[k] || k; if (!ORDER.length || ORDER[ORDER.length - 1][0] !== s) ORDER.push([s, k]); });
+      const stage = document.getElementById("stage");
+      ORDER.forEach(([s]) => { const sc = S[s] || [STYLE.bg, F(TXT(540, 900, "missing scene " + s, 40, "red"))]; stage.insertAdjacentHTML("beforeend", `<div class="scene" id="sc-${s}"><div class="bg" style="background:${sc[0]}"></div><div class="cam" id="cam-${s}"><div class="punch" id="pn-${s}">${sc[1]}</div></div></div>`); });
+
+      const fx = document.getElementById("fx"); let sp = "";
+      for (let i = 0; i < 36; i++) sp += `<circle class="du" cx="${(rnd() * 1080).toFixed(0)}" cy="${(400 + rnd() * 1500).toFixed(0)}" r="${(1.5 + rnd() * 2.5).toFixed(1)}" fill="${C.fg}" opacity="${(0.06 + rnd() * 0.14).toFixed(2)}" />`;
+      fx.innerHTML = `<svg viewBox="0 0 1080 1920" style="position:absolute; left:0; top:0; width:1080px; height:1920px">${STYLE.dust ? sp : ""}</svg><div id="vig" style="background:${STYLE.vig}"></div>`;
+
+      /* captions */
+      const caps = document.getElementById("captions");
+      function splitLine(t) { if (t.length <= 42) return [t]; const mid = t.length / 2; let best = -1, bestD = 1e9; const re = /[.,;:!?]\s|\sand\s|\sof\s|\sfor\s|\sbut\s/g; let m; while ((m = re.exec(t))) { const cut = m[0].startsWith(" ") ? m.index : m.index + m[0].length - 1; const d = Math.abs(cut - mid); if (d < bestD) { bestD = d; best = cut; } } if (best < 0) return [t]; const a = t.slice(0, best).trim(), b = t.slice(best).trim(); return [...(a.length > 48 ? splitLine(a) : [a]), ...(b.length > 48 ? splitLine(b) : [b])]; }
+      LINES.forEach((l, i) => { const [start, text, end] = l; const chunks = splitLine(text); const nextStart = i + 1 < LINES.length ? LINES[i + 1][0] : end + 0.8; const dur = end - start; let t0 = i === 0 ? 0 : start - 0.08; let acc = 0;
+        chunks.forEach((c, j) => { const id = `cap-${i}-${j}`; caps.insertAdjacentHTML("beforeend", `<div class="cap" id="${id}">${c}</div>`); acc += c.length; const t1 = j + 1 < chunks.length ? start + dur * (acc / text.length) : nextStart - 0.1;
+          if (i === 0 && j === 0) tl.set(`#${id}`, { opacity: 1, y: 0 }, 0); else tl.fromTo(`#${id}`, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, t0); tl.to(`#${id}`, { opacity: 0, duration: 0.1 }, t1 - 0.12); t0 = t1; }); });
+
+      ORDER.forEach(([s, k], i) => { const on = i === 0 ? 0 : T[k] - (HARD.includes(s) ? 0.02 : 0.15); const nx = ORDER[i + 1]; const off = nx ? T[nx[1]] - (HARD.includes(nx[0]) ? 0.02 : 0.18) : T.end;
+        if (i === 0) tl.set(`#sc-${s}`, { opacity: 1 }, 0); else if (HARD.includes(s)) tl.set(`#sc-${s}`, { opacity: 1 }, on); else tl.fromTo(`#sc-${s}`, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, on);
+        if (nx) { if (HARD.includes(nx[0])) tl.set(`#sc-${s}`, { opacity: 0 }, off); else tl.to(`#sc-${s}`, { opacity: 0, duration: 0.2 }, off); }
+        tl.fromTo(`#cam-${s}`, { scale: 1 }, { scale: PUSH[s] || 1.07, duration: Math.max(0.5, off - on + 0.2), ease: "none" }, on); });
+      /* motion helpers for beats */
+      const punch = (s, t) => { tl.fromTo(`#pn-${s}`, { scale: 1 }, { scale: 1.07, duration: 0.08, ease: "power2.out", immediateRender: false }, t); tl.to(`#pn-${s}`, { scale: 1, duration: 0.3, ease: "power2.out" }, t + 0.08); };
+      const pop = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)" }, t);
+      const fadeIn = (sel, t, d = 0.4) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d }, t);
+      const slideIn = (sel, t, dx = 0, dy = 80) => tl.fromTo(sel, { opacity: 0, x: dx, y: dy }, { opacity: 1, x: 0, y: 0, duration: 0.45, ease: "power3.out" }, t);
+      const drawOn = (sel, t, len = 1000, d = 0.6) => tl.fromTo(sel, { attr: { "stroke-dasharray": len, "stroke-dashoffset": len } }, { attr: { "stroke-dashoffset": 0 }, duration: d, ease: "power1.inOut" }, t);
+      const bob = (sel, t, dur) => tl.fromTo(sel, { y: 0 }, { y: -12, duration: 0.7, yoyo: true, repeat: Math.max(1, Math.floor(dur / 0.7)) | 1, ease: "sine.inOut", immediateRender: false }, t);
+      const shake = (sel, t) => tl.fromTo(sel, { x: -10 }, { x: 10, duration: 0.05, yoyo: true, repeat: 5, ease: "none", immediateRender: false }, t);
+      document.querySelectorAll("#dust .du, #fx .du").forEach((c, i) => { const d = 8 + (i % 5) * 1.7; tl.fromTo(c, { y: 0 }, { y: -420, duration: d, ease: "none", repeat: Math.floor(T.end / d), immediateRender: false }, 0); });
+
+      /* ---------- BEATS (written by the storyboard model) ---------- */
+      /*BEATS*/
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{
+ "topics": {
+  "model": "deepseek-v4-flash",
+  "why": "Cheap default, small output, taste handled by prompt."
+ },
+ "research": {
+  "model": "deepseek-v4-flash",
+  "why": "Web search capable, accuracy sufficient, medium output, low cost."
+ },
+ "script": {
+  "model": "deepseek-v4-pro",
+  "why": "Writing quality matters most, needs punchy plain English."
+ },
+ "script_judge": {
+  "model": "deepseek-v4-pro",
+  "why": "Strong reasoning required for critical judging and change requests."
+ },
+ "storyboard": {
+  "model": "deepseek-v4-pro",
+  "why": "orchestrator override: qwen coder output too weak"
+ },
+ "board_judge": {
+  "model": "deepseek-v4-1-flash",
+  "why": "owner: DeepSeek for everything; has vision"
+ },
+ "package": {
+  "model": "deepseek-v4-flash",
+  "why": "Small output, cheap, simple copywriting task."
+ }
+}

@@ -1,0 +1,11 @@
+# Lessons (read before every batch; every manual fix becomes a rule here)
+- Never state a number, price, percentage or study that the research did not find. "A Harvard study found" with no source is banned. When unsure, make the claim qualitative.
+- Scripts: 110 to 160 words. Lines short enough to read in one breath. No essay sentences.
+- The hook frame must show a BIG subject (35 to 50 percent of frame height) at t=0. A tiny figure in empty space kills the video.
+- The last frame must not be empty or just a blur. End on a clear image that loops back to the hook.
+- No on-screen labels that repeat the caption. Max 2 short labels per frame.
+- Every animated selector starts with "#". Bare "path"/"text"/"circle" selectors break every scene.
+- Kit objects: animate "#id .in", never the outer group with x/y.
+- What worked on the channel: character-driven pain or future stories (an AI agent named Dan going rogue: 1.3k views; why you don't have friends: 691). Pure history/biography did worst (Hoffer 12, Putin 77).
+- (Batch 2 review) DeepSeek-written STORY shorts made no sense to the owner (recruiter, man who traded friends). Mechanism explainers worked better (friendship unpaid labor, algorithms ghost you). A story must have one clear point a stranger gets on first watch: who the character is, what he wants, what goes wrong, and the one lesson. If the judge can't state the point in one sentence, rewrite.
+- Pronunciation: the TTS reads "resume" as the verb (re-ZOOM). In the "say" field always write the job document as "rez-oo-may".
