@@ -1,0 +1,64 @@
+round 1: 8 schema/geo problems
+    c1: nothing new happens from 5.1s to 8.9s; add an action on a word in that stretch
+    c3: card line "BORDER NEAR SEPOPOL" is over 18 chars
+    s3: card line "BETWEEN POLAND & LITHUANIA" is over 18 chars
+    s3: nothing new happens from 29.7s to 33.3s; add an action on a word in that stretch
+    e1: card line "DON'T NEED TO CLOSE" is over 18 chars
+    e1: card line "JUST NEED YOU TO THINK" is over 18 chars
+    e2: nothing new happens from 43.0s to 46.8s; add an action on a word in that stretch
+    e3: nothing new happens from 48.2s to 51.6s; add an action on a word in that stretch
+round 2: 1 schema/geo problems
+    c1: nothing new happens from 5.7s to 8.9s; add an action on a word in that stretch
+round 3: 2 motion problems
+    STATIC 0.8s to 5.0s: nothing moves for 4.2s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 5.2s to 52.8s: nothing moves for 47.5s. Add a beat (pop, swap, move) in that stretch.
+motion problems left: ['STATIC 0.8s to 5.0s: nothing moves for 4.2s. Add a beat (pop, swap, move) in that stretch.', 'STATIC 5.2s to 52.8s: nothing moves for 47.5s. Add a beat (pop, swap, move) in that stretch.']
+done after 4 DeepSeek calls ({'schema': 2, 'layout': 0, 'motion': 1})
+round 1: 4 layout problems
+    e2: label "BORDER" overlaps label "JUST UNDER THE LINE"
+    e3: label "SUNDAY" runs off the right edge: shorten it, use side left/right, or move the camera
+    e3: label "STILL THERE" runs off the right edge: shorten it, use side left/right, or move the camera
+    e3: label "SUNDAY" overlaps label "STILL THERE"
+round 2: 3 motion problems
+    STATIC 16.0s to 19.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 20.0s to 24.0s: nothing moves for 4.0s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 24.0s to 27.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+round 3: 4 layout problems
+    s3: label "MISSILES" runs off the left edge: shorten it, use side left/right, or move the camera
+    e3: 4 labels on screen at once; keep it to 2 or 3
+    ?: WT miss s2 southeast
+    ?: WT miss s2 southeast
+round 4: 2 schema/geo problems
+    s2: 4 labels/cards in one line; keep it to 2 or 3
+    e3: nothing new happens from 48.2s to 51.6s; add an action on a word in that stretch
+layout problems left after 2 rounds: 1
+    e2: label "MISSILE" overlaps label "JUST UNDER THE LINE"
+round 5: 3 motion problems
+    STATIC 16.0s to 19.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 20.0s to 24.0s: nothing moves for 4.0s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 24.0s to 27.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+layout problems left after 2 rounds: 5
+    e2: label "MISSILE" overlaps label "JUST UNDER THE LINE"
+    ?: WT miss s2 southeast
+    ?: WT miss s2 southeast
+    ?: WT miss s2 southeast
+    ?: WT miss s2 southeast
+motion problems left: ['STATIC 16.0s to 19.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.', 'STATIC 24.0s to 27.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.']
+done after 6 DeepSeek calls ({'schema': 1, 'layout': 2, 'motion': 2})
+round 1: 2 schema/geo problems
+    s2: at "southeast" is not in this line's HEARD words; pick one of: kaliningrad a piece of russia inside nato about 12000 troops iskandare missiles
+    s2: at "southeast" is not in this line's HEARD words; pick one of: kaliningrad a piece of russia inside nato about 12000 troops iskandare missiles
+round 2: 3 layout problems
+    hk: the map subject is small (284px tall, 508px wide); zoom the camera in on it, or add a highlight/line/marker cluster so the picture fills the middle of the screen
+    e1: the map subject is small (237px tall, 423px wide); zoom the camera in on it, or add a highlight/line/marker cluster so the picture fills the middle of the screen
+    e2: label "MISSILE" overlaps label "JUST UNDER THE LINE"
+round 3: 3 motion problems
+    STATIC 16.0s to 19.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 20.0s to 24.0s: nothing moves for 4.0s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 24.0s to 27.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+round 4: 3 motion problems
+    STATIC 16.0s to 19.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 20.0s to 24.0s: nothing moves for 4.0s. Add a beat (pop, swap, move) in that stretch.
+    STATIC 24.0s to 27.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.
+motion problems left: ['STATIC 16.0s to 19.5s: nothing moves for 3.5s. Add a beat (pop, swap, move) in that stretch.', 'STATIC 20.0s to 24.0s: nothing moves for 4.0s. Add a beat (pop, swap, move) in that stretch.']
+done after 5 DeepSeek calls ({'schema': 1, 'layout': 1, 'motion': 2})

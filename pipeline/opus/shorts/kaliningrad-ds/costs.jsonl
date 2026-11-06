@@ -1,0 +1,13 @@
+{"t": "2026-11-05 20:12:20", "stage": "board", "model": "deepseek-v4-flash", "in": 2278, "out": 7940, "usd": 0.0025, "exact": true, "note": "shot list call 1", "seconds": 119.5}
+{"t": "2026-11-05 20:13:25", "stage": "board", "model": "deepseek-v4-flash", "in": 5261, "out": 6041, "usd": 0.00239, "exact": true, "note": "shot list call 2", "seconds": 65.3}
+{"t": "2026-11-05 20:14:00", "stage": "board", "model": "deepseek-v4-flash", "in": 8284, "out": 3594, "usd": 0.00213, "exact": true, "note": "shot list call 3", "seconds": 34.3}
+{"t": "2026-11-05 20:18:37", "stage": "board", "model": "deepseek-v4-flash", "in": 11409, "out": 6116, "usd": 0.00326, "exact": true, "note": "shot list call 4", "seconds": 181.3}
+{"t": "2026-11-05 20:24:21", "stage": "board", "model": "deepseek-v4-flash", "in": 5676, "out": 3752, "usd": 0.00182, "exact": true, "note": "shot list call 2", "seconds": 38.4}
+{"t": "2026-11-05 20:26:02", "stage": "board", "model": "deepseek-v4-flash", "in": 9039, "out": 4259, "usd": 0.00242, "exact": true, "note": "shot list call 3", "seconds": 43.1}
+{"t": "2026-11-05 20:26:44", "stage": "board", "model": "deepseek-v4-flash", "in": 12556, "out": 4934, "usd": 0.00309, "exact": true, "note": "shot list call 4", "seconds": 41.7}
+{"t": "2026-11-05 20:27:11", "stage": "board", "model": "deepseek-v4-flash", "in": 15991, "out": 3897, "usd": 0.00328, "exact": true, "note": "shot list call 5", "seconds": 26.1}
+{"t": "2026-11-05 20:29:04", "stage": "board", "model": "deepseek-v4-flash", "in": 19487, "out": 5468, "usd": 0.00419, "exact": true, "note": "shot list call 6", "seconds": 56.0}
+{"t": "2026-11-05 20:31:09", "stage": "board", "model": "deepseek-v4-flash", "in": 5937, "out": 3774, "usd": 0.00186, "exact": true, "note": "shot list call 2", "seconds": 40.1}
+{"t": "2026-11-05 20:31:55", "stage": "board", "model": "deepseek-v4-flash", "in": 9624, "out": 4408, "usd": 0.00254, "exact": true, "note": "shot list call 3", "seconds": 45.7}
+{"t": "2026-11-05 20:33:42", "stage": "board", "model": "deepseek-v4-flash", "in": 13316, "out": 5128, "usd": 0.00325, "exact": true, "note": "shot list call 4", "seconds": 49.0}
+{"t": "2026-11-05 20:35:25", "stage": "board", "model": "deepseek-v4-flash", "in": 17205, "out": 4333, "usd": 0.00357, "exact": true, "note": "shot list call 5", "seconds": 44.9}

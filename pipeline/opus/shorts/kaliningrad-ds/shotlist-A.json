@@ -1,0 +1,663 @@
+{
+ "region": {
+  "bbox": [
+   14,
+   49,
+   32,
+   56
+  ],
+  "countries": [
+   "Poland",
+   "Russia",
+   "Belarus",
+   "Lithuania"
+  ]
+ },
+ "places": {
+  "Kaliningrad": [
+   20.5,
+   54.7
+  ],
+  "Sepopol": [
+   21.0,
+   54.3
+  ],
+  "Suwalki": [
+   22.9,
+   54.1
+  ],
+  "Marijampole": [
+   23.35,
+   54.55
+  ],
+  "Vilnius": [
+   25.3,
+   54.7
+  ],
+  "BorderPoint": [
+   20.8,
+   54.4
+  ],
+  "BorderHQ": [
+   20.9,
+   54.35
+  ]
+ },
+ "shots": [
+  {
+   "key": "hk",
+   "mode": "today",
+   "camera": {
+    "focus": "BorderPoint",
+    "zoom": 4.5
+   },
+   "actions": [
+    {
+     "do": "title",
+     "at": "poland",
+     "text": "Poland sends commandos",
+     "accent": "commandos"
+    },
+    {
+     "do": "highlight",
+     "at": "poland",
+     "country": "Poland",
+     "color": "ice",
+     "style": "glow"
+    },
+    {
+     "do": "marker",
+     "at": "border",
+     "place": "BorderPoint",
+     "color": "ice",
+     "size": "m",
+     "count": 3,
+     "blink": false
+    },
+    {
+     "do": "label",
+     "at": "commandos",
+     "target": "BorderPoint",
+     "text": "COMMANDOS",
+     "size": "m",
+     "color": "ice",
+     "side": "below"
+    },
+    {
+     "do": "card",
+     "at": "weakest",
+     "kicker": "NATO'S WEAKEST SPOT",
+     "lines": [
+      "SUWALKI GAP",
+      "65 KM WIDE"
+     ],
+     "accent": 0,
+     "color": "amber",
+     "pos": "mid"
+    }
+   ]
+  },
+  {
+   "key": "c1",
+   "mode": "today",
+   "camera": {
+    "focus": "BorderHQ",
+    "zoom": 3.2
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "monday",
+     "kicker": "MONDAY",
+     "lines": [
+      "BORDER OPERATION",
+      "LAUNCHED"
+     ],
+     "accent": 0,
+     "color": "ice",
+     "pos": "top"
+    },
+    {
+     "do": "marker",
+     "at": "poland",
+     "place": "BorderHQ",
+     "color": "ice",
+     "size": "m",
+     "count": 2,
+     "blink": false
+    },
+    {
+     "do": "label",
+     "at": "operation",
+     "target": "BorderHQ",
+     "text": "OPERATION",
+     "size": "m",
+     "color": "ice",
+     "side": "above"
+    },
+    {
+     "do": "unit",
+     "at": "grom",
+     "place": "BorderHQ",
+     "letter": "G",
+     "color": "ice"
+    }
+   ]
+  },
+  {
+   "key": "c2",
+   "mode": "today",
+   "camera": {
+    "focus": "Kaliningrad",
+    "zoom": 3.5
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "intelligence",
+     "kicker": "INTELLIGENCE WARNING",
+     "lines": [
+      "ARMED GROUPS",
+      "FROM KALININGRAD"
+     ],
+     "accent": 1,
+     "color": "red",
+     "pos": "top"
+    },
+    {
+     "do": "highlight",
+     "at": "kaliningrad",
+     "country": "Russia",
+     "near": "Kaliningrad",
+     "color": "red",
+     "style": "glow"
+    },
+    {
+     "do": "marker",
+     "at": "groups",
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "m",
+     "count": 5,
+     "blink": false
+    },
+    {
+     "do": "label",
+     "at": "november",
+     "target": "Kaliningrad",
+     "text": "NOVEMBER",
+     "size": "m",
+     "color": "red",
+     "side": "above"
+    }
+   ]
+  },
+  {
+   "key": "c3",
+   "mode": "today",
+   "camera": {
+    "focus": "Sepopol",
+    "zoom": 4.0
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "midnight",
+     "kicker": "MIDNIGHT",
+     "lines": [
+      "FLASHLIGHTS",
+      "NEAR SEPOPOL"
+     ],
+     "accent": 1,
+     "color": "amber",
+     "pos": "top"
+    },
+    {
+     "do": "marker",
+     "at": "flashlights",
+     "place": "Sepopol",
+     "color": "amber",
+     "size": "s",
+     "count": 3,
+     "blink": true
+    },
+    {
+     "do": "arrows",
+     "at": "pulled",
+     "from": "Sepopol",
+     "to": [
+      "Kaliningrad"
+     ],
+     "color": "red"
+    },
+    {
+     "do": "label",
+     "at": "russia",
+     "delay": 1.5,
+     "target": "Sepopol",
+     "text": "PULLED BACK",
+     "size": "m",
+     "color": "red",
+     "side": "below"
+    },
+    {
+     "do": "marker",
+     "at": "back",
+     "delay": 1.0,
+     "place": "Sepopol",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "border",
+     "delay": 1.5,
+     "place": "BorderPoint",
+     "color": "amber",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "border",
+     "delay": 2.5,
+     "place": "BorderPoint",
+     "color": "amber",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    }
+   ]
+  },
+  {
+   "key": "s2",
+   "mode": "today",
+   "camera": {
+    "focus": "Kaliningrad",
+    "zoom": 3.0
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "kaliningrad",
+     "kicker": "KALININGRAD",
+     "lines": [
+      "RUSSIAN EXCLAVE",
+      "INSIDE NATO"
+     ],
+     "accent": 0,
+     "color": "red",
+     "pos": "top"
+    },
+    {
+     "do": "highlight",
+     "at": "russia",
+     "country": "Russia",
+     "near": "Kaliningrad",
+     "color": "red",
+     "style": "fill"
+    },
+    {
+     "do": "label",
+     "at": "12000",
+     "target": "Kaliningrad",
+     "text": "12,000 TROOPS",
+     "size": "l",
+     "color": "red",
+     "side": "below"
+    },
+    {
+     "do": "marker",
+     "at": "missiles",
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 4,
+     "blink": false
+    },
+    {
+     "do": "ring",
+     "at": "iskandare",
+     "center": "Kaliningrad",
+     "radius_km": 200,
+     "color": "red"
+    },
+    {
+     "do": "label",
+     "at": "missiles",
+     "delay": 2.0,
+     "target": "Kaliningrad",
+     "text": "MISSILE",
+     "size": "m",
+     "color": "red",
+     "side": "right"
+    },
+    {
+     "do": "marker",
+     "at": "troops",
+     "delay": 0.5,
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "troops",
+     "delay": 2.0,
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "iskandare",
+     "delay": 4.5,
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "missiles",
+     "delay": 5.0,
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "troops",
+     "delay": 3.0,
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    },
+    {
+     "do": "marker",
+     "at": "missiles",
+     "delay": 6.0,
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    }
+   ]
+  },
+  {
+   "key": "s3",
+   "mode": "today",
+   "camera": {
+    "focus": "Suwalki",
+    "zoom": 3.5
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "southeast",
+     "kicker": "THE SUWALKI GAP",
+     "lines": [
+      "65 KM WIDE",
+      "POLAND & LITHUANIA"
+     ],
+     "accent": 0,
+     "color": "amber",
+     "pos": "top"
+    },
+    {
+     "do": "highlight",
+     "at": "belarus",
+     "country": "Belarus",
+     "color": "red",
+     "style": "glow"
+    },
+    {
+     "do": "line",
+     "at": "between",
+     "through": [
+      "Suwalki",
+      "Marijampole"
+     ],
+     "color": "amber",
+     "style": "dashed"
+    },
+    {
+     "do": "label",
+     "at": "65",
+     "target": "Suwalki",
+     "text": "65 KM",
+     "size": "l",
+     "color": "amber",
+     "side": "center"
+    },
+    {
+     "do": "marker",
+     "at": "suwalki",
+     "place": "Suwalki",
+     "color": "amber",
+     "size": "m",
+     "count": 1,
+     "blink": false
+    }
+   ]
+  },
+  {
+   "key": "s4",
+   "mode": "today",
+   "camera": {
+    "focus": "Suwalki",
+    "zoom": 2.5
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "only",
+     "kicker": "ONLY LAND LINK",
+     "lines": [
+      "BALTIC STATES",
+      "TO NATO"
+     ],
+     "accent": 1,
+     "color": "amber",
+     "pos": "top"
+    },
+    {
+     "do": "label",
+     "at": "baltic",
+     "target": "Vilnius",
+     "text": "BALTIC STATES",
+     "size": "m",
+     "color": "ice",
+     "side": "above"
+    }
+   ]
+  },
+  {
+   "key": "s5",
+   "mode": "whatif",
+   "camera": {
+    "focus": "Suwalki",
+    "zoom": 3.0
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "close",
+     "kicker": "IF CLOSED",
+     "lines": [
+      "3 NATO COUNTRIES",
+      "CUT OFF BY LAND"
+     ],
+     "accent": 1,
+     "color": "red",
+     "pos": "top"
+    },
+    {
+     "do": "highlight",
+     "at": "three",
+     "country": "Lithuania",
+     "color": "red",
+     "style": "fill"
+    },
+    {
+     "do": "label",
+     "at": "countries",
+     "target": "Vilnius",
+     "text": "CUT OFF",
+     "size": "l",
+     "color": "red",
+     "side": "below"
+    },
+    {
+     "do": "line",
+     "at": "close",
+     "through": [
+      "Suwalki",
+      "Marijampole"
+     ],
+     "color": "red",
+     "style": "solid"
+    }
+   ]
+  },
+  {
+   "key": "e1",
+   "mode": "today",
+   "camera": {
+    "focus": "Kaliningrad",
+    "zoom": 4.0
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "russia",
+     "kicker": "RUSSIA'S GAME",
+     "lines": [
+      "NEED NOT CLOSE",
+      "YOU THINK IT MIGHT"
+     ],
+     "accent": 0,
+     "color": "red",
+     "pos": "top"
+    },
+    {
+     "do": "highlight",
+     "at": "russia",
+     "country": "Russia",
+     "near": "Kaliningrad",
+     "color": "red",
+     "style": "glow"
+    },
+    {
+     "do": "marker",
+     "at": "think",
+     "place": "Kaliningrad",
+     "color": "red",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    }
+   ]
+  },
+  {
+   "key": "e2",
+   "mode": "today",
+   "camera": {
+    "focus": "BorderPoint",
+    "zoom": 3.0
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "drones",
+     "kicker": "HYBRID WARFARE",
+     "lines": [
+      "DRONES, ARSON,",
+      "FLASHLIGHTS"
+     ],
+     "accent": 0,
+     "color": "red",
+     "pos": "top"
+    },
+    {
+     "do": "marker",
+     "at": "drones",
+     "place": "BorderPoint",
+     "color": "red",
+     "size": "m",
+     "count": 5,
+     "blink": true
+    },
+    {
+     "do": "label",
+     "at": "border",
+     "target": "BorderPoint",
+     "text": "JUST UNDER THE LINE",
+     "size": "m",
+     "color": "amber",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "key": "e3",
+   "mode": "today",
+   "camera": {
+    "focus": "Suwalki",
+    "zoom": 3.0
+   },
+   "actions": [
+    {
+     "do": "card",
+     "at": "polands",
+     "kicker": "OPERATION ENDS",
+     "lines": [
+      "SUNDAY",
+      "GAP REMAINS"
+     ],
+     "accent": 1,
+     "color": "ice",
+     "pos": "top"
+    },
+    {
+     "do": "highlight",
+     "at": "poland",
+     "country": "Poland",
+     "color": "ice",
+     "style": "glow"
+    },
+    {
+     "do": "label",
+     "at": "gap",
+     "target": "Suwalki",
+     "text": "REMAINS",
+     "size": "m",
+     "color": "amber",
+     "side": "below"
+    },
+    {
+     "do": "marker",
+     "at": "sunday",
+     "place": "Suwalki",
+     "color": "amber",
+     "size": "s",
+     "count": 1,
+     "blink": true
+    }
+   ]
+  }
+ ]
+}

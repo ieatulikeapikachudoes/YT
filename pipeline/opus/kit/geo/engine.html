@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="vendor/gsap.min.js"></script>
+<script src="assets/timing.js"></script>
+<!-- Geo kit engine: turns a shot list (JSON) into a timeline. No per-video code. -->
+<style>
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-800-normal.woff2") format("woff2"); font-weight: 800; }
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-900-normal.woff2") format("woff2"); font-weight: 900; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #050b14; }
+ #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Mont", sans-serif; }
+ .clip { position: absolute; inset: 0; }
+ svg { position: absolute; left: 0; top: 0; overflow: visible; }
+ .hid { opacity: 0; }
+ #tagrow { position: absolute; top: 120px; left: 0; right: 0; display: flex; justify-content: center; gap: 14px; }
+ .tag { font-weight: 900; font-size: 34px; letter-spacing: 0.1em; padding: 10px 22px; border-radius: 8px; color: #fff; }
+ #hypo { background: rgba(140, 16, 20, 0.92); box-shadow: 0 0 30px rgba(255, 40, 40, 0.35); opacity: 0; }
+ #mode { background: rgba(255, 255, 255, 0.12); border: 2px solid rgba(255, 255, 255, 0.35); }
+ #title { position: absolute; top: 215px; left: 40px; right: 40px; text-align: center; opacity: 0; }
+ #title span { display: inline-block; font-weight: 900; font-size: 108px; color: #fff; line-height: 1.04; text-shadow: 0 6px 30px rgba(0,0,0,0.8); }
+ #title b { color: #ff4d3d; }
+ .card { position: absolute; left: 60px; right: 60px; text-align: center; opacity: 0; }
+ .card .box { display: inline-block; max-width: 960px; background: rgba(5, 8, 13, 0.88); border: 3px solid #ff3b2f; border-radius: 22px; padding: 24px 36px; box-shadow: 0 0 60px rgba(255, 40, 40, 0.3); }
+ .card .k { font-weight: 800; font-size: 32px; letter-spacing: 0.12em; color: #ff8a7c; }
+ .card .v { font-weight: 900; font-size: 76px; color: #fff; line-height: 1.05; margin-top: 8px; }
+ .card .v.sm { font-size: 60px; }
+ .card .v b { color: #ff3b2f; }
+ .c-ice .box { border-color: #5fb7ff; box-shadow: 0 0 60px rgba(95, 183, 255, 0.3); } .c-ice .k { color: #9fd3ff; } .c-ice .v b { color: #5fb7ff; }
+ .c-amber .box { border-color: #ffb02e; box-shadow: 0 0 60px rgba(255, 176, 46, 0.3); } .c-amber .k { color: #ffcf7a; } .c-amber .v b { color: #ffb02e; }
+ #caps .c { position: absolute; left: 60px; right: 60px; top: 1380px; text-align: center; font-weight: 900; font-size: 82px; color: #fff; line-height: 1.04;
+   -webkit-text-stroke: 14px #05080d; paint-order: stroke fill; text-shadow: 0 8px 24px rgba(0,0,0,0.6); opacity: 0; }
+ #caps .c b { color: #ff4d3d; font-weight: 900; }
+ #flash { position: absolute; inset: 0; background: radial-gradient(circle at 55% 45%, #ffffff 0%, #ff3b2f 30%, #5a0505 70%, #000 100%); opacity: 0; mix-blend-mode: screen; }
+ #dark { position: absolute; inset: 0; background: #000; opacity: 0; }
+ #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 44%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.72) 100%); }
+ #grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay; }
+ .lbl { font-family: "Mont"; font-weight: 900; paint-order: stroke; stroke: #05080d; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+ <audio id="vo" src="assets/mix.wav" data-start="0" data-duration="__TOTAL__"></audio>
+ <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0">
+  <svg id="world" viewBox="0 0 1080 1920" width="1080" height="1920"><g id="cam"></g></svg>
+  <div id="dark"></div><div id="vig"></div>
+  <img id="grain" src="assets/grain.png" width="1080" height="1920">
+ </div>
+ <div id="ui" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+  <div id="tagrow"><div class="tag" id="hypo">HYPOTHETICAL</div><div class="tag" id="mode">TODAY</div></div>
+  <div id="title"><span></span></div>
+  <div id="cards"></div>
+  <div id="caps"></div>
+  <div id="flash"></div>
+ </div>
+</div>
+<script>
+const SL = __SHOTS__, G = __GEO__, RF = __RF__, CAPS = __CAPS__;
+const T = window.__T, E = window.__E, W = window.__W;
+const WT = (k, w) => { const f = String(w).toLowerCase().replace(/[^a-z0-9]/g, ""); const h = W.find(x => x[1] >= T[k] - 0.15 && x[1] <= E[k] + 0.15 && (x[0] === f || (f.length >= 4 && x[0].startsWith(f.slice(0, 4))))); if (!h) console.error("WT miss", k, w); return h ? h[1] : T[k]; };
+const COL = { red: "#ff3b2f", ice: "#5fb7ff", amber: "#ffb02e", white: "#ffffff", gray: "#9aa3ad" };
+const DIM = { red: "#4a0d10", ice: "#0d2a4a", amber: "#4a3005", white: "#333a45", gray: "#2a3038" };
+const col = c => COL[c] || COL.white, dim = c => DIM[c] || DIM.white;
+const NS = 'vector-effect="non-scaling-stroke"';
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const KEYS = SL.shots.map(s => s.key);
+const lineEnd = k => { const i = KEYS.indexOf(k); return i >= 0 && i + 1 < KEYS.length ? T[KEYS[i + 1]] - 0.12 : T.end + 1; };
+const untilT = (a, key) => a.until === "end" ? T.end + 1 : (a.until && T[a.until] !== undefined ? lineEnd(a.until) : lineEnd(key));
+const pt = r => G.pts[r];
+const TL = gsap.timeline({ paused: true }); let tl = TL;
+const DUMMY = new Proxy({}, { get: () => () => DUMMY });
+
+/* ---------- camera: one framing per line, a slow push while it holds ---------- */
+const cam = document.getElementById("cam");
+const apply = o => cam.setAttribute("transform", `translate(540 830) scale(${o.s}) translate(${-o.x} ${-o.y})`);
+const SEG = []; const move = (a, b, t0, t1, ease = "power2.inOut") => { if (t1 > t0) SEG.push([t0, t1, a, b, gsap.parseEase(ease)]); };
+const camAt = t => { let cur = SEG[0][2]; for (const [t0, t1, a, b, e] of SEG) { if (t < t0) break; const kk = t >= t1 ? 1 : e((t - t0) / (t1 - t0)); cur = {}; for (const q in a) cur[q] = a[q] + (b[q] - a[q]) * kk; } return cur; };
+const CAMS = SL.shots.map(s => { const c = pt(s.camera.focus) || [540, 990]; const z = Math.min(Math.max(+s.camera.zoom || 1, 0.8), 9); return { x: c[0], y: c[1], s: z }; });
+const drift = (c, i) => ({ x: c.x + (i % 2 ? 10 : -10) / c.s, y: c.y - 8 / c.s, s: c.s * 1.07 });
+SL.shots.forEach((s, i) => {
+  const c = CAMS[i], t0 = i ? T[s.key] - 0.15 : 0, t1 = i ? T[s.key] + 0.85 : 1.0, nx = i + 1 < KEYS.length ? T[KEYS[i + 1]] - 0.15 : T.end;
+  move(i ? drift(CAMS[i - 1], i - 1) : { ...c, s: c.s * 0.9 }, c, t0, t1, i ? "power2.inOut" : "power2.out");
+  move(c, drift(c, i), t1, nx, "sine.inOut");
+});
+SEG.sort((a, b) => a[0] - b[0]); apply(SEG[0][2]);
+const CLK = { t: 0 }; tl.fromTo(CLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { apply(camAt(+v)); return v; } } }, 0);
+
+/* ---------- motion helpers ---------- */
+const hide = (s, t, d = 0.3) => tl.to(s, { opacity: 0, duration: d }, t);
+const fade = (s, t, d = 0.35) => tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: d, immediateRender: false }, t);
+const pop = (s, t) => { tl.set(s, { opacity: 1 }, t); tl.fromTo(`${s} .in`, { scale: 0.2, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.42, ease: "back.out(2.4)", immediateRender: false }, t); };
+const draw = (s, t, d = 0.8) => tl.fromTo(s, { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: d, ease: "power2.in", immediateRender: false }, t);
+const pulse = (s, t, n = 1, k = 1.35) => tl.fromTo(`${s} .in`, { scale: 1, transformOrigin: "50% 50%" }, { scale: k, duration: 0.4, yoyo: true, repeat: n * 2 - 1, ease: "sine.inOut", immediateRender: false }, t);
+const blink = (s, t, n = 3) => tl.fromTo(s, { opacity: 1 }, { opacity: 0.2, duration: 0.18, yoyo: true, repeat: n * 2 - 1, immediateRender: false }, t);
+const flash = (t, k = 0.5) => { tl.fromTo("#flash", { opacity: 0 }, { opacity: k, duration: 0.1, immediateRender: false }, t - 0.05); tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, t + 0.06); };
+const shake = (t, a = 9) => tl.fromTo("#world", { x: 0, y: 0 }, { keyframes: [{ x: a, y: -a * 0.6 }, { x: -a * 0.8, y: a * 0.5 }, { x: a * 0.5, y: a * 0.4 }, { x: 0, y: 0 }], duration: 0.36, immediateRender: false }, t);
+const card = (s, t0, t1) => { tl.fromTo(s, { opacity: 0, y: 30, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false }, t0); tl.to(s, { opacity: 0, y: -20, duration: 0.25 }, t1); };
+
+/* ---------- the templates ---------- */
+const PX = { s: 26, m: 36, l: 52, xl: 84 }, MR = { s: 9, m: 14, l: 20 };
+let map = "", ui = "", N = 0;
+const TPL = {
+  title(a, k, z, id, t, u) { const txt = esc(a.text).replace(new RegExp(`\\b(${esc(a.accent || "").replace(/[.*+?^${}()|[\]\\]/g, "")})\\b`, "i"), "<b>$1</b>");
+    document.querySelector("#title span").innerHTML = txt; tl.set("#title", { opacity: 1 }, t); tl.fromTo("#title span", { scale: 0.85 }, { scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false }, t); hide("#title", u, 0.25); },
+  card(a, k, z, id, t, u) { const L = (a.lines || []).slice(0, 2).map(esc), ac = a.accent === undefined ? L.length - 1 : +a.accent;
+    const v = L.map((l, i) => i === ac ? `<b>${l}</b>` : l).join("<br>"), sm = L.some(l => l.length > 13) ? " sm" : "";
+    ui += `<div class="card c-${a.color || "red"} ann" id="${id}" style="top:${a.pos === "mid" ? 960 : 240}px"><div class="box"><div class="k">${esc(a.kicker || "")}</div><div class="v${sm}">${v}</div></div></div>`;
+    card(`#${id}`, t, u); },
+  highlight(a, k, z, id, t, u) { const ref = a.near ? `${a.country}@${a.near}` : a.country, d = G.shapes[ref]; if (!d) return; const c = col(a.color);
+    const st = a.style || "fill";
+    map += `<g id="${id}" class="hid shape">` + (st === "outline" ? `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" ${NS}/>` :
+      st === "glow" ? `<path d="${d}" fill="${dim(a.color)}" opacity="0.6"/><path d="${d}" fill="none" stroke="${c}" stroke-width="8" opacity="0.45" filter="url(#glow2)" ${NS}/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" ${NS}/>` :
+      `<path d="${d}" fill="${c}" fill-opacity="0.22" stroke="${c}" stroke-width="2.4" ${NS}/>`) + `</g>`;
+    fade(`#${id}`, t, 0.4); if (st === "glow") tl.fromTo(`#${id}`, { opacity: 0.5 }, { opacity: 1, duration: 0.3, yoyo: true, repeat: 3, immediateRender: false }, t + 0.4); hide(`#${id}`, u, 0.4); },
+  label(a, k, z, id, t, u) { const p = pt(a.target); if (!p) return; const px = PX[a.size] || PX.m, fs = px / z, side = a.side || (G.shapes[a.target] ? "center" : "above");
+    const off = { above: [0, -px * 0.8], below: [0, px * 1.35], left: [-px * 0.5, px * 0.35], right: [px * 0.5, px * 0.35], center: [0, px * 0.35] }[side] || [0, 0];
+    const anc = side === "left" ? "end" : side === "right" ? "start" : "middle";
+    map += `<g id="${id}" class="hid ann lab"><g class="in"><text x="${p[0] + off[0] / z}" y="${p[1] + off[1] / z}" text-anchor="${anc}" class="lbl" fill="${col(a.color)}" font-size="${fs.toFixed(2)}" stroke-width="${(fs * 0.18).toFixed(2)}">${esc(a.text)}</text></g></g>`;
+    if (a.size === "xl") { pop(`#${id}`, t); } else fade(`#${id}`, t, 0.3); hide(`#${id}`, u); },
+  marker(a, k, z, id, t, u) { const p = pt(a.place); if (!p) return; const r = (MR[a.size] || MR.m) / z, n = Math.min(Math.max(+a.count || 1, 1), 8), c = col(a.color);
+    let g = ""; for (let i = 0; i < n; i++) { const ang = i * 2.399, rr = n > 1 ? r * 2.6 * Math.sqrt(i + 0.5) : 0, x = p[0] + Math.cos(ang) * rr, y = p[1] + Math.sin(ang) * rr;
+      g += `<g id="${id}_${i}" class="hid" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><g class="in"><circle r="${(r * 2.4).toFixed(2)}" fill="${c}" opacity="0.25"/><circle r="${r.toFixed(2)}" fill="${c}" stroke="#fff" stroke-width="1.5" ${NS}/></g></g>`; }
+    map += `<g id="${id}" class="ann">${g}</g>`;
+    for (let i = 0; i < n; i++) { pop(`#${id}_${i}`, t + i * 0.09); if (a.blink) blink(`#${id}_${i}`, t + 0.45 + i * 0.05, 3); else pulse(`#${id}_${i}`, t + 0.9 + i * 0.05, 1, 1.3); hide(`#${id}_${i}`, u); } },
+  unit(a, k, z, id, t, u) { const p = pt(a.place); if (!p) return; const s = 2.2 / z, c = col(a.color || "ice");
+    map += `<g id="${id}" class="hid ann" transform="translate(${p[0]} ${p[1]})"><g class="in"><path d="M-10 -11 L10 -11 L10 4 L0 13 L-10 4 Z" transform="scale(${s.toFixed(3)})" fill="${c}" stroke="#fff" stroke-width="1.4" ${NS}/><text y="${(2.5 * s).toFixed(2)}" text-anchor="middle" font-family="Mont" font-weight="900" font-size="${((String(a.letter || "").length > 1 ? 8 : 11) * s).toFixed(2)}" fill="#05080d">${esc(String(a.letter || "").slice(0, 3))}</text></g></g>`;
+    pop(`#${id}`, t); pulse(`#${id}`, t + 0.8, 1, 1.25); hide(`#${id}`, u); },
+  arrows(a, k, z, id, t, u) { const A = pt(a.from); if (!A) return; const c = col(a.color || "red"); let g = "";
+    (a.to || []).forEach((r, i) => { const B = pt(r); if (!B) return; const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], n = Math.hypot(dx, dy) || 1, bow = n * 0.22 * (i % 2 ? -1 : 1);
+      g += `<path id="${id}_${i}" d="M${A[0]} ${A[1]} Q${mx - dy / n * bow} ${my + dx / n * bow} ${B[0]} ${B[1]}" pathLength="1" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)" ${NS}/>`
+        + `<g id="${id}_h${i}" class="hid" transform="translate(${B[0]} ${B[1]})"><g class="in"><circle r="${(9 / z).toFixed(2)}" fill="${c}" opacity="0.35"/><circle r="${(4 / z).toFixed(2)}" fill="#fff"/></g></g>`; });
+    map += `<g id="${id}" class="hid ann">${g}</g>`; tl.set(`#${id}`, { opacity: 1 }, t);
+    (a.to || []).forEach((r, i) => { draw(`#${id}_${i}`, t + i * 0.2, 0.6); pop(`#${id}_h${i}`, t + i * 0.2 + 0.6); }); hide(`#${id}`, u, 0.4); },
+  line(a, k, z, id, t, u) { const ps = (a.through || []).map(pt).filter(Boolean); if (ps.length < 2) return; const d = "M" + ps.map(p => p.join(" ")).join(" L"), c = col(a.color || "amber"), st = a.style || "solid";
+    if (st === "dashed") { map += `<g id="${id}" class="hid ann"><path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-dasharray="10 8" ${NS}/></g>`; fade(`#${id}`, t, 0.4); }
+    else { map += `<g id="${id}" class="hid ann">${st === "glow" ? `<path d="${d}" fill="none" stroke="${c}" stroke-width="20" opacity="0.4" stroke-linecap="round" filter="url(#glow2)" ${NS}/>` : ""}<path id="${id}_p" d="${d}" pathLength="1" fill="none" stroke="${c}" stroke-width="${st === "glow" ? 7 : 4.5}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)" ${NS}/></g>`;
+      tl.set(`#${id}`, { opacity: 1 }, t); draw(`#${id}_p`, t, 0.9); if (st === "glow") tl.fromTo(`#${id}`, { opacity: 1 }, { opacity: 0.55, duration: 0.35, yoyo: true, repeat: 3, immediateRender: false }, t + 1.0); }
+    hide(`#${id}`, u, 0.4); },
+  ring(a, k, z, id, t, u) { const p = pt(a.center); if (!p) return; const r = (+a.radius_km || 100) * G.kmpx, c = col(a.color || "red");
+    map += `<circle id="${id}" class="hid ann" cx="${p[0]}" cy="${p[1]}" r="${r.toFixed(1)}" fill="${c}" fill-opacity="0.07" stroke="${c}" stroke-width="2.2" stroke-dasharray="10 8" ${NS}/>`;
+    fade(`#${id}`, t, 0.3); tl.fromTo(`#${id}`, { attr: { r: r * 0.08 } }, { attr: { r }, duration: 1.0, ease: "power2.out", immediateRender: false }, t); hide(`#${id}`, u, 0.5); },
+  effect(a, k, z, id, t, u) { if (a.kind === "flash") flash(t + 0.05); else if (a.kind === "shake") shake(t); else if (a.kind === "dark") { tl.to("#dark", { opacity: 0.4, duration: 0.5 }, t); tl.to("#dark", { opacity: 0, duration: 0.4 }, u); } },
+};
+const runAll = () => { N = 0; SL.shots.forEach((s, i) => (s.actions || []).forEach(a => { const f = TPL[a.do]; if (!f) return; const id = `a${N++}`; const u = untilT(a, s.key); const t = Math.min(WT(s.key, a.at || "") + Math.min(Math.max(+a.delay || 0, 0), 1.5), u - 0.6); f(a, s.key, CAMS[i].s, id, t, u); })); };
+tl = DUMMY; runAll(); tl = TL;  // pass 1: markup only
+cam.innerHTML = `<defs>
+ <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+ <radialGradient id="nearfade"><stop offset="0.6" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+ <mask id="nearmask" maskUnits="userSpaceOnUse" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}"><rect x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" fill="url(#nearfade)"/></mask></defs>
+ <image href="assets/relief-wide.jpg" x="${RF.wide.X0}" y="${RF.wide.Y0}" width="${RF.wide.W}" height="${RF.wide.H}" preserveAspectRatio="none"/>
+ <image mask="url(#nearmask)" href="assets/relief-near.jpg" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" preserveAspectRatio="none"/>
+ <path d="${G.base.join(" ")}" fill="none" stroke="#4a5566" stroke-width="1.4" ${NS}/>
+ <g id="shapes"></g>${map}`;
+document.getElementById("cards").innerHTML = ui;
+// shapes go under everything else on the map
+document.querySelectorAll("#cam > g.shape").forEach(g => document.getElementById("shapes").appendChild(g));
+runAll();  // pass 2: animations, now that every element exists
+
+/* ---------- mode chip (TODAY / WHAT IF) ---------- */
+let last = "today";
+SL.shots.forEach(s => { const m = s.mode === "whatif" ? "whatif" : "today"; if (m !== last) { const t = T[s.key] - 0.05, on = m === "whatif";
+  tl.to("#hypo", { opacity: on ? 1 : 0, duration: 0.2 }, t);
+  tl.call(() => {}, null, t); last = m; } });
+const MODES = []; let lm = null; SL.shots.forEach(s => { const m = s.mode === "whatif"; if (m !== lm) { MODES.push([s === SL.shots[0] ? 0 : T[s.key] - 0.05, m]); lm = m; } });
+const MCLK = { t: 0 }; tl.fromTo(MCLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { const red = (MODES.filter(m => m[0] <= +v).pop() || [0, false])[1]; const el = document.getElementById("mode"), txt = red ? "WHAT IF" : "TODAY";
+  if (el.textContent !== txt) { el.textContent = txt; el.style.background = red ? "rgba(255,59,47,0.25)" : "rgba(255,255,255,0.12)"; el.style.borderColor = red ? "#ff3b2f" : "rgba(255,255,255,0.35)"; } return v; } } }, 0);
+
+/* ---------- captions ---------- */
+const capRoot = document.getElementById("caps");
+CAPS.forEach((c, i) => { capRoot.insertAdjacentHTML("beforeend", `<div class="c" id="cp${i}">${c.html}</div>`);
+ if (i === 0) tl.set(`#cp${i}`, { opacity: 1 }, 0); else { tl.set(`#cp${i}`, { opacity: 1 }, c.t0); tl.fromTo(`#cp${i}`, { scale: 0.86 }, { scale: 1, duration: 0.09, ease: "back.out(3)", immediateRender: false }, c.t0); }
+ tl.set(`#cp${i}`, { opacity: 0 }, c.t1); });
+window.__timelines = window.__timelines || {}; window.__timelines["main"] = TL; tl.seek(0);
+</script>
+</body>
+</html>
