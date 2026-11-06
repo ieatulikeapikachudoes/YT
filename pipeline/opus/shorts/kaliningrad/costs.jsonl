@@ -1,0 +1,24 @@
+{"t": "2026-11-05 19:25:56", "stage": "research", "model": "claude-fable-5-1", "in": 9000, "out": 1100, "usd": 0.145, "exact": false, "note": "4 web fetches + research.md (estimated: main session)"}
+{"t": "2026-11-05 19:27:27", "stage": "script", "model": "claude-fable-5-1", "in": 4000, "out": 900, "usd": 0.085, "exact": false, "note": "draft v1 + revision from judge (estimated: main session)"}
+{"t": "2026-11-05 19:27:27", "stage": "script_judge", "model": "claude-opus-5-5", "in": 80430, "out": 450, "usd": 0.33072, "exact": true, "note": "judge S round 1 (agent total tokens as in; reply chars/4 as out)"}
+{"t": "2026-11-05 19:27:51", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0225, "exact": true, "note": "tts paragraph", "chars": 120}
+{"t": "2026-11-05 19:28:03", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.06056, "exact": true, "note": "tts paragraph", "chars": 323}
+{"t": "2026-11-05 19:28:13", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.02138, "exact": true, "note": "tts paragraph", "chars": 114}
+{"t": "2026-11-05 19:28:24", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.04931, "exact": true, "note": "tts paragraph", "chars": 263}
+{"t": "2026-11-05 19:28:39", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.04706, "exact": true, "note": "tts paragraph", "chars": 251}
+{"t": "2026-11-05 19:28:55", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:28:56", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:28:57", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:28:58", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:29:12", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.05025, "exact": true, "note": "tts paragraph", "chars": 268}
+{"t": "2026-11-05 19:34:23", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:34:23", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:34:25", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:34:26", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:34:27", "stage": "voice", "model": "tts-gemini-3-1-flash", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "tts cache hit, free"}
+{"t": "2026-11-05 19:37:31", "stage": "board", "model": "claude-fable-5-1", "in": 25100, "out": 7294, "usd": 0.6157, "exact": false, "note": "board draft + 3 fix rounds (estimated: main session; board.jpg counted as ~1.2k tokens per view x3)"}
+{"t": "2026-11-05 19:40:38", "stage": "board_judge", "model": "claude-opus-5-5", "in": 81313, "out": 500, "usd": 0.33525, "exact": true, "note": "judge B round 1 (agent total as in)"}
+{"t": "2026-11-05 19:40:38", "stage": "board", "model": "claude-fable-5-1", "in": 5500, "out": 6700, "usd": 0.39, "exact": false, "note": "apply judge B + edge fixes (estimated)"}
+{"t": "2026-11-05 19:55:43", "stage": "final_judge", "model": "claude-opus-5-5", "in": 82784, "out": 300, "usd": 0.33714, "exact": true, "note": "judge F (agent total as in)"}
+{"t": "2026-11-05 19:55:43", "stage": "package", "model": "claude-fable-5-1", "in": 6500, "out": 6656, "usd": 0.3978, "exact": false, "note": "covers, final fixes, copy, run.md (estimated)"}
+{"t": "2026-11-05 19:55:43", "stage": "render", "model": "none", "in": 0, "out": 0, "usd": 0.0, "exact": true, "note": "hyperframes render x2, about 7 min each, no model"}

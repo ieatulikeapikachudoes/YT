@@ -30,6 +30,7 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 PRICES_FILE = os.path.join(HERE, "prices.json")
 CHARS_PER_TOKEN = 4
+IMAGE_TOKENS = 1500
 
 STAGES = ["pick", "research", "script", "script_judge", "voice", "board", "board_judge",
           "render", "package", "final_judge", "other"]
@@ -54,6 +55,8 @@ def price(model, tokens_in=0, tokens_out=0, chars=0):
 def est_tokens(text_or_path):
     """Rough token count: 4 chars per token. Takes a string or a file path."""
     if isinstance(text_or_path, str) and os.path.exists(text_or_path):
+        if text_or_path.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+            return IMAGE_TOKENS  # a viewed image costs about this many tokens regardless of file size
         n = os.path.getsize(text_or_path)
     else:
         n = len(text_or_path.encode("utf-8")) if isinstance(text_or_path, str) else len(text_or_path)

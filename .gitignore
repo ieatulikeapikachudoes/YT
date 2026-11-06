@@ -12,3 +12,14 @@ __pycache__/
 pipeline/factory/runs/
 pipeline/factory/costs.jsonl
 pipeline/factory/models.json
+pipeline/opus/node_modules/
+pipeline/opus/models/
+pipeline/opus/kit/fonts/
+pipeline/opus/kit/vendor/
+pipeline/opus/package-lock.json
+pipeline/opus/shorts/*/proj-*/
+pipeline/opus/shorts/*/check-*/
+pipeline/opus/shorts/*/out/
+pipeline/opus/shorts/*/render-*.log
+pipeline/opus/shorts/*/geo.json
+pipeline/opus/shorts/*/relief.json

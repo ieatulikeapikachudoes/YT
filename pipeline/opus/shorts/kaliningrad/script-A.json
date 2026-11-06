@@ -1,0 +1,63 @@
+{
+ "lines": [
+  {
+   "key": "hk",
+   "sec": "hook",
+   "text": "Poland just sent commandos to its border with Russia. Right next to NATO's weakest spot."
+  },
+  {
+   "key": "c1",
+   "sec": "body",
+   "text": "Monday. Poland launches a border operation. Police, counterterror units, GROM special forces."
+  },
+  {
+   "key": "c2",
+   "sec": "body",
+   "text": "Intelligence warned armed groups might cross from Kaliningrad in the first half of November.",
+   "say": "Intelligence warned armed groups might cross from Kah-LEE-nin-grad in the first half of November."
+  },
+  {
+   "key": "c3",
+   "sec": "body",
+   "text": "Just after midnight, flashlights near the border by Sepopol. The group pulled back into Russia.",
+   "say": "Just after midnight, flashlights near the border by Sem-poh-pol. The group pulled back into Russia."
+  },
+  {
+   "key": "s2",
+   "sec": "payoff",
+   "text": "Kaliningrad. A piece of Russia inside NATO. About twelve thousand troops. Iskander missiles.",
+   "say": "[short pause] Kah-LEE-nin-grad. A piece of Russia inside NATO. About twelve thousand troops. Iss-KAN-der missiles."
+  },
+  {
+   "key": "s3",
+   "sec": "body",
+   "text": "Southeast, Belarus. Between them, sixty-five kilometers of Poland and Lithuania. The Suwalki Gap.",
+   "say": "Southeast, Belarus. Between them, sixty-five kilometers of Poland and Lithuania. The Soo-VAHL-kee Gap."
+  },
+  {
+   "key": "s4",
+   "sec": "body",
+   "text": "It is the only land link between the Baltic states and the rest of NATO."
+  },
+  {
+   "key": "s5",
+   "sec": "body",
+   "text": "Close it, and three NATO countries are cut off by land."
+  },
+  {
+   "key": "e1",
+   "sec": "end",
+   "text": "Russia doesn't need to close it. It needs you to think it might."
+  },
+  {
+   "key": "e2",
+   "sec": "end",
+   "text": "Drones. Arson. Flashlights at the border. Always just under the line that triggers NATO."
+  },
+  {
+   "key": "e3",
+   "sec": "end",
+   "text": "Poland's operation runs until at least Sunday. After that, the gap is still there."
+  }
+ ]
+}

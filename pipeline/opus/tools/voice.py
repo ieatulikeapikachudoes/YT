@@ -29,7 +29,8 @@ SR = 24000
 
 def key():
     if os.environ.get("VENICE_API_KEY"): return os.environ["VENICE_API_KEY"]
-    for p in [os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"), ".env", os.path.expanduser("~/.venice.env")]:
+    T = os.path.dirname(os.path.abspath(__file__))
+    for p in [os.path.join(T, ".env"), os.path.join(T, "..", "..", "..", ".env"), ".env", os.path.expanduser("~/.venice.env")]:  # tools/, repo root, cwd
         if os.path.exists(p):
             for l in open(p):
                 if l.startswith("VENICE_API_KEY="): return l.split("=", 1)[1].strip()

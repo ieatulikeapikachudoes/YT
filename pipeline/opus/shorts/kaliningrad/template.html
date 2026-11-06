@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="vendor/gsap.min.js"></script>
+<script src="assets/timing.js"></script>
+<style>
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-800-normal.woff2") format("woff2"); font-weight: 800; }
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-900-normal.woff2") format("woff2"); font-weight: 900; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #050b14; }
+ #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Mont", sans-serif; }
+ .clip { position: absolute; inset: 0; }
+ svg { position: absolute; left: 0; top: 0; overflow: visible; }
+ .hid { opacity: 0; }
+ #tagrow { position: absolute; top: 120px; left: 0; right: 0; display: flex; justify-content: center; gap: 14px; }
+ .tag { font-weight: 900; font-size: 34px; letter-spacing: 0.1em; padding: 10px 22px; border-radius: 8px; color: #fff; }
+ #hypo { background: rgba(140, 16, 20, 0.92); box-shadow: 0 0 30px rgba(255, 40, 40, 0.35); opacity: 0; }
+ #mode { background: rgba(255, 255, 255, 0.12); border: 2px solid rgba(255, 255, 255, 0.35); }
+ #title { position: absolute; top: 215px; left: 0; right: 0; text-align: center; }
+ #title span { display: inline-block; font-weight: 900; font-size: 112px; color: #fff; line-height: 1.04; text-shadow: 0 6px 30px rgba(0,0,0,0.8); }
+ #title b { color: #ff4d3d; }
+ .card { position: absolute; left: 70px; right: 70px; text-align: center; opacity: 0; }
+ .card .box { display: inline-block; background: rgba(5, 8, 13, 0.88); border: 3px solid #ff3b2f; border-radius: 22px; padding: 26px 38px; box-shadow: 0 0 60px rgba(255, 40, 40, 0.3); }
+ .card .k { font-weight: 800; font-size: 34px; letter-spacing: 0.12em; color: #ff8a7c; }
+ .card .v { font-weight: 900; font-size: 78px; color: #fff; line-height: 1.05; margin-top: 8px; }
+ .card .v b { color: #ff3b2f; }
+ .ice .box { border-color: #5fb7ff; box-shadow: 0 0 60px rgba(95, 183, 255, 0.3); }
+ .ice .k { color: #9fd3ff; }
+ .ice .v b { color: #5fb7ff; }
+ .amb .box { border-color: #ffb02e; box-shadow: 0 0 60px rgba(255, 176, 46, 0.3); }
+ .amb .k { color: #ffcf7a; }
+ .amb .v b { color: #ffb02e; }
+ #caps .c { position: absolute; left: 60px; right: 60px; top: 1380px; text-align: center; font-weight: 900; font-size: 82px; color: #fff; line-height: 1.04;
+   -webkit-text-stroke: 14px #05080d; paint-order: stroke fill; text-shadow: 0 8px 24px rgba(0,0,0,0.6); opacity: 0; }
+ #caps .c b { color: #ff4d3d; font-weight: 900; }
+ #flash { position: absolute; inset: 0; background: radial-gradient(circle at 55% 50%, #ffffff 0%, #ff3b2f 30%, #5a0505 70%, #000 100%); opacity: 0; mix-blend-mode: screen; }
+ #dark { position: absolute; inset: 0; background: #000; opacity: 0; }
+ #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 44%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.72) 100%); }
+ #grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay; }
+ .lbl { font-family: "Mont"; font-weight: 900; fill: #fff; paint-order: stroke; stroke: #05080d; }
+ .sub { font-family: "Mont"; font-weight: 800; fill: #c8ced8; paint-order: stroke; stroke: #05080d; }
+ .amber { fill: #ffd27a; }
+ .icy { fill: #bfe3ff; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+ <audio id="vo" src="assets/mix.wav" data-start="0" data-duration="__TOTAL__"></audio>
+ <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0">
+  <svg id="world" viewBox="0 0 1080 1920" width="1080" height="1920"><g id="cam"></g></svg>
+  <div id="dark"></div>
+  <div id="vig"></div>
+  <img id="grain" src="assets/grain.png" width="1080" height="1920">
+ </div>
+ <div id="ui" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+  <div id="tagrow"><div class="tag" id="hypo">HYPOTHETICAL</div><div class="tag" id="mode">TODAY</div></div>
+  <div id="title"><span>Poland sends <b>commandos.</b></span></div>
+  <div class="card ice" id="op" style="top:240px"><div class="box"><div class="k">NOV 2 TO NOV 8 · BORDER OPERATION</div><div class="v">POLICE · COUNTERTERROR<br><b>GROM</b></div></div></div>
+  <div class="card" id="warn" style="top:240px"><div class="box"><div class="k">INTEL WARNING · FIRST HALF OF NOV</div><div class="v">ARMED GROUPS<br><b>CROSSING?</b></div></div></div>
+  <div class="card" id="kal" style="top:240px"><div class="box"><div class="k">KALININGRAD · RUSSIA</div><div class="v">~12,000 TROOPS<br><b>ISKANDER, 500 KM</b></div></div></div>
+  <div class="card amb" id="gap" style="top:240px"><div class="box"><div class="k">THE SUWALKI GAP</div><div class="v"><b>65 KM</b> OF BORDER</div></div></div>
+  <div class="card" id="cut" style="top:960px"><div class="box"><div class="k">IF THE GAP CLOSES</div><div class="v">ESTONIA · LATVIA · LITHUANIA<br><b>CUT OFF BY LAND</b></div></div></div>
+  <div class="card ice" id="quote" style="top:240px"><div class="box"><div class="k">THE POINT</div><div class="v">IT NEEDS YOU TO<br><b>THINK IT MIGHT</b></div></div></div>
+  <div class="card amb" id="sun" style="top:240px"><div class="box"><div class="k">OPERATION RUNS</div><div class="v">UNTIL AT LEAST<br><b>SUNDAY, NOV 8</b></div></div></div>
+  <div id="caps"></div>
+  <div id="flash"></div>
+ </div>
+</div>
+<script>
+const GEO = __GEO__, RF = __RF__, CAPS = __CAPS__;
+const T = window.__T, E = window.__E, W = window.__W;
+const WT = (k, w) => { const f = w.toLowerCase().replace(/[^a-z0-9]/g, ""); const h = W.find(x => x[1] >= T[k] - 0.15 && x[1] <= E[k] + 0.15 && (x[0] === f || (f.length >= 4 && x[0].startsWith(f.slice(0, 4))))); if (!h) console.error("WT miss", k, w); return h ? h[1] : T[k]; };
+const C = GEO.cities, L = GEO.lines;
+const NS = 'vector-effect="non-scaling-stroke"';
+const RED = "#ff3b2f", ICE = "#5fb7ff", AMBER = "#ffb02e";
+const label = (id, [x, y], t, size, dx = 0, dy = 0, cls = "hid", anchor = "start", klass = "lbl") => `<g id="${id}" class="${cls}"><text x="${x + dx}" y="${y + dy}" text-anchor="${anchor}" class="${klass}" font-size="${size}" stroke-width="${size * 0.18}">${t}</text></g>`;
+const dot = (id, [x, y], r, col, cls = "hid") => `<g id="${id}" class="${cls}" transform="translate(${x} ${y})"><g class="in"><circle r="${r * 2.4}" fill="${col}" opacity="0.25"/><circle r="${r}" fill="${col}" stroke="#fff" stroke-width="1.5" ${NS}/></g></g>`;
+const arc = (id, a, b, bow, col, w) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], n = Math.hypot(dx, dy);
+  const cx = mx - dy / n * bow, cy = my + dx / n * bow;
+  return `<g id="${id}" class="hid"><path id="${id}-p" d="M${a[0]} ${a[1]} Q${cx} ${cy} ${b[0]} ${b[1]}" pathLength="1" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)"/></g>`; };
+// a small unit badge: shield shape with a letter
+const unit = (id, [x, y], s, col, letter) => `<g id="${id}" class="hid" transform="translate(${x} ${y})"><g class="in"><path d="M-9 -10 L9 -10 L9 4 L0 12 L-9 4 Z" transform="scale(${s})" fill="${col}" stroke="#fff" stroke-width="1.2" ${NS}/><text y="${3 * s}" text-anchor="middle" font-family="Mont" font-weight="900" font-size="${10 * s}" fill="#05080d">${letter}</text></g></g>`;
+// a flashlight: a dot with a cone
+const torch = (id, [x, y], s, ang) => `<g id="${id}" class="hid" transform="translate(${x} ${y}) rotate(${ang})"><g class="in"><path d="M0 0 L${30 * s} ${-9 * s} L${30 * s} ${9 * s} Z" fill="#ffe9a8" opacity="0.55" filter="url(#glow1)"/><circle r="${2.2 * s}" fill="#fff6d0"/></g></g>`;
+const cd = id => GEO.countries[id] ? GEO.countries[id].d : "";
+const others = Object.entries(GEO.countries).map(([, c]) => c.d).join(" ");
+// pixels per km from two known cities (Warsaw to Vilnius is about 394 km)
+const KM = Math.hypot(C.vilnius[0] - C.warsaw[0], C.vilnius[1] - C.warsaw[1]) / 394;
+const Y = C.sepopol[1] - 14; // flashlight start row, just north of the border
+const torches = [[C.sepopol[0] - 26, Y + 2, 70], [C.sepopol[0] - 6, Y - 4, 100], [C.sepopol[0] + 18, Y, 85]];
+
+document.getElementById("cam").innerHTML = `
+ <defs>
+  <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  <radialGradient id="nearfade"><stop offset="0.55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+  <mask id="nearmask" maskUnits="userSpaceOnUse" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}"><rect x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" fill="url(#nearfade)"/></mask>
+ </defs>
+ <image href="assets/relief-wide.jpg" x="${RF.wide.X0}" y="${RF.wide.Y0}" width="${RF.wide.W}" height="${RF.wide.H}" preserveAspectRatio="none"/>
+ <image mask="url(#nearmask)" href="assets/relief-near.jpg" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" preserveAspectRatio="none"/>
+ <path d="${others}" fill="none" stroke="#3a4352" stroke-width="1" ${NS}/>
+ <path id="pl" d="${GEO.pl}" fill="${ICE}" fill-opacity="0.08" stroke="${ICE}" stroke-width="2.2" ${NS}/>
+ <path id="balt" class="hid" d="${GEO.lt} ${GEO.lv} ${GEO.ee}" fill="${ICE}" fill-opacity="0.12" stroke="${ICE}" stroke-width="2" ${NS}/>
+ <path id="by" class="hid" d="${GEO.by}" fill="#4a0d10" fill-opacity="0.6" stroke="${RED}" stroke-width="2.2" ${NS}/>
+ <path id="kal-fill" d="${GEO.kal}" fill="#4a0d10" opacity="0.7"/>
+ <g id="kal-glow"><path d="${GEO.kal}" fill="none" stroke="${RED}" stroke-width="8" opacity="0.4" filter="url(#glow2)" ${NS}/><path d="${GEO.kal}" fill="none" stroke="#ff7a6e" stroke-width="2" ${NS}/></g>
+ <circle id="ring" class="hid" cx="${C.kalcenter[0]}" cy="${C.kalcenter[1]}" r="${500 * KM}" fill="${RED}" fill-opacity="0.06" stroke="${RED}" stroke-width="2" stroke-dasharray="10 8" ${NS}/>
+ <path id="bord" class="hid" d="${L.border}" fill="none" stroke="${ICE}" stroke-width="3" stroke-dasharray="4 4" filter="url(#glow1)" ${NS}/>
+ <path id="gapline" class="hid" d="${L.gap}" fill="none" stroke="${AMBER}" stroke-width="7" stroke-linecap="round" filter="url(#glow1)" ${NS}/>
+ <path id="gapglow" class="hid" d="${L.gap}" fill="none" stroke="${AMBER}" stroke-width="22" opacity="0.45" stroke-linecap="round" filter="url(#glow2)" ${NS}/>
+ <path id="link" class="hid" d="${L.link}" pathLength="1" fill="none" stroke="${ICE}" stroke-width="5" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)" ${NS}/>
+ <path id="link-cut" class="hid" d="${L.link}" fill="none" stroke="${RED}" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 10" ${NS}/>
+ <path id="pinN" class="hid" d="${L.pincerN}" pathLength="1" fill="none" stroke="${RED}" stroke-width="9" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)" ${NS}/>
+ <path id="pinS" class="hid" d="${L.pincerS}" pathLength="1" fill="none" stroke="${RED}" stroke-width="9" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)" ${NS}/>
+ ${[["in1", [C.kalcity[0] + 10, C.kalcity[1] + 8], [C.sepopol[0] - 30, C.sepopol[1] + 26], 14], ["in2", [C.kalcenter[0] + 20, C.kalcenter[1] + 4], [C.sepopol[0] + 10, C.sepopol[1] + 30], -10], ["in3", [C.kalcenter[0] + 48, C.kalcenter[1] + 10], [C.suwalki[0] - 30, C.sepopol[1] + 28], -16]].map(([id, a, b, bow]) => arc(id, a, b, bow, RED, 2.2)).join("")}
+ ${unit("u1", [C.sepopol[0] - 44, C.sepopol[1] + 26], 1.4, ICE, "P")}${unit("u2", [C.sepopol[0] + 6, C.sepopol[1] + 32], 1.4, ICE, "CT")}${unit("u3", [C.suwalki[0] - 40, C.sepopol[1] + 28], 1.6, "#fff", "G")}
+ ${torches.map(([x, y, a], i) => torch(`t${i}`, [x, y], 0.5, a)).join("")}
+ ${dot("d-sep", C.sepopol, 1.6, AMBER)}${[[-28, -16], [-6, -22], [16, -12], [-18, 2], [6, -2], [26, 6]].map(([dx, dy], i) => dot(`tr${i}`, [C.kalcenter[0] + dx, C.kalcenter[1] + dy], 4, RED)).join("")}
+ ${dot("d-drone", [C.warsaw[0] + 70, C.warsaw[1] - 130], 4.5, RED)}${dot("d-arson", [C.warsaw[0] - 60, C.warsaw[1] - 60], 4.5, RED)}${dot("d-torch", C.sepopol, 4.5, RED)}
+ ${label("l-kal", [C.kalcenter[0] + 6, C.kalcenter[1] - 26], "KALININGRAD", 18, 0, 0, "hid", "middle")}${label("l-kal2", [C.kalcenter[0] + 6, C.kalcenter[1] - 8], "RUSSIA", 11, 0, 0, "hid", "middle", "sub")}
+ ${label("l-pl", [C.warsaw[0] + 20, C.warsaw[1] + 70], "POLAND", 34, 0, 0, "hid", "middle")}
+ ${label("l-by", [C.grodno[0] + 42, C.grodno[1] + 34], "BELARUS", 13, 0, 0, "hid", "middle")}${label("l-lt2", [C.vilnius[0] - 30, C.vilnius[1] - 10], "LITHUANIA", 13, 0, 0, "hid", "middle")}
+ ${label("l-lt", [C.vilnius[0] - 40, C.vilnius[1] - 60], "LITHUANIA", 30, 0, 0, "hid", "middle", "sub")}${label("l-lv", [C.riga[0] + 40, C.riga[1] + 40], "LATVIA", 30, 0, 0, "hid", "middle", "sub")}${label("l-ee", [C.tallinn[0] + 30, C.tallinn[1] + 60], "ESTONIA", 30, 0, 0, "hid", "middle", "sub")}
+ ${label("l-sep", [C.sepopol[0], C.sepopol[1] + 14], "SEPOPOL", 7, 0, 0, "hid", "middle")}${label("l-mid", [C.sepopol[0], C.sepopol[1] + 22], "00:00 · NOV 3", 6, 0, 0, "hid", "middle", "sub")}${label("l-rus", [C.sepopol[0], C.sepopol[1] - 36], "RUSSIA", 8, 0, 0, "hid", "middle", "sub")}${arc("back", [C.sepopol[0] + 2, C.sepopol[1] - 6], [C.sepopol[0] + 12, C.sepopol[1] - 40], 10, RED, 2.4)}
+ ${label("l-back", [C.sepopol[0], C.sepopol[1] - 24], "PULLED BACK", 5, 0, 0, "hid", "middle")}${label("l-bord", [C.sepopol[0] + 36, C.sepopol[1] - 8], "BORDER", 6, 0, 0, "hid", "middle", "sub icy")}
+ ${label("l-gap", [C.gapmid[0] - 22, C.gapmid[1] - 14], "SUWALKI GAP", 12, 0, 0, "hid", "end", "lbl amber")}${label("l-gap2", [C.gapmid[0] + 44, C.gapmid[1] + 6], "65 KM", 9, 0, 0, "hid", "start", "sub amber")}
+ ${label("l-only", [C.vilnius[0] + 10, C.vilnius[1] + 70], "THE ONLY LAND LINK", 34, 0, 0, "hid", "middle", "lbl icy")}
+ ${label("stamp", [C.gapmid[0] + 10, C.gapmid[1] - 50], "CUT OFF", 40, 0, 0, "hid", "middle")}
+ ${label("l-drone", [C.warsaw[0] + 70, C.warsaw[1] - 156], "DRONES", 18, 0, 0, "hid", "middle")}${label("l-arson", [C.warsaw[0] - 60, C.warsaw[1] - 86], "ARSON", 18, 0, 0, "hid", "middle")}${label("l-torch", [C.sepopol[0], C.sepopol[1] - 26], "FLASHLIGHTS", 18, 0, 0, "hid", "middle")}
+ ${label("l-a5", [C.suwalki[0] - 10, C.warsaw[1] - 6], "ARTICLE 5 LINE", 22, 0, 0, "hid", "middle", "sub")}
+ <path id="a5" class="hid" d="M${C.warsaw[0] - 160} ${C.warsaw[1] - 30} L${C.suwalki[0] + 260} ${C.warsaw[1] - 30}" fill="none" stroke="${RED}" stroke-width="2" stroke-dasharray="6 6" ${NS}/>
+`;
+
+/* ---------- camera ---------- */
+const tl = gsap.timeline({ paused: true });
+const cam = document.getElementById("cam");
+const apply = o => cam.setAttribute("transform", `translate(540 820) rotate(${o.r}) scale(${o.s}) translate(${-o.x} ${-o.y})`);
+const SEG = []; const move = (a, b, t0, t1, ease = "power2.inOut") => SEG.push([t0, t1, a, b, gsap.parseEase(ease)]);
+const camAt = t => { let cur = SEG[0][2]; for (const [t0, t1, a, b, e] of SEG) { if (t < t0) break; const kk = t >= t1 ? 1 : e((t - t0) / (t1 - t0)); cur = {}; for (const q in a) cur[q] = a[q] + (b[q] - a[q]) * kk; } return cur; };
+const V = (x, y, s, r = 0) => ({ x, y, s, r });
+const H0 = V(530, 1040, 1.3, -2), H1 = V(520, 1020, 1.45, 0), OPS = V(520, 1010, 3.1, 0), WARN = V(515, 1000, 2.9, 0),
+  SEP = V(C.sepopol[0], C.sepopol[1] + 4, 9.5, 0), SEP2 = V(C.sepopol[0], C.sepopol[1] + 2, 10.5, 0),
+  KAL = V(518, 992, 3.4, 0), GAP = V(C.gapmid[0] + 20, C.gapmid[1] + 10, 5.0, 0), GAP2 = V(C.gapmid[0] + 20, C.gapmid[1] + 10, 5.4, 0),
+  LINK = V(600, 900, 1.55, 0), CUT = V(600, 960, 1.9, 0), QUO = V(600, 1000, 1.7, 0), HYB = V(560, 1060, 2.2, 0), END = V(C.gapmid[0], C.gapmid[1] + 20, 3.2, 0);
+move(H0, H1, 0, T.c1, "sine.inOut");
+move(H1, OPS, T.c1, T.c1 + 1.1); move(OPS, V(OPS.x - 40, OPS.y + 20, 3.7, 0), T.c1 + 1.1, T.c2, "sine.inOut"); move(V(OPS.x - 40, OPS.y + 20, 3.7, 0), WARN, T.c2, T.c2 + 0.9); move(WARN, V(WARN.x + 18, WARN.y - 10, 3.35, 0), T.c2 + 0.9, T.c3 - 0.1, "sine.inOut"); move(V(WARN.x + 18, WARN.y - 10, 3.35, 0), SEP, T.c3 - 0.1, T.c3 + 1.0); move(SEP, SEP2, T.c3 + 1.0, T.s2, "sine.inOut");
+move(SEP2, KAL, T.s2, T.s2 + 1.1); move(KAL, V(KAL.x - 10, KAL.y - 8, 3.8, 0), T.s2 + 1.1, T.s3 - 0.2, "sine.inOut"); move(V(KAL.x - 10, KAL.y - 8, 3.8, 0), GAP, T.s3 - 0.2, T.s3 + 1.0); move(GAP, GAP2, T.s3 + 1.0, T.s4, "sine.inOut");
+move(GAP2, LINK, T.s4, T.s4 + 1.0); move(LINK, CUT, T.s5, T.s5 + 0.7); move(CUT, QUO, T.e1, T.e1 + 0.9); move(QUO, HYB, T.e2, T.e2 + 1.0); move(HYB, V(HYB.x - 20, HYB.y - 30, 2.55, 0), T.e2 + 1.0, T.e3, "sine.inOut"); move(V(HYB.x - 20, HYB.y - 30, 2.55, 0), END, T.e3, T.end, "power1.inOut");
+SEG.sort((a, b) => a[0] - b[0]); apply(H0);
+const CLK = { t: 0 }; tl.fromTo(CLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { apply(camAt(+v)); return v; } } }, 0);
+
+/* ---------- helpers ---------- */
+const show = (s, t) => tl.set(s, { opacity: 1 }, t), hide = (s, t, d = 0.3) => tl.to(s, { opacity: 0, duration: d }, t);
+const fade = (s, t, d = 0.35) => tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: d, immediateRender: false }, t);
+const pop = (s, t) => { tl.set(s, { opacity: 1 }, t); tl.fromTo(`${s} .in`, { scale: 0.2, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.42, ease: "back.out(2.4)", immediateRender: false }, t); };
+const draw = (s, t, d = 0.8) => tl.fromTo(s, { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: d, ease: "power2.in", immediateRender: false }, t);
+const pulse = (s, t, n = 3, k = 1.35) => tl.fromTo(`${s} .in`, { scale: 1, transformOrigin: "50% 50%" }, { scale: k, duration: 0.45, yoyo: true, repeat: n * 2 - 1, ease: "sine.inOut", immediateRender: false }, t);
+const fire = (id, t, d = 0.7) => { show(`#${id}`, t); draw(`#${id}-p`, t, d); };
+const card = (s, t0, t1) => { tl.fromTo(s, { opacity: 0, y: 30, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false }, t0); tl.to(s, { opacity: 0, y: -20, duration: 0.25 }, t1); };
+const flash = (t, k = 0.5) => { tl.fromTo("#flash", { opacity: 0 }, { opacity: k, duration: 0.1, immediateRender: false }, t - 0.05); tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, t + 0.06); };
+const shake = (t, a = 10) => tl.fromTo("#world", { x: 0, y: 0 }, { keyframes: [{ x: a, y: -a * 0.6 }, { x: -a * 0.8, y: a * 0.5 }, { x: a * 0.5, y: a * 0.4 }, { x: 0, y: 0 }], duration: 0.36, immediateRender: false }, t);
+const blink = (s, t, n = 4) => tl.fromTo(s, { opacity: 1 }, { opacity: 0.15, duration: 0.18, yoyo: true, repeat: n * 2 - 1, immediateRender: false }, t);
+// mode chip, seek-safe
+const MODES = [[0, "TODAY", false]]; const modeAt = t => MODES.filter(m => m[0] <= t).pop();
+const MCLK = { t: 0 }; tl.fromTo(MCLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { const [, txt, red] = modeAt(+v); const m = document.getElementById("mode"); if (m.textContent !== txt) { m.textContent = txt; m.style.background = red ? "rgba(255,59,47,0.25)" : "rgba(255,255,255,0.12)"; m.style.borderColor = red ? "#ff3b2f" : "rgba(255,255,255,0.35)"; } return v; } } }, 0);
+
+/* ---------- beats ---------- */
+// hook: Poland outlined, Kaliningrad pulsing red, title
+tl.set("#title", { opacity: 1 }, 0); tl.fromTo("#title span", { scale: 0.85 }, { scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false }, 0);
+fade("#l-pl", 0.2, 0.4); ["#u1", "#u2", "#u3"].forEach((u, i) => pop(u, WT("hk", "commandos") + i * 0.15)); fade("#l-kal", WT("hk", "russia") - 0.2, 0.3); fade("#l-kal2", WT("hk", "russia") - 0.1, 0.3);
+tl.fromTo("#kal-glow", { opacity: 0.4 }, { opacity: 1, duration: 0.3, yoyo: true, repeat: 5, immediateRender: false }, WT("hk", "russia") - 0.2);
+tl.fromTo("#title span", { scale: 1 }, { scale: 1.12, duration: 0.1, yoyo: true, repeat: 1, immediateRender: false }, WT("hk", "weakest"));
+fade("#gapglow", WT("hk", "weakest") - 0.1, 0.3); blink("#gapglow", WT("hk", "weakest"), 2);
+hide("#title", T.c1 - 0.15); hide("#l-pl", T.c1 - 0.1); hide("#gapglow", T.c1);
+// c1: the operation, three units pop along the border
+card("#op", T.c1 + 0.05, T.c2 - 0.1);
+[["#u1", "police"], ["#u2", "counterterror"], ["#u3", "grom"]].forEach(([u, w], i) => { pulse(u, WT("c1", w), 1, 1.5); });
+pulse("#u3", WT("c1", "special"), 1, 1.3); [["#u1", 0.6], ["#u2", 1.3], ["#u3", 2.0]].forEach(([u, d], i) => pulse(u, WT("c1", "launches") + d, 2, 1.25)); hide("#l-kal", T.c1 - 0.05); hide("#l-kal2", T.c1 - 0.05); fade("#l-kal", T.c2 + 0.2, 0.3); fade("#l-kal2", T.c2 + 0.3, 0.3);
+// c2: warning arrows from Kaliningrad into Poland
+card("#warn", T.c2 + 0.05, T.c3 - 0.1);
+["in1", "in2", "in3"].forEach((a, i) => { fire(a, WT("c2", "armed") + i * 0.22, 0.6); draw(`#${a}-p`, WT("c2", "first") + i * 0.2, 0.6); }); tl.fromTo("#kal-glow", { opacity: 0.4 }, { opacity: 1, duration: 0.25, yoyo: true, repeat: 3, immediateRender: false }, WT("c2", "november"));
+tl.to("#kal-fill", { opacity: 0.9, duration: 0.3 }, WT("c2", "kaliningrad"));
+["in1", "in2", "in3"].forEach(a => hide(`#${a}`, T.c3 + 0.5, 0.4)); ["#u1", "#u2", "#u3"].forEach(u => hide(u, T.c3 + 0.3, 0.3)); hide("#l-kal", T.c3 - 0.1); hide("#l-kal2", T.c3 - 0.1);
+// c3: Sepopol at midnight; flashlights blink, then pull back north
+tl.to("#dark", { opacity: 0.25, duration: 0.7 }, T.c3); fade("#l-rus", T.c3 + 0.5, 0.3); hide("#l-rus", T.s2); fade("#bord", T.c3 + 0.4, 0.4); fade("#l-bord", T.c3 + 0.6, 0.3); hide("#bord", T.s2 + 0.5); hide("#l-bord", T.s2); pop("#d-sep", T.c3 + 0.3); fade("#l-sep", T.c3 + 0.5, 0.3); fade("#l-mid", T.c3 + 0.6, 0.3);
+["#t0", "#t1", "#t2"].forEach((s, i) => { show(s, WT("c3", "flashlights") + i * 0.15); blink(s, WT("c3", "flashlights") + i * 0.15, 3); });
+const PB = WT("c3", "pulled");
+fade("#l-back", PB, 0.25); fire("back", PB - 0.1, 0.6); hide("#back", T.s2, 0.3); ["#t0", "#t1", "#t2"].forEach((s, i) => { tl.to(s, { y: -40, opacity: 0, duration: 0.9, ease: "power2.in" }, PB + i * 0.1); });
+tl.to("#dark", { opacity: 0, duration: 0.5 }, T.s2 - 0.2); hide("#l-sep", T.s2); hide("#l-mid", T.s2); hide("#l-back", T.s2); hide("#d-sep", T.s2 + 0.3);
+// s2: Kaliningrad, troops, missile ring
+fade("#l-kal", T.s2 + 0.8, 0.3); fade("#l-kal2", T.s2 + 0.9, 0.3); card("#kal", WT("s2", "piece") - 0.2, T.s3 - 0.1);
+tl.fromTo("#kal-glow", { opacity: 0.4 }, { opacity: 1, duration: 0.25, yoyo: true, repeat: 3, immediateRender: false }, WT("s2", "nato"));
+[0, 1, 2, 3, 4, 5].forEach(i => pop(`#tr${i}`, WT("s2", "12000") + i * 0.12)); [0, 1, 2, 3, 4, 5].forEach(i => hide(`#tr${i}`, T.s3 + 0.3, 0.3)); fade("#ring", WT("s2", "iskander") - 0.1, 0.4); tl.fromTo("#ring", { attr: { r: 20 } }, { attr: { r: 500 * KM }, duration: 1.0, ease: "power2.out", immediateRender: false }, WT("s2", "iskander") - 0.1);
+hide("#ring", T.s3 + 0.6, 0.6); hide("#l-kal", T.s3 + 0.6); hide("#l-kal2", T.s3 + 0.6); fade("#l-lt2", T.s3 + 0.4, 0.3); hide("#l-lt2", T.s4);
+// s3: Belarus, the gap
+fade("#by", WT("s3", "belarus") - 0.3, 0.4); fade("#l-by", WT("s3", "belarus") - 0.1, 0.3);
+fade("#gapglow", WT("s3", "between") - 0.1, 0.3); fade("#gapline", WT("s3", "between"), 0.25); fade("#l-gap", WT("s3", "suwalki") - 0.2, 0.3); fade("#l-gap2", WT("s3", "kilometers") - 0.3, 0.3); tl.fromTo("#gapline", { attr: { "stroke-width": 7 } }, { attr: { "stroke-width": 16 }, duration: 0.3, yoyo: true, repeat: 3, immediateRender: false }, WT("s3", "kilometers"));
+card("#gap", WT("s3", "suwalki") - 0.1, T.s4 - 0.1); hide("#l-by", T.s4);
+// s4: the only land link
+fade("#balt", T.s4, 0.4); show("#link", T.s4); draw("#link", T.s4 + 0.1, 1.2); ["l-lt", "l-lv", "l-ee"].forEach((l, i) => fade(`#${l}`, WT("s4", "baltic") + i * 0.2, 0.3));
+fade("#l-only", WT("s4", "only"), 0.3); hide("#l-gap2", T.s4 + 0.4); hide("#l-only", T.s5 - 0.1);
+// s5: close it (hypothetical)
+const CL = WT("s5", "close"); MODES.push([CL - 0.05, "WHAT IF", true]); fade("#hypo", CL - 0.05, 0.2);
+fire("pinN", CL, 0.5); fire("pinS", CL, 0.5); tl.to("#link", { opacity: 0.2, duration: 0.3 }, CL + 0.45); fade("#link-cut", CL + 0.45, 0.2);
+flash(CL + 0.5, 0.45); shake(CL + 0.5, 8); tl.to("#balt", { fill: "#6b7280", stroke: "#9aa3ad", fillOpacity: 0.5, duration: 0.4 }, CL + 0.5);
+ card("#cut", WT("s5", "three") - 0.2, T.e1 - 0.1);
+// e1: back to today, the quote
+const BK = T.e1; MODES.push([BK, "TODAY", false]); hide("#hypo", BK, 0.2);
+["#pinN", "#pinS", "#link-cut", "#stamp"].forEach(s => hide(s, BK, 0.4)); tl.to("#link", { opacity: 1, duration: 0.4 }, BK + 0.2); tl.to("#balt", { fill: ICE, stroke: ICE, fillOpacity: 0.12, duration: 0.5 }, BK);
+card("#quote", WT("e1", "needs") - 0.1, T.e2 - 0.1); hide("#l-ee", WT("e1", "needs") - 0.2, 0.2); blink("#gapglow", WT("e1", "think"), 2);
+// e2: hybrid dots, Article 5 line
+["#l-lt", "#l-lv", "#l-ee", "#link", "#balt"].forEach(s => hide(s, T.e2, 0.4)); hide("#l-gap", T.e2);
+[["#d-drone", "#l-drone", "drones"], ["#d-arson", "#l-arson", "arson"], ["#d-torch", "#l-torch", "flashlights"]].forEach(([d, l, w]) => { pop(d, WT("e2", w)); fade(l, WT("e2", w) + 0.1, 0.25); });
+["#d-drone", "#d-arson", "#d-torch"].forEach((d, i) => pulse(d, WT("e2", "border") + i * 0.3, 2, 1.4)); fade("#a5", WT("e2", "under") - 0.2, 0.3); fade("#l-a5", WT("e2", "line") - 0.1, 0.3); blink("#a5", WT("e2", "triggers"), 2);
+// e3: the operation runs on, the gap stays
+["#d-drone", "#d-arson", "#d-torch", "#l-drone", "#l-arson", "#l-torch", "#a5", "#l-a5"].forEach(s => hide(s, T.e3, 0.4));
+card("#sun", WT("e3", "sunday") - 0.6, T.end + 1); fade("#l-gap", WT("e3", "gap") - 0.2, 0.3);
+tl.fromTo("#gapglow", { opacity: 0.45 }, { opacity: 1, duration: 0.5, yoyo: true, repeat: 3, immediateRender: false }, WT("e3", "gap"));
+
+/* captions */
+const capRoot = document.getElementById("caps");
+CAPS.forEach((c, i) => { capRoot.insertAdjacentHTML("beforeend", `<div class="c" id="cp${i}">${c.html}</div>`);
+ if (i === 0) tl.set(`#cp${i}`, { opacity: 1 }, 0); else { tl.set(`#cp${i}`, { opacity: 1 }, c.t0); tl.fromTo(`#cp${i}`, { scale: 0.86 }, { scale: 1, duration: 0.09, ease: "back.out(3)", immediateRender: false }, c.t0); }
+ tl.set(`#cp${i}`, { opacity: 0 }, c.t1); });
+window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl; tl.seek(0);
+</script>
+</body>
+</html>
