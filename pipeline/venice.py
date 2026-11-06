@@ -27,6 +27,9 @@ import requests
 from dotenv import load_dotenv
 from openai import OpenAI
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import costs  # noqa: E402  token/cost log, pipeline/costs.py
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(REPO_ROOT, ".env"))
 
@@ -70,15 +73,21 @@ def _save(data, out):
 
 # ---------- text ----------
 
-def chat(prompt, system=None, model=TEXT_MODEL, max_tokens=2000, **kwargs):
-    """One-shot chat completion. Returns the reply text. Pass messages=[...] for multi-turn."""
+def chat(prompt, system=None, model=TEXT_MODEL, max_tokens=2000, stage="other", short_dir=None,
+         note="", **kwargs):
+    """One-shot chat completion. Returns the reply text. Pass messages=[...] for multi-turn.
+    Every call logs its exact token usage to <short_dir>/costs.jsonl under `stage` (see costs.py)."""
     messages = kwargs.pop("messages", None)
     if messages is None:
         messages = ([{"role": "system", "content": system}] if system else []) + [
             {"role": "user", "content": prompt}
         ]
     kwargs.setdefault("extra_body", NO_VENICE_PROMPT)
+    t0 = time.time()
     resp = client.chat.completions.create(model=model, messages=messages, max_tokens=max_tokens, **kwargs)
+    u = resp.usage
+    costs.log(stage, model, u.prompt_tokens if u else 0, u.completion_tokens if u else 0,
+              short_dir=short_dir, note=note, exact=bool(u), seconds=time.time() - t0)
     return resp.choices[0].message.content
 
 
@@ -102,12 +111,17 @@ def upscale(path_or_bytes, out=None, scale=2, creativity=0.01):
 
 # ---------- speech ----------
 
-def speak(text, out=None, model=TTS_MODEL, voice=TTS_VOICE, fmt="mp3", speed=1.0, **kwargs):
+def speak(text, out=None, model=TTS_MODEL, voice=TTS_VOICE, fmt="mp3", speed=1.0,
+          short_dir=None, note="", **kwargs):
     """Text to speech. Returns audio bytes, or the path if out= is given. Max 4096 chars per call.
     Voices depend on the model: ElevenLabs takes a name (Rachel, Aria) or a raw voice id;
-    Kokoro takes af_sky / am_adam / etc; MiniMax takes DeepVoiceMan / WiseWoman; xAI takes eve / rex."""
+    Kokoro takes af_sky / am_adam / etc; MiniMax takes DeepVoiceMan / WiseWoman; xAI takes eve / rex.
+    Logs the character count (TTS is billed per character) to costs.jsonl under stage "voice"."""
     body = {"model": model, "input": text, "voice": voice, "response_format": fmt, "speed": speed, **kwargs}
-    return _save(_post("/audio/speech", json=body).content, out)
+    t0 = time.time()
+    data = _post("/audio/speech", json=body).content
+    costs.log("voice", model, chars=len(text), short_dir=short_dir, note=note, seconds=time.time() - t0)
+    return _save(data, out)
 
 
 # ---------- embeddings ----------

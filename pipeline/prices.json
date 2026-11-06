@@ -1,0 +1,9 @@
+{
+ "_note": "USD per million tokens (in/out). TTS models use per_m_chars (USD per million characters). Run `python3 pipeline/costs.py prices` to refresh the Venice rows from the API; the Claude rows are set by hand.",
+ "claude-opus-5-5": {"in": 4.0, "out": 20.0, "source": "anthropic list price, Nov 2026"},
+ "claude-sonnet-5-5": {"in": 0.0, "out": 0.0, "source": "set me: check anthropic.com/pricing"},
+ "deepseek-v4-flash": {"in": 0.0, "out": 0.0, "source": "set me: run costs.py prices"},
+ "deepseek-v4-pro": {"in": 0.0, "out": 0.0, "source": "set me: run costs.py prices"},
+ "deepseek-v4-1-flash": {"in": 0.0, "out": 0.0, "source": "set me: run costs.py prices"},
+ "gemini-3-1-flash-tts": {"per_m_chars": 0.0, "source": "set me: run costs.py prices (voice.py knows the exact Venice id)"}
+}
