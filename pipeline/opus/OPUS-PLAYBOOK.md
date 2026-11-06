@@ -115,6 +115,14 @@ Send Simon in one message: the mp4(s), the cover(s), the copy, and a 5-line summ
 
 ---
 
+## Token log (every stage, every short)
+Every short gets `shorts/<slug>/costs.jsonl`. Opus logs one row per stage as it finishes it, so the per-stage cost breakdown is real data, not a guess. Report with `python3 pipeline/cost_report.py pipeline/opus/shorts/<slug>` (or `shorts/*` for a batch). Stages: pick, research, script, script_judge, voice, board, board_judge, render, package, final_judge.
+- **Venice calls** (voice now, DeepSeek later): logged automatically by `voice.py` and `pipeline/venice.py`. Exact.
+- **Judge agents** (H, S, STRANGER, S-PAIR, B, B-PAIR, F): the Agent result reports its total tokens. Log it right after the agent returns: `python3 pipeline/costs.py log <dir> script_judge claude-opus-5-5 <subagent_tokens> <reply tokens, chars/4> --note "judge S round 1"`. Board judges go under board_judge, the final judge under final_judge.
+- **Main-session work** (pick, research, script drafts, drawing scenes.js and beats.js, package copy): log from what was read and written, plus an overhead for the brief: `python3 pipeline/costs.py files <dir> board claude-opus-5-5 --read kit/kit.html script-A.json --wrote scenes.js beats.js --overhead 6000 --note "board draft v1"`. These rows are marked estimated (4 chars per token). Log every revision round, not just the first draft.
+- Prices live in `pipeline/prices.json`. Run `python3 pipeline/costs.py prices` once the Venice key is present to fill the DeepSeek and TTS rows.
+- Never log prompt text, replies, or keys. Counts only. Commit `costs.jsonl` with the short's other source files.
+
 ## Cost control
 - About 7 judge agents per short (H, S, STRANGER, S-PAIR, B, B-PAIR, F). Each gets only its brief and the material.
 - One board snap per round. Render only after the board gate. Re-render at most once, only for real final-judge flags.

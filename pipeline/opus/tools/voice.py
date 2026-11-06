@@ -17,6 +17,8 @@ import hashlib, json, os, re, subprocess, sys, urllib.error, urllib.request
 import numpy as np
 import soundfile as sf
 import sherpa_onnx
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+import costs  # pipeline/costs.py: token and cost log per short
 
 MODEL = "tts-gemini-3-1-flash"
 PROJ = sys.argv[1]
@@ -65,6 +67,9 @@ def tts(text):
             try: open(mp3, "wb").write(urllib.request.urlopen(req, timeout=180).read()); break
             except urllib.error.HTTPError as e:
                 if attempt == 2: sys.exit(f"Venice TTS failed: {e.code} {e.read()[:300]}")
+        costs.log("voice", MODEL, chars=len(text), short_dir=os.path.dirname(os.path.abspath(PROJ)), note="tts paragraph")
+    else:
+        costs.log("voice", MODEL, chars=0, short_dir=os.path.dirname(os.path.abspath(PROJ)), note="tts cache hit, free")
     af = f"atempo={TEMPO}," if abs(TEMPO - 1) > 1e-3 else ""
     # Gemini leaves long gaps inside paragraphs: squeeze any pause over 0.35 s down to 0.3 s (the words themselves are untouched)
     sq = "silenceremove=start_periods=0:stop_periods=-1:stop_duration=0.35:stop_threshold=-42dB:stop_silence=0.3,"
