@@ -1,0 +1,294 @@
+<title>Iran Strike Edit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: one phone-width column; sticky player on top, tabbed edit panels below, a fixed send bar at the bottom. */
+:root{
+  --bg:#0c0f15; --panel:#151a23; --panel2:#1c2330; --line:#262e3d;
+  --fg:#e9edf3; --muted:#8a94a6; --red:#ff3b2f; --amber:#ffb02e; --ice:#5fb7ff; --ok:#3ecf8e;
+  --display:"Montserrat",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 140px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+header h1{font-family:var(--display);font-weight:900;font-size:20px;line-height:1.15;margin:0;text-wrap:balance;min-width:0}
+.ver{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--panel2);color:#a9b6cc;padding:5px 9px;border-radius:7px;white-space:nowrap}
+.player{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:4px 8px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+video{display:block;width:100%;max-height:34vh;border-radius:14px;background:#000;aspect-ratio:9/16;object-fit:contain}
+.ptools{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px}
+.time{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tab{appearance:none;border:0;border-radius:10px;padding:10px 0;background:var(--panel);color:var(--muted);font:700 13px var(--body);cursor:pointer;position:relative}
+.tab[aria-selected=true]{background:var(--red);color:#fff}
+.tab .dot{position:absolute;top:5px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.panel{display:flex;flex-direction:column;gap:8px}
+.lab{font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:8px 0 2px}
+.ln{background:var(--panel);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:start}
+.ln.changed{background:#211b0e;box-shadow:inset 0 0 0 1.5px var(--amber)}
+.ln.playing .ts{color:#fff;background:var(--red)}
+.ts{font-family:var(--mono);font-size:12px;font-weight:600;color:#9aa6ba;background:var(--panel2);border:0;border-radius:6px;padding:3px 0;cursor:pointer;text-align:center}
+.txt{min-width:0;cursor:text}
+.txt .old{color:var(--muted);text-decoration:line-through;font-size:13px;margin-bottom:3px}
+textarea,input[type=text]{width:100%;background:#0a0d13;color:var(--fg);border:1.5px solid var(--line);border-radius:9px;padding:9px 10px;font:15px var(--body);resize:vertical}
+textarea:focus,input[type=text]:focus{outline:none;border-color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chip{appearance:none;border:0;border-radius:8px;padding:6px 10px;background:var(--panel2);color:#c9d0db;font:600 12.5px var(--body);cursor:pointer}
+.chip.on{background:var(--red);color:#fff}
+.row{display:flex;align-items:center;gap:12px;background:var(--panel);border-radius:12px;padding:12px}
+.row .n{width:74px;font-weight:600}
+.row input[type=range]{flex:1;accent-color:var(--red)}
+.row .v{width:62px;text-align:right;font-family:var(--mono);font-size:13px;color:#c9d0db}
+.tog{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel);border-radius:12px;padding:12px;cursor:pointer}
+.sw{width:44px;height:26px;border-radius:13px;background:#333b49;position:relative;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}
+.tog[aria-checked=true] .sw{background:var(--red)}.tog[aria-checked=true] .sw::after{left:21px}
+.cover{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start}
+.cover img{width:110px;aspect-ratio:9/16;object-fit:cover;border-radius:10px;background:var(--panel)}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field span{font:700 10.5px var(--body);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.hint{font-size:12.5px;color:var(--muted)}
+.note{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;background:var(--panel);border-radius:12px;padding:11px 12px}
+.note .t{font-family:var(--mono);font-weight:600;font-size:12px;background:var(--amber);color:#2a1a00;border-radius:6px;padding:2px 7px;border:0;cursor:pointer}
+.x{appearance:none;border:0;background:none;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:0 2px}
+.btn{appearance:none;border:0;border-radius:12px;padding:12px 14px;font:700 14px var(--body);cursor:pointer;background:var(--panel2);color:var(--fg)}
+.btn.dash{background:none;border:1.5px dashed #3a4354;color:#c9d0db}
+.btn.red{background:var(--red);color:#fff}
+.ver-row{display:flex;align-items:center;gap:10px;background:var(--panel);border-radius:12px;padding:11px 12px}
+.ver-row .vn{font-family:var(--mono);font-weight:600;min-width:34px}
+.ver-row .vd{flex:1;min-width:0;font-size:13px;color:#c9d0db}
+.cur{font:700 11px var(--body);color:var(--ok)}
+.sendbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:linear-gradient(transparent,var(--bg) 22%);padding:22px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sendbar .in{max-width:560px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.sum{flex:1;min-width:0;font-size:13px;color:#c9d0db}
+.sum b{color:var(--fg)}
+#send{padding:15px 20px;font-size:15px;box-shadow:0 10px 30px rgba(255,59,47,.3)}
+#send:disabled{opacity:.4;box-shadow:none;cursor:default}
+.banner{background:#10261b;border:1.5px solid var(--ok);border-radius:12px;padding:12px;font-size:14px}
+.banner code{font-family:var(--mono);background:#0a1a12;padding:2px 6px;border-radius:5px}
+.empty{background:var(--panel);border-radius:14px;padding:22px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.status{font-size:12.5px;color:var(--muted);text-align:center}
+:focus-visible{outline:2px solid var(--ice);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header><h1 id="title">Loading video…</h1><span class="ver" id="ver">v-</span></header>
+
+  <div class="player" id="playerBox" hidden>
+    <video id="vid" controls playsinline preload="metadata"></video>
+    <div class="ptools"><span class="time" id="clock">0:00</span><button class="btn" id="addNoteTop">＋ Note at <span id="noteAt">0:00</span></button></div>
+  </div>
+
+  <div class="empty" id="emptyBox" hidden>
+    <strong>No video on this page yet</strong>
+    <span class="hint">Upload an mp4 (up to 20 MB) and it becomes v1. Claude can also put one here for you.</span>
+    <input type="file" id="file" accept="video/mp4,video/webm" hidden>
+    <button class="btn red" id="pick">Upload a video</button>
+    <span class="hint" id="upMsg"></span>
+  </div>
+
+  <div class="banner" id="sentBox" hidden></div>
+
+  <nav class="tabs" role="tablist" id="tabs" hidden>
+    <button class="tab" role="tab" data-tab="script" aria-selected="true">Script</button>
+    <button class="tab" role="tab" data-tab="sound" aria-selected="false">Sound</button>
+    <button class="tab" role="tab" data-tab="cover" aria-selected="false">Cover</button>
+    <button class="tab" role="tab" data-tab="copy" aria-selected="false">Copy</button>
+    <button class="tab" role="tab" data-tab="notes" aria-selected="false">Notes</button>
+  </nav>
+
+  <section class="panel" data-panel="script" id="pScript"></section>
+  <section class="panel" data-panel="sound" id="pSound" hidden></section>
+  <section class="panel" data-panel="cover" id="pCover" hidden></section>
+  <section class="panel" data-panel="copy" id="pCopy" hidden></section>
+  <section class="panel" data-panel="notes" id="pNotes" hidden></section>
+  <p class="status" id="status"></p>
+</div>
+
+<div class="sendbar" id="sendbar" hidden><div class="in"><div class="sum" id="sum">No changes yet</div><button class="btn red" id="send" disabled>Send to Claude</button></div></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const fmt = t => { t = Math.max(0, t || 0); return Math.floor(t / 60) + ":" + String(Math.floor(t % 60)).padStart(2, "0"); };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let db = null, assets = null, meta = null, draft = blank(), lastBatch = null, tab = "script", saveT = null, saving = Promise.resolve();
+function blank() { return { lines: {}, sound: {}, cover: {}, copy: {}, notes: [] }; }
+const vid = $("#vid");
+const cur = () => (meta?.versions || []).find(v => v.v === meta.current) || (meta?.versions || []).slice(-1)[0];
+const blobUrl = id => id ? "/_blob/" + id : "";
+
+/* ---------- counting + summary ---------- */
+function changes() {
+  const out = [], d = draft;
+  const nl = Object.keys(d.lines).length; if (nl) { const rv = Object.values(d.lines).filter(x => x.mode === "revoice").length; out.push(`${nl} line${nl > 1 ? "s" : ""}${rv ? ` (${rv} re-voice)` : ""}`); }
+  if (Object.keys(d.sound).length) out.push("sound");
+  if (Object.keys(d.cover).length) out.push("cover");
+  if (Object.keys(d.copy).length) out.push("copy");
+  if (d.notes.length) out.push(`${d.notes.length} note${d.notes.length > 1 ? "s" : ""}`);
+  return out;
+}
+function refreshSum() {
+  const c = changes();
+  $("#sum").innerHTML = c.length ? `<b>${c.length} change group${c.length > 1 ? "s" : ""}:</b> ${esc(c.join(", "))}` : "No changes yet";
+  $("#send").disabled = !c.length;
+  document.querySelectorAll(".tab").forEach(b => { const k = b.dataset.tab; const has = k === "script" ? Object.keys(draft.lines).length : k === "notes" ? draft.notes.length : Object.keys(draft[k] || {}).length; b.querySelector(".dot")?.remove(); if (has) b.insertAdjacentHTML("beforeend", '<span class="dot"></span>'); });
+}
+/* ---------- saving the draft (one write per pause) ---------- */
+function queueSave() {
+  refreshSum(); clearTimeout(saveT);
+  saveT = setTimeout(() => { saving = saving.then(async () => { if (!db) return; try { await db.doc("edits/draft").set({ ...draft, updatedAt: new Date().toISOString() }); $("#status").textContent = "Draft saved"; } catch (e) { $("#status").textContent = "Couldn't save the draft (" + (e.code || "error") + "). Your edits are still on screen."; } }); }, 700);
+}
+
+/* ---------- panels ---------- */
+function renderScript() {
+  const p = $("#pScript"); const lines = meta?.lines || [];
+  if (!lines.length) { p.innerHTML = `<div class="empty"><strong>No script for this video</strong><span class="hint">It wasn't made by the factory, so there are no lines to edit. Use Notes to say what to change (trim, captions, music, text on screen) and Claude handles it.</span></div>`; return; }
+  p.innerHTML = `<p class="hint">Tap a time to jump there. Tap a line to rewrite it.</p>` + lines.map(l => {
+    const e = draft.lines[l.key];
+    return `<div class="ln ${e ? "changed" : ""}" data-key="${esc(l.key)}" data-t="${l.t}"><button class="ts" data-seek="${l.t}">${fmt(l.t)}</button><div class="txt">${e ? `<div class="old">${esc(l.text)}</div>` : ""}<div class="cur-t">${esc(e ? e.text : l.text)}</div></div></div>`;
+  }).join("");
+}
+function openLine(el) {
+  const key = el.dataset.key, l = meta.lines.find(x => x.key === key), e = draft.lines[key] || { text: l.text, mode: "revoice" };
+  const box = el.querySelector(".txt");
+  box.innerHTML = `<div class="old">${esc(l.text)}</div><textarea rows="3" id="ed-${esc(key)}">${esc(e.text)}</textarea>
+   <div class="chips"><button class="chip ${e.mode === "revoice" ? "on" : ""}" data-mode="revoice">Re-voice line</button><button class="chip ${e.mode === "caption" ? "on" : ""}" data-mode="caption">Caption only</button><button class="chip" data-act="done">Done</button>${draft.lines[key] ? '<button class="chip" data-act="undo">Undo change</button>' : ""}</div>`;
+  const ta = box.querySelector("textarea"); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  let mode = e.mode;
+  const commit = () => { const v = ta.value.trim(); if (!v || v === l.text) delete draft.lines[key]; else draft.lines[key] = { text: v, mode, was: l.text, t: l.t }; queueSave(); };
+  ta.addEventListener("input", commit);
+  box.querySelectorAll("[data-mode]").forEach(b => b.onclick = ev => { ev.stopPropagation(); mode = b.dataset.mode; box.querySelectorAll("[data-mode]").forEach(x => x.classList.toggle("on", x === b)); commit(); });
+  box.querySelector('[data-act="done"]').onclick = ev => { ev.stopPropagation(); commit(); renderScript(); };
+  box.querySelector('[data-act="undo"]')?.addEventListener("click", ev => { ev.stopPropagation(); delete draft.lines[key]; queueSave(); renderScript(); });
+}
+function renderSound() {
+  const s = meta?.sound || {}, d = draft.sound;
+  const music = d.music_db ?? 0, duck = d.ducking ?? s.ducking ?? "light", voice = d.voice_db ?? 0;
+  const hits = s.hits || [];
+  $("#pSound").innerHTML = `<div class="lab">Levels (change from current)</div>
+   <div class="row"><span class="n">Voice</span><input type="range" id="voice" min="-6" max="6" step="1" value="${voice}"><span class="v" id="voiceV">${voice > 0 ? "+" : ""}${voice} dB</span></div>
+   <div class="row"><span class="n">Music</span><input type="range" id="music" min="-9" max="9" step="1" value="${music}"><span class="v" id="musicV">${music > 0 ? "+" : ""}${music} dB</span></div>
+   <div class="row"><span class="n">Ducking</span><input type="range" id="duck" min="0" max="2" step="1" value="${["none", "light", "strong"].indexOf(duck)}"><span class="v" id="duckV">${duck}</span></div>
+   <p class="hint">Ducking is how much the music dips under the voice.</p>
+   ${hits.length ? `<div class="lab">Hits</div>` + hits.map(h => { const on = d.hits?.[h.id] ?? h.on; return `<div class="tog" role="switch" tabindex="0" aria-checked="${on}" data-hit="${esc(h.id)}"><span>${esc(h.label)}</span><span class="sw"></span></div>`; }).join("") : ""}
+   <div class="lab">Anything else</div><textarea rows="2" id="soundNote" placeholder="e.g. swap the music for something darker">${esc(d.note || "")}</textarea>`;
+  const setNum = (id, key, unit) => $("#" + id).addEventListener("input", ev => { const v = +ev.target.value; $("#" + id + "V").textContent = (v > 0 ? "+" : "") + v + unit; if (v === 0) delete draft.sound[key]; else draft.sound[key] = v; queueSave(); });
+  setNum("voice", "voice_db", " dB"); setNum("music", "music_db", " dB");
+  $("#duck").addEventListener("input", ev => { const v = ["none", "light", "strong"][+ev.target.value]; $("#duckV").textContent = v; if (v === (s.ducking || "light")) delete draft.sound.ducking; else draft.sound.ducking = v; queueSave(); });
+  document.querySelectorAll("[data-hit]").forEach(el => { const flip = () => { const h = hits.find(x => x.id === el.dataset.hit); const on = el.getAttribute("aria-checked") !== "true"; el.setAttribute("aria-checked", on); draft.sound.hits = { ...(draft.sound.hits || {}) }; if (on === h.on) delete draft.sound.hits[h.id]; else draft.sound.hits[h.id] = on; if (!Object.keys(draft.sound.hits).length) delete draft.sound.hits; queueSave(); }; el.onclick = flip; el.onkeydown = e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); } }; });
+  $("#soundNote").addEventListener("input", ev => { const v = ev.target.value.trim(); if (v) draft.sound.note = v; else delete draft.sound.note; queueSave(); });
+}
+function textFields(panel, src, dkey, fields) {
+  const d = draft[dkey];
+  panel.querySelectorAll("[data-f]").forEach(inp => inp.addEventListener("input", () => { const f = inp.dataset.f, v = inp.value; if (v === (src[f] ?? "")) delete d[f]; else d[f] = v; queueSave(); }));
+}
+function renderCover() {
+  const c = meta?.cover || {}, d = draft.cover, v = cur();
+  $("#pCover").innerHTML = `<div class="cover"><img id="covImg" alt="Current cover" src="${blobUrl(v?.cover)}"><div class="field" style="gap:10px">
+    <label class="field"><span>Headline</span><input type="text" data-f="headline" id="cHead" value="${esc(d.headline ?? c.headline ?? "")}"></label>
+    <label class="field"><span>Tag</span><input type="text" data-f="tag" id="cTag" value="${esc(d.tag ?? c.tag ?? "")}"></label>
+    <label class="field"><span>Frame</span><input type="text" data-f="frame" id="cFrame" value="${esc(d.frame ?? c.frame ?? "")}" placeholder="e.g. 0:03"></label>
+    <button class="btn" id="useNow">Use the frame at <span id="useAt">${fmt(vid.currentTime)}</span></button></div></div>
+    <p class="hint">Put words in *stars* to make them red on the cover.</p>`;
+  textFields($("#pCover"), c, "cover");
+  $("#useNow").onclick = () => { const f = $("#cFrame"); f.value = fmt(vid.currentTime); f.dispatchEvent(new Event("input")); };
+}
+function renderCopy() {
+  const c = meta?.copy || {}, d = draft.copy;
+  $("#pCopy").innerHTML = `<div class="lab">YouTube</div>
+   <label class="field"><span>Title (${(d.yt_title ?? c.yt_title ?? "").length}/60)</span><input type="text" data-f="yt_title" id="yTitle" value="${esc(d.yt_title ?? c.yt_title ?? "")}"></label>
+   <label class="field"><span>Description</span><textarea rows="7" data-f="yt_desc" id="yDesc">${esc(d.yt_desc ?? c.yt_desc ?? "")}</textarea></label>
+   <div class="lab">TikTok</div>
+   <label class="field"><span>Caption</span><textarea rows="5" data-f="tt_caption" id="tCap">${esc(d.tt_caption ?? c.tt_caption ?? "")}</textarea></label>
+   <p class="hint">Copy changes don't need a render. Claude updates them with the next batch.</p>`;
+  textFields($("#pCopy"), c, "copy");
+}
+function renderNotes() {
+  const n = draft.notes.slice().sort((a, b) => a.t - b.t);
+  $("#pNotes").innerHTML = `<p class="hint">Pause where something's off and add a note. Claude decides the fix.</p>` +
+    (n.length ? n.map((x, i) => `<div class="note"><button class="t" data-seek="${x.t}">${fmt(x.t)}</button><textarea rows="2" data-ni="${draft.notes.indexOf(x)}">${esc(x.text)}</textarea><button class="x" aria-label="Delete note" data-del="${draft.notes.indexOf(x)}">×</button></div>`).join("") : "") +
+    `<button class="btn dash" id="addNote">＋ Add note at ${fmt(vid.currentTime)}</button>`;
+  $("#addNote").onclick = addNote;
+  document.querySelectorAll("[data-ni]").forEach(t => t.addEventListener("input", () => { draft.notes[+t.dataset.ni].text = t.value; queueSave(); }));
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { draft.notes.splice(+b.dataset.del, 1); queueSave(); renderNotes(); });
+}
+function addNote() { draft.notes.push({ t: Math.round(vid.currentTime * 10) / 10, text: "" }); vid.pause(); showTab("notes"); queueSave(); setTimeout(() => { const all = document.querySelectorAll("[data-ni]"); const last = [...all].find(t => +t.dataset.ni === draft.notes.length - 1); last?.focus(); }, 30); }
+function renderVersions() {
+  const vs = (meta?.versions || []).slice().reverse();
+  const box = document.createElement("div"); box.className = "panel";
+  box.innerHTML = `<div class="lab">Versions</div>` + vs.map(v => `<div class="ver-row"><span class="vn">v${v.v}</span><span class="vd">${esc(v.note || "")}${v.date ? ` · ${esc(v.date)}` : ""}</span>${v.v === meta.current ? '<span class="cur">CURRENT</span>' : `<button class="chip" data-rev="${v.v}">Revert to this</button>`}</div>`).join("");
+  $("#pNotes").appendChild(box);
+  box.querySelectorAll("[data-rev]").forEach(b => b.onclick = async () => { const v = +b.dataset.rev; b.textContent = "Reverting…"; try { await db.doc("video/meta").update({ current: v }); $("#status").textContent = `Reverted to v${v}.`; } catch (e) { b.textContent = "Couldn't revert"; } });
+}
+function showTab(t) {
+  tab = t; document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === t));
+  document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== t);
+  ({ script: renderScript, sound: renderSound, cover: renderCover, copy: renderCopy, notes: () => { renderNotes(); renderVersions(); } })[t]();
+}
+function renderAll() {
+  const has = !!cur()?.video;
+  $("#title").textContent = meta?.title || "Untitled video";
+  $("#ver").textContent = has ? `v${meta.current}` + (meta.duration ? ` · ${Math.round(meta.duration)}s` : "") : "no video";
+  $("#playerBox").hidden = !has; $("#tabs").hidden = !has; $("#sendbar").hidden = !has; $("#emptyBox").hidden = has;
+  document.querySelectorAll("[data-panel]").forEach(p => { if (!has) p.hidden = true; });
+  if (has) { const src = blobUrl(cur().video); if (vid.getAttribute("src") !== src) vid.src = src; showTab(tab); }
+  refreshSum(); renderSent();
+}
+function renderSent() {
+  const b = $("#sentBox");
+  if (lastBatch && lastBatch.status === "sent") { b.hidden = false; b.innerHTML = `Sent ${esc(lastBatch.summary || "")}. Now text Claude <code>edits ready</code> and it comes back as v${(meta?.current || 0) + 1}.`; }
+  else if (lastBatch && lastBatch.status === "applied") { b.hidden = false; b.innerHTML = `Your last edits are in <b>v${lastBatch.result_version ?? meta?.current}</b>.`; }
+  else b.hidden = true;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", ev => {
+  const s = ev.target.closest("[data-seek]"); if (s) { vid.currentTime = +s.dataset.seek; vid.play().catch(() => {}); ev.stopPropagation(); return; }
+  const ln = ev.target.closest(".ln"); if (ln && !ev.target.closest("textarea,.chip")) openLine(ln);
+});
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+vid.addEventListener("timeupdate", () => {
+  const t = vid.currentTime; $("#clock").textContent = fmt(t) + " / " + fmt(vid.duration || meta?.duration); $("#noteAt").textContent = fmt(t);
+  const u = $("#useAt"); if (u) u.textContent = fmt(t); const a = $("#addNote"); if (a) a.textContent = "＋ Add note at " + fmt(t);
+  if (tab === "script" && meta?.lines) { let k = null; for (const l of meta.lines) if (l.t <= t + 0.05) k = l.key; document.querySelectorAll(".ln").forEach(el => el.classList.toggle("playing", el.dataset.key === k)); }
+});
+$("#addNoteTop").onclick = addNote;
+$("#send").onclick = async () => {
+  const btn = $("#send"); btn.disabled = true; btn.textContent = "Sending…";
+  const summary = changes().join(", ");
+  try {
+    clearTimeout(saveT); await saving;
+    await db.collection("batches").add({ status: "sent", createdAt: new Date().toISOString(), from_version: meta.current, summary, changes: draft });
+    draft = blank(); await db.doc("edits/draft").set({ ...draft, updatedAt: new Date().toISOString() });
+    btn.textContent = "Send to Claude"; renderAll(); window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (e) { btn.textContent = "Couldn't send, try again"; btn.disabled = false; }
+};
+$("#pick").onclick = () => $("#file").click();
+$("#file").onchange = async ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  if (!assets) { $("#upMsg").textContent = "Only people who can edit this page can upload."; return; }
+  if (f.size > 20 * 1024 * 1024) { $("#upMsg").textContent = "That file is over 20 MB. Send it to Claude in chat instead."; return; }
+  $("#upMsg").textContent = "Uploading…";
+  try {
+    const r = await assets.upload(f, { type: f.type || "video/mp4" });
+    const m = { title: f.name.replace(/\.[^.]+$/, ""), kind: "outside", current: 1, versions: [{ v: 1, video: r.id, note: "Your upload", date: new Date().toISOString().slice(0, 10) }], lines: [], sound: {}, cover: {}, copy: {} };
+    await db.doc("video/meta").set(m); $("#upMsg").textContent = "";
+  } catch (e) { $("#upMsg").textContent = e.code === "too_large" ? "Too big. Send it to Claude in chat instead." : "Upload failed (" + (e.code || "error") + ")."; }
+};
+
+/* ---------- boot ---------- */
+(async () => {
+  const timer = setTimeout(() => { if (!meta) $("#title").textContent = "Can't reach this page's data yet"; }, 10000);
+  db = await claude.use("db"); assets = await claude.use("assets");
+  if (!db) { clearTimeout(timer); $("#title").textContent = "Sign in to edit this video"; return; }
+  let first = true;
+  db.doc("video/meta").onSnapshot(s => { clearTimeout(timer); meta = s.exists ? s.data() : null; if (!meta) { $("#title").textContent = "New edit page"; $("#emptyBox").hidden = false; $("#ver").textContent = "no video"; return; } renderAll(); }, e => { clearTimeout(timer); $("#title").textContent = "Couldn't load this video (" + e.code + ")"; });
+  db.doc("edits/draft").onSnapshot(s => { if (!first) return; first = false; if (s.exists) { const d = s.data(); draft = { lines: { ...(d.lines || {}) }, sound: JSON.parse(JSON.stringify(d.sound || {})), cover: { ...(d.cover || {}) }, copy: { ...(d.copy || {}) }, notes: (d.notes || []).map(n => ({ ...n })) }; if (meta) renderAll(); } });
+  db.collection("batches").orderBy("createdAt", "desc").limit(1).onSnapshot(q => { lastBatch = q.docs[0]?.data() || null; renderSent(); });
+})();
+</script>

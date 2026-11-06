@@ -1,0 +1,74 @@
+{
+ "title": "What If Russia Broke Through?",
+ "lines": [
+  {
+   "key": "hk",
+   "sec": "hook",
+   "text": "What if these two cities fell? The map of Europe would change."
+  },
+  {
+   "key": "c1",
+   "sec": "body",
+   "text": "Kramatorsk and Sloviansk. They hold up Ukraine's whole defense in the east.",
+   "say": "Krah-ma-torsk and Slo-vyansk. They hold up Ukraine's whole defense in the east."
+  },
+  {
+   "key": "c2",
+   "sec": "body",
+   "text": "Russia already took the towns around them, one by one."
+  },
+  {
+   "key": "c3",
+   "sec": "body",
+   "text": "Now it's fighting for Kostiantynivka, the gateway to the rest of the region.",
+   "say": "Now it's fighting for Kos-tyan-tee-niv-ka, the gateway to the rest of the region."
+  },
+  {
+   "key": "s1",
+   "sec": "payoff",
+   "text": "Now imagine they fall.",
+   "say": "[whispering] Now imagine they fall."
+  },
+  {
+   "key": "s2",
+   "sec": "body",
+   "text": "Behind them, the map opens west."
+  },
+  {
+   "key": "s3",
+   "sec": "body",
+   "text": "Russian forces push toward the Dnipro, the river that runs down the middle of Ukraine."
+  },
+  {
+   "key": "s4",
+   "sec": "body",
+   "text": "To the south, the front already sits south-east of Zaporizhzhia city.",
+   "say": "To the south, the front already sits south-east of Za-po-rizh-zhya city."
+  },
+  {
+   "key": "s5",
+   "sec": "body",
+   "text": "To the north, Kharkiv, Ukraine's second biggest city, sits thirty kilometers from Russia."
+  },
+  {
+   "key": "e1",
+   "sec": "end",
+   "text": "Ukraine is the biggest country entirely inside Europe."
+  },
+  {
+   "key": "e2",
+   "sec": "end",
+   "text": "Every line that moves here redraws the map of Europe."
+  },
+  {
+   "key": "e3",
+   "sec": "end",
+   "text": "This hasn't happened. Today, Russia holds about one fifth of Ukraine."
+  },
+  {
+   "key": "e4",
+   "sec": "end",
+   "text": "And two cities are holding the line."
+  }
+ ]
+}

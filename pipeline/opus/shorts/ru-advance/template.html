@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="vendor/gsap.min.js"></script>
+<script src="assets/timing.js"></script>
+<style>
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-800-normal.woff2") format("woff2"); font-weight: 800; }
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-900-normal.woff2") format("woff2"); font-weight: 900; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #050b14; }
+ #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Mont", sans-serif; }
+ .clip { position: absolute; inset: 0; }
+ svg { position: absolute; left: 0; top: 0; overflow: visible; }
+ .hid { opacity: 0; }
+ #tagrow { position: absolute; top: 120px; left: 0; right: 0; display: flex; justify-content: center; gap: 14px; }
+ .tag { font-weight: 900; font-size: 34px; letter-spacing: 0.1em; padding: 10px 22px; border-radius: 8px; color: #fff; }
+ #hypo { background: rgba(140, 16, 20, 0.92); box-shadow: 0 0 30px rgba(255, 40, 40, 0.35); }
+ #mode { background: rgba(255, 255, 255, 0.12); border: 2px solid rgba(255, 255, 255, 0.35); }
+ #title { position: absolute; top: 220px; left: 0; right: 0; text-align: center; }
+ #title span { display: inline-block; font-weight: 900; font-size: 118px; color: #fff; line-height: 1.05; text-shadow: 0 6px 30px rgba(0,0,0,0.8); }
+ #title b { color: #ff4d3d; }
+ #caps .c { position: absolute; left: 60px; right: 60px; top: 1380px; text-align: center; font-weight: 900; font-size: 82px; color: #fff; line-height: 1.04;
+   -webkit-text-stroke: 14px #05080d; paint-order: stroke fill; text-shadow: 0 8px 24px rgba(0,0,0,0.6); opacity: 0; }
+ #caps .c b { color: #ff4d3d; font-weight: 900; }
+ #flash { position: absolute; inset: 0; background: radial-gradient(circle at 60% 50%, #ff3b2f 0%, #5a0505 60%, #000 100%); opacity: 0; mix-blend-mode: screen; }
+ #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 44%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.7) 100%); }
+ #grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay; }
+ .lbl { font-family: "Mont"; font-weight: 900; fill: #fff; paint-order: stroke; stroke: #05080d; }
+ .sub { font-family: "Mont"; font-weight: 800; fill: #c8ced8; paint-order: stroke; stroke: #05080d; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+ <audio id="vo" src="assets/mix.wav" data-start="0" data-duration="__TOTAL__"></audio>
+ <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0">
+  <svg id="world" viewBox="0 0 1080 1920" width="1080" height="1920"><g id="cam"></g></svg>
+  <div id="vig"></div>
+  <img id="grain" src="assets/grain.png" width="1080" height="1920">
+ </div>
+ <div id="ui" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+  <div id="tagrow"><div class="tag" id="hypo">HYPOTHETICAL SCENARIO</div><div class="tag" id="mode">TODAY</div></div>
+  <div id="title"><span>What if these <b>fell?</b></span></div>
+  <div id="caps"></div>
+  <div id="flash"></div>
+ </div>
+</div>
+<script>
+const GEO = __GEO__, RF = __RF__, CAPS = __CAPS__;
+const T = window.__T, E = window.__E, W = window.__W;
+const WT = (k, w) => { const f = w.toLowerCase().replace(/[^a-z0-9]/g, ""); const h = W.find(x => x[1] >= T[k] - 0.15 && x[1] <= E[k] + 0.15 && (x[0] === f || (f.length >= 4 && x[0].startsWith(f.slice(0, 4))))); if (!h) console.error("WT miss", k, w); return h ? h[1] : T[k]; };
+const C = GEO.cities, L = GEO.lines;
+const NS = 'vector-effect="non-scaling-stroke"';
+const RED = "#ff3b2f", DRED = "#7a0c10", ICE = "#5fb7ff", AMBER = "#ffb02e";
+const ring = (id, [x, y], r, col, w = 3, cls = "hid") => `<g id="${id}" class="${cls}" transform="translate(${x} ${y})"><g class="in"><circle r="${r}" fill="none" stroke="${col}" stroke-width="${w}" ${NS}/><circle r="${r}" fill="${col}" opacity="0.12"/></g></g>`;
+const dot = (id, [x, y], r, col, cls = "") => `<g id="${id}" class="${cls}" transform="translate(${x} ${y})"><g class="in"><circle r="${r * 2.2}" fill="${col}" opacity="0.25"/><circle r="${r}" fill="${col}" stroke="#fff" stroke-width="1.5" ${NS}/></g></g>`;
+const label = (id, [x, y], t, size, dx = 0, dy = 0, cls = "hid", anchor = "start", klass = "lbl") => `<g id="${id}" class="${cls}"><text x="${x + dx}" y="${y + dy}" text-anchor="${anchor}" class="${klass}" font-size="${size}" stroke-width="${size * 0.18}">${t}</text></g>`;
+const arrow = (id, pts, w, col, head) => { const [a, b] = pts.slice(-2); const ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 57.3;
+  const d = "M" + pts.map(p => p.join(" ")).join(" L");
+  return `<g id="${id}" class="hid"><path id="${id}-p" d="${d}" pathLength="1" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)"/>
+  <g id="${id}-h" opacity="0" transform="translate(${b[0]} ${b[1]}) rotate(${ang})"><g class="in"><path d="M${head} 0 L${-head * 0.6} ${-head * 0.8} L${-head * 0.25} 0 L${-head * 0.6} ${head * 0.8} Z" fill="${col}"/></g></g></g>`; };
+const XM = (id, [x, y], s, col = RED) => `<g id="${id}" class="hid" transform="translate(${x} ${y})"><g class="in"><path d="M${-s} ${-s} L${s} ${s} M${s} ${-s} L${-s} ${s}" stroke="${col}" stroke-width="${s * 0.45}" stroke-linecap="round"/></g></g>`;
+const others = Object.entries(GEO.countries).filter(([k]) => k !== "804").map(([, c]) => c.d).join(" ");
+const nb = id => GEO.countries[id] ? GEO.countries[id].d : "";
+const k = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+const twin = k(C.kramatorsk, C.sloviansk);
+
+document.getElementById("cam").innerHTML = `
+ <defs>
+  <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="${DRED}" opacity="0.55"/><path d="M0 0 L0 6" stroke="${RED}" stroke-width="1.6" opacity="0.7"/></pattern>
+  <pattern id="hatch2" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.4" height="2.4" fill="#4a070a" opacity="0.5"/><path d="M0 0 L0 2.4" stroke="${RED}" stroke-width="0.7" opacity="0.8"/></pattern>
+  <radialGradient id="nearfade"><stop offset="0.55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="nearmask" maskUnits="userSpaceOnUse" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}"><rect x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" fill="url(#nearfade)"/></mask><clipPath id="uaclip"><path d="${GEO.ua}"/></clipPath>
+ </defs>
+ <image href="assets/relief-wide.jpg" x="${RF.wide.X0}" y="${RF.wide.Y0}" width="${RF.wide.W}" height="${RF.wide.H}" preserveAspectRatio="none"/>
+ <image mask="url(#nearmask)" href="assets/relief-near.jpg" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" preserveAspectRatio="none"/>
+ <path d="${others}" fill="none" stroke="#3a4352" stroke-width="1" ${NS}/>
+ <g id="nbs" class="hid">${[616, 440, 428, 233, 498, 642].map(i => `<path d="${nb(i)}" fill="${AMBER}" fill-opacity="0.12" stroke="${AMBER}" stroke-width="2.5" ${NS}/>`).join("")}</g>
+ <path id="ua-fill" d="${GEO.ua}" fill="#2c3646" opacity="0.55"/>
+ <g id="ua-glow"><path d="${GEO.ua}" fill="none" stroke="${ICE}" stroke-width="7" opacity="0.35" filter="url(#glow2)" ${NS}/><path d="${GEO.ua}" fill="none" stroke="#8fcaff" stroke-width="2" ${NS}/></g>
+ <path id="dnipro" class="hid" d="${L.dnipro}" pathLength="1" fill="none" stroke="#7cc4ff" stroke-width="8" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)" ${NS}/>
+ <g clip-path="url(#uaclip)">
+  <path id="occ" d="${L.occupied}" fill="url(#hatch)"/>
+  <path id="hypo-zone" class="hid" d="${L.hypoBand}" fill="url(#hatch2)"/>
+ </g>
+ <path id="front-g" d="${L.front}" fill="none" stroke="${RED}" stroke-width="10" opacity="0.5" filter="url(#glow2)" ${NS}/>
+ <path id="front" d="${L.front}" fill="none" stroke="#ff6a5c" stroke-width="2.6" ${NS}/>
+ <g id="hfront" class="hid"><path d="${L.hypoFront}" fill="none" stroke="${RED}" stroke-width="12" opacity="0.5" filter="url(#glow2)" ${NS}/><path id="hfront-p" d="${L.hypoFront}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" fill="none" stroke="#ff8a7c" stroke-width="3" ${NS}/></g>
+ ${arrow("ar1", [[C.kramatorsk[0] - 4, C.kramatorsk[1] + 2], [C.kramatorsk[0] - 40, C.kramatorsk[1] + 6], [C.dnipro[0] + 30, C.dnipro[1]]], 7, RED, 16)}
+ ${arrow("ar2", [[C.pokrovsk[0] - 6, C.pokrovsk[1] + 6], [C.pokrovsk[0] - 50, C.pokrovsk[1] + 18], [C.zaporizhzhia[0] + 40, C.zaporizhzhia[1] - 18]], 4, RED, 12)}
+ ${arrow("ar3", [[C.sloviansk[0] - 6, C.sloviansk[1] - 6], [C.sloviansk[0] - 40, C.sloviansk[1] - 40], [C.kharkiv[0] + 18, C.kharkiv[1] + 30]], 4, RED, 12)}
+ ${arrow("ar4", [[C.zaporizhzhia[0] + 36, C.zaporizhzhia[1] + 22], [C.zaporizhzhia[0] + 12, C.zaporizhzhia[1] + 9]], 1.6, RED, 3.5)}
+ ${ring("fort", twin, 14, ICE, 3, "")}${ring("hkring", twin, 30, RED, 5, "")}
+ <g id="fort-crack" class="hid"><path d="M${twin[0] - 14} ${twin[1] - 3} L${twin[0] - 4} ${twin[1] + 1} L${twin[0] + 2} ${twin[1] - 6} L${twin[0] + 14} ${twin[1] + 2}" stroke="${RED}" stroke-width="3" fill="none" ${NS}/></g>
+ ${dot("d-kr", C.kramatorsk, 1.6, ICE)}${dot("d-sl", C.sloviansk, 1.6, ICE)}
+ ${label("h-kr", C.kramatorsk, "KRAMATORSK", 13, -12, 16, "hid", "end")}${label("h-sl", C.sloviansk, "SLOVIANSK", 13, -12, -8, "hid", "end")}${label("l-kr", C.kramatorsk, "KRAMATORSK", 6.4, -5, 9, "hid", "end")}${label("l-sl", C.sloviansk, "SLOVIANSK", 6.4, -5, -4, "hid", "end")}
+ ${["pokrovsk", "toretsk", "siversk"].map(c => dot(`d-${c}`, C[c], 1.6, "#c9ccd2", "hid") + label(`l-${c}`, C[c], c.toUpperCase(), 4.2, 2.6, -1.8, "hid", "start", "sub") + XM(`x-${c}`, C[c], 2.6)).join("")}
+ ${dot("d-ko", C.kostiantynivka, 1.4, AMBER, "hid")}${label("l-ko", C.kostiantynivka, "KOSTIANTYNIVKA", 5.2, 0, 9, "hid", "middle")}
+ ${ring("ko-ring", C.kostiantynivka, 3.2, AMBER, 2.5)}
+ ${dot("d-dn", C.dnipro, 2.4, "#ffffff", "hid")}${label("l-dn", C.dnipro, "DNIPRO", 30, -10, -12, "hid", "end")}${label("l-river", [C.dnipro[0] - 140, C.dnipro[1] - 70], "DNIPRO RIVER", 30, 0, 0, "hid", "start", "sub")}
+ ${dot("d-za", C.zaporizhzhia, 2.4, "#ffffff", "hid")}${label("l-za", C.zaporizhzhia, "ZAPORIZHZHIA", 11, -10, 16, "hid", "start")}
+ ${dot("d-kh", C.kharkiv, 2.4, "#ffffff", "hid")}${label("l-kh", C.kharkiv, "KHARKIV", 11, -5, 12, "hid", "end")}
+ <g id="kh-ruler" class="hid"><path d="M${C.kharkiv[0]} ${C.kharkiv[1]} L${C.border_kh[0]} ${C.border_kh[1]}" stroke="${AMBER}" stroke-width="5" stroke-dasharray="10 7" ${NS}/>${label("", k(C.kharkiv, C.border_kh), "30 KM", 11, 4, 4, "", "start")}</g>
+ <g id="size" class="hid" transform="translate(470 1150)"><g class="in"><rect x="-250" y="-74" width="500" height="112" rx="18" fill="#0d2238" stroke="${ICE}" stroke-width="4" ${NS}/><text y="4" text-anchor="middle" class="lbl" font-size="64" stroke-width="7">603,500 KM²</text></g></g>
+${label("l-ru2", C.border_kh, "RUSSIA", 12, 6, -8, "hid", "start")} ${label("l-ru", [930, 880], "RUSSIA", 16, 0, 0, "hid", "middle", "sub")}${label("l-ua", [520, 960], "UKRAINE", 34, 0, 0, "hid", "middle")}
+ ${["warsaw", "vilnius", "riga", "chisinau"].map(c => dot(`d-${c}`, C[c], 6, AMBER, "hid")).join("")}
+ ${label("l-eu1", [C.warsaw[0] - 20, C.warsaw[1] - 30], "POLAND", 58, 0, 0, "hid", "middle")}${label("l-eu2", [C.vilnius[0] + 10, C.vilnius[1] - 120], "BALTICS", 58, 0, 0, "hid", "middle")}
+ <g id="pct" class="hid" transform="translate(${C.kramatorsk[0] - 230} ${C.kramatorsk[1] + 230})"><g class="in"><rect x="-150" y="-86" width="300" height="124" rx="18" fill="${DRED}" stroke="${RED}" stroke-width="4" ${NS}/><text y="10" text-anchor="middle" class="lbl" font-size="84" stroke-width="9">≈ 19%</text></g></g>
+`;
+
+/* ---------- camera: one track, driven by a modifier so seeking always applies it ---------- */
+const tl = gsap.timeline({ paused: true });
+const cam = document.getElementById("cam");
+const apply = o => cam.setAttribute("transform", `translate(540 820) rotate(${o.r}) scale(${o.s}) translate(${-o.x} ${-o.y})`);
+const SEG = []; const move = (a, b, t0, t1, ease = "sine.inOut") => SEG.push([t0, t1, a, b, gsap.parseEase(ease)]);
+const camAt = t => { let cur = SEG[0][2]; for (const [t0, t1, a, b, e] of SEG) { if (t < t0) break; const kk = t >= t1 ? 1 : e((t - t0) / (t1 - t0)); cur = {}; for (const q in a) cur[q] = a[q] + (b[q] - a[q]) * kk; } return cur; };
+const V = (x, y, s, r = 0) => ({ x, y, s, r });
+const K0 = V(twin[0] - 10, twin[1] + 8, 2.9, -2), K1 = V(640, 900, 0.95, 0), DON = V(twin[0] - 4, twin[1] + 12, 5.6, 0), DON2 = V(twin[0] + 2, twin[1] + 18, 6.2, 1),
+  KO = V(C.kostiantynivka[0] - 9, C.kostiantynivka[1] - 6, 7.6, 0), FALL = V(twin[0] - 14, twin[1] + 10, 4.6, 0), WEST = V(810, 985, 2.4, 0), RIVER = V(700, 960, 1.45, 0),
+  SOUTH = V(C.zaporizhzhia[0] + 48, C.zaporizhzhia[1] + 2, 3.6, 0), NORTH = V(C.kharkiv[0] + 12, C.kharkiv[1] - 8, 4.6, 0), UA = V(560, 980, 0.98, 0), EU = V(520, 740, 0.62, 0), END = V(twin[0] - 2, twin[1] + 10, 5.8, 0);
+move(K0, V(twin[0] - 6, twin[1] + 6, 3.6, 0), 0, WT("hk", "map") - 0.3, "sine.out"); move(V(twin[0] - 6, twin[1] + 6, 3.6, 0), K1, WT("hk", "map") - 0.3, T.c1 - 0.3, "power2.inOut");
+move(K1, DON, T.c1 - 0.3, T.c1 + 0.9, "power3.inOut"); move(DON, DON2, T.c1 + 0.9, T.c3);
+move(DON2, KO, T.c3, T.c3 + 1.2, "power2.inOut"); move(KO, V(KO.x, KO.y, 10, 0), T.c3 + 1.2, T.s1);
+move(V(KO.x, KO.y, 10, 0), FALL, T.s1, T.s1 + 1.0, "power2.inOut");
+move(FALL, WEST, T.s2, E.s2, "power2.inOut"); move(WEST, RIVER, T.s3, T.s3 + 2.5, "power2.inOut"); move(RIVER, V(690, 965, 1.35, 0), T.s3 + 2.5, T.s4);
+move(V(690, 965, 1.35, 0), SOUTH, T.s4, T.s4 + 1.4, "power2.inOut"); move(SOUTH, V(SOUTH.x, SOUTH.y, 4.4, 0), T.s4 + 1.4, T.s5);
+move(V(SOUTH.x, SOUTH.y, 4.4, 0), NORTH, T.s5, T.s5 + 1.4, "power2.inOut"); move(NORTH, V(NORTH.x, NORTH.y, 5.0, 0), T.s5 + 1.4, T.e1);
+move(V(NORTH.x, NORTH.y, 5.0, 0), UA, T.e1, T.e1 + 1.4, "power2.inOut"); move(UA, EU, T.e2, T.e2 + 1.6, "power2.inOut");
+move(EU, UA, T.e3, T.e3 + 1.3, "power2.inOut"); move(UA, END, T.e4 - 0.2, T.end, "power3.inOut");
+apply(K0); SEG.sort((a, b) => a[0] - b[0]);
+const CLK = { t: 0 }; tl.fromTo(CLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { apply(camAt(+v)); return v; } } }, 0);
+
+/* ---------- helpers ---------- */
+const show = (s, t) => tl.set(s, { opacity: 1 }, t), hide = (s, t, d = 0.3) => tl.to(s, { opacity: 0, duration: d }, t);
+const fade = (s, t, d = 0.35) => tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: d, immediateRender: false }, t);
+const pop = (s, t) => { tl.set(s, { opacity: 1 }, t); tl.fromTo(`${s} .in`, { scale: 0.2, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.42, ease: "back.out(2.4)", immediateRender: false }, t); };
+const draw = (s, t, d = 0.8) => tl.fromTo(s, { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: d, ease: "power2.inOut", immediateRender: false }, t);
+const pulse = (s, t, n = 3, k = 1.35) => tl.fromTo(`${s} .in`, { scale: 1, transformOrigin: "50% 50%" }, { scale: k, duration: 0.45, yoyo: true, repeat: n * 2 - 1, ease: "sine.inOut", immediateRender: false }, t);
+const shoot = (id, t, d = 1.0) => { show(`#${id}`, t); draw(`#${id}-p`, t, d); tl.fromTo(`#${id}-h`, { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, t + d - 0.15); };
+const flash = t => { tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.45, duration: 0.12, immediateRender: false }, t - 0.06); tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, t + 0.08); };
+const setMode = (txt, t, red) => { tl.to("#mode", { opacity: 0, duration: 0.12 }, t - 0.12); tl.call(() => { const m = document.getElementById("mode"); m.textContent = txt; m.style.background = red ? "rgba(255,59,47,0.25)" : "rgba(255,255,255,0.12)"; m.style.borderColor = red ? "#ff3b2f" : "rgba(255,255,255,0.35)"; }, null, t); tl.to("#mode", { opacity: 1, duration: 0.15 }, t); };
+/* tl.call does not run on seek, so also set the mode text through a modifier-driven tween */
+const MODES = [[0, "TODAY", false]]; const modeAt = t => MODES.filter(m => m[0] <= t).pop();
+const MCLK = { t: 0 }; tl.fromTo(MCLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { const [, txt, red] = modeAt(+v); const m = document.getElementById("mode"); if (m.textContent !== txt) { m.textContent = txt; m.style.background = red ? "rgba(255,59,47,0.25)" : "rgba(255,255,255,0.12)"; m.style.borderColor = red ? "#ff3b2f" : "rgba(255,255,255,0.35)"; } return v; } } }, 0);
+
+/* ---------- beats ---------- */
+// hook: wide view, the two cities glow, title
+pulse("#hkring", 0.2, 4, 1.3); hide("#hkring", T.c1, 0.4); fade("#h-kr", 0.1, 0.3); fade("#h-sl", 0.2, 0.3); fade("#l-ua", WT("hk", "map"), 0.4); fade("#l-ru", WT("hk", "map") + 0.2, 0.4); hide("#h-kr", WT("hk", "map"), 0.25); hide("#h-sl", WT("hk", "map"), 0.25); tl.set("#title", { opacity: 1 }, 0);
+tl.fromTo("#title span", { scale: 0.9 }, { scale: 1, duration: 0.5, ease: "back.out(2)", immediateRender: false }, 0);
+punchTitle(WT("hk", "fell")); function punchTitle(t) { tl.fromTo("#title span", { scale: 1 }, { scale: 1.12, duration: 0.1, immediateRender: false }, t); tl.to("#title span", { scale: 1, duration: 0.3 }, t + 0.1); }
+hide("#title", T.c1 - 0.2); hide("#l-ua", T.c1 - 0.2); hide("#l-ru", T.c1 - 0.2);
+// the two cities
+fade("#l-kr", WT("c1", "kramatorsk"), 0.3); fade("#l-sl", WT("c1", "sloviansk") - 0.1, 0.3); pulse("#fort", WT("c1", "defense"), 2, 1.25);
+// the towns already taken
+["pokrovsk", "toretsk", "siversk"].forEach((c, i) => { const t = WT("c2", "took") + 0.15 + i * 0.55; fade(`#d-${c}`, t, 0.15); tl.to(`#d-${c} .in circle`, { fill: RED, duration: 0.15 }, t + 0.2); pop(`#x-${c}`, t + 0.2); });
+// Kostiantynivka contested
+fade("#d-ko", WT("c3", "fighting") - 0.1, 0.2); fade("#l-ko", WT("c3", "fighting"), 0.25); show("#ko-ring", WT("c3", "fighting")); pulse("#ko-ring", WT("c3", "fighting"), 4, 1.6);
+["pokrovsk", "toretsk", "siversk"].forEach(c => { hide(`#l-${c}`, T.c3 + 0.5); hide(`#x-${c}`, T.c3 + 0.5); });
+// imagine they fall
+const F = WT("s1", "fall"); flash(F); hide("#l-ko", T.s1); hide("#ko-ring", T.s1);
+tl.call(() => {}, null, F); MODES.push([F - 0.05, "WHAT IF", true]);
+tl.to("#fort .in circle:first-child", { stroke: RED, duration: 0.2 }, F); tl.to("#fort .in circle:last-child", { fill: RED, duration: 0.2 }, F); show("#fort-crack", F + 0.05); tl.to("#fort", { opacity: 0, duration: 0.6 }, F + 0.9); hide("#fort-crack", F + 0.9, 0.6);
+tl.to("#d-kr .in circle, #d-sl .in circle", { fill: RED, duration: 0.2 }, F);
+show("#hypo-zone", F + 0.1); tl.fromTo("#hypo-zone", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power1.in", immediateRender: false }, F + 0.1);
+show("#hfront", F + 0.2); draw("#hfront-p", F + 0.2, 1.4); tl.to("#front, #front-g", { opacity: 0.25, duration: 0.6 }, F + 0.4);
+hide("#l-kr", T.s2); hide("#l-sl", T.s2);
+// the map opens west, toward the Dnipro
+shoot("ar1", T.s2 + 0.05, 1.0);
+show("#dnipro", WT("s3", "dnipro") - 0.3); draw("#dnipro", WT("s3", "dnipro") - 0.3, 1.6); fade("#d-dn", WT("s3", "dnipro"), 0.3); fade("#l-dn", WT("s3", "dnipro") + 0.1, 0.3);
+pulse("#dnipro", WT("s3", "middle"), 1, 1.0); tl.to("#dnipro", { attr: { "stroke-width": 9 }, duration: 0.4, yoyo: true, repeat: 1 }, WT("s3", "middle"));
+// south: Zaporizhzhia
+hide("#l-river", T.s4); hide("#l-dn", T.s4);
+fade("#d-za", WT("s4", "south"), 0.3); fade("#l-za", WT("s4", "south") + 0.2, 0.3); shoot("ar2", WT("s4", "front") - 0.2, 1.0); shoot("ar4", WT("s4", "southeast") - 0.1, 0.6); pulse("#d-za", WT("s4", "city"), 2, 1.5);
+// north: Kharkiv, 30 km
+hide("#l-za", T.s5); hide("#ar4", T.s5); tl.to("#ar1, #ar2", { opacity: 0.3, duration: 0.4 }, T.s5);
+fade("#d-kh", WT("s5", "north"), 0.3); fade("#l-kh", WT("s5", "kharkiv"), 0.3); shoot("ar3", WT("s5", "biggest") - 0.2, 1.0); fade("#kh-ruler", WT("s5", "30") - 0.1, 0.3); fade("#l-ru2", WT("s5", "russia") - 0.3, 0.3); tl.to("#d-za, #d-dn", { opacity: 0, duration: 0.3 }, T.s5); pulse("#d-kh", WT("s5", "russia"), 2, 1.5);
+// Europe
+hide("#l-kh", T.e1 + 0.5); hide("#kh-ruler", T.e1 + 0.5); hide("#l-ru2", T.e1 + 0.5);
+fade("#l-ua", WT("e1", "biggest"), 0.4); pop("#size", WT("e1", "country") - 0.1); pulse("#ua-glow", WT("e1", "europe") - 0.2, 1, 1.0); tl.fromTo("#ua-glow", { opacity: 1 }, { opacity: 0.35, duration: 0.25, yoyo: true, repeat: 3, immediateRender: false }, WT("e1", "entirely")); hide("#size", T.e2); tl.to("#ua-fill", { opacity: 0.95, fill: "#34506e", duration: 0.6 }, WT("e1", "biggest"));
+fade("#nbs", WT("e2", "europe") - 0.6, 0.6); ["warsaw", "vilnius", "riga", "chisinau"].forEach((c, i) => fade(`#d-${c}`, WT("e2", "redraws") + i * 0.12, 0.25)); fade("#l-eu1", WT("e2", "europe") - 0.3, 0.3); fade("#l-eu2", WT("e2", "europe") - 0.1, 0.3);
+pulse("#hfront", WT("e2", "line"), 2, 1.0);
+// back to today
+MODES.push([WT("e3", "hasnt") - 0.05, "TODAY", false]); hide("#l-ua", T.e3); hide("#nbs", T.e3 + 0.2, 0.6); ["warsaw", "vilnius", "riga", "chisinau"].forEach(c => hide(`#d-${c}`, T.e3)); hide("#l-eu1", T.e3); hide("#l-eu2", T.e3);
+tl.to("#ua-fill", { opacity: 0.55, fill: "#2c3646", duration: 0.5 }, T.e3);
+["#hypo-zone", "#hfront", "#ar1", "#ar2", "#ar3", "#dnipro", "#d-dn", "#d-za", "#d-kh"].forEach(s => hide(s, WT("e3", "hasnt"), 0.5)); tl.to("#front, #front-g", { opacity: 1, duration: 0.5 }, WT("e3", "hasnt"));
+pop("#pct", WT("e3", "russia")); tl.to("#occ", { opacity: 0.35, duration: 0.25, yoyo: true, repeat: 3 }, WT("e3", "holds")); tl.to("#occ", { filter: "brightness(1.6)", duration: 0.3 }, WT("e3", "onefifth")); tl.to("#occ", { filter: "brightness(1)", duration: 0.4 }, T.e4); tl.to("#pct .in", { scale: 1.25, duration: 0.15, yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, WT("e3", "onefifth")); tl.to("#front-g", { attr: { "stroke-width": 22 }, duration: 0.3, yoyo: true, repeat: 3 }, WT("e3", "ukraine")); hide("#pct", T.e4 - 0.1);
+// two cities holding the line
+tl.set("#fort", { opacity: 1 }, T.e4 - 0.05); tl.set("#fort .in circle:first-child", { stroke: ICE }, T.e4 - 0.05); tl.set("#fort .in circle:last-child", { fill: ICE }, T.e4 - 0.05); tl.set("#d-kr .in circle, #d-sl .in circle", { fill: ICE }, T.e4 - 0.05);
+fade("#l-kr", WT("e4", "two"), 0.3); fade("#l-sl", WT("e4", "two") + 0.1, 0.3); pulse("#fort", WT("e4", "holding"), 2, 1.3);
+
+/* captions */
+const capRoot = document.getElementById("caps");
+CAPS.forEach((c, i) => { capRoot.insertAdjacentHTML("beforeend", `<div class="c" id="cp${i}">${c.html}</div>`);
+ if (i === 0) tl.set(`#cp${i}`, { opacity: 1 }, 0); else tl.fromTo(`#cp${i}`, { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.09, ease: "back.out(3)", immediateRender: false }, c.t0);
+ tl.set(`#cp${i}`, { opacity: 0 }, c.t1); });
+window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl; tl.seek(0);
+</script>
+</body>
+</html>

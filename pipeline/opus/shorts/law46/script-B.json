@@ -1,0 +1,22 @@
+{
+ "title": "Weak Ties (Law 46)",
+ "voice": "Charon",
+ "lines": [
+  {"key": "hk", "sec": "hook", "text": "Your best friends sent hearts. The gym guy sent the job.", "say": "Your best friends sent hearts. [short pause] The gym guy... sent the job.", "tone": "flat, almost amused, like you are letting the listener in on something"},
+  {"key": "r1", "sec": "body", "text": "Rewind. You had the best crew alive. Ride or die since high school.", "say": "Rewind. You had the best crew alive. Ride or die, since high school.", "tone": "warm, nostalgic, picking up speed"},
+  {"key": "f1", "sec": "body", "text": "Then you get laid off.", "say": "[short pause] Then you get laid off.", "tone": "sudden drop, quiet"},
+  {"key": "f2", "sec": "body", "text": "You tell the group chat. Hearts. Prayers. Zero leads.", "say": "You tell the group chat. Hearts. Prayers. [short pause] Zero leads.", "tone": "flat, tired, each word its own beat"},
+  {"key": "f3", "sec": "body", "text": "Three months. Two hundred applications. Nothing.", "say": "Three months. Two hundred applications. [sighs] Nothing.", "tone": "flat, tired, each word its own beat"},
+  {"key": "t1", "sec": "body", "text": "Then a guy from the gym. You've talked twice. He sends you a link.", "say": "Then... a guy from the gym. You've talked twice. He sends you a link.", "tone": "curious, brightening, slower on the first word"},
+  {"key": "t2", "sec": "body", "text": "Two weeks later, you're hired. More money than before.", "tone": "surprised, almost laughing"},
+  {"key": "g1", "sec": "payoff", "text": "Here is the gospel.", "say": "[short pause] Here is the gospel.", "tone": "fired up, preacher stepping up to the pulpit"},
+  {"key": "g2", "sec": "payoff", "text": "Law 46. Weak ties.", "say": "Law forty six. Weak ties.", "tone": "fired up, preacher stepping up to the pulpit"},
+  {"key": "m1", "sec": "body", "text": "Your boys know the same people you know. They hear about the same jobs.", "tone": "explaining, steady, leaning on the word same"},
+  {"key": "m2", "sec": "body", "text": "The guy you barely know lives in a different world. He sees doors you can't.", "say": "The guy you barely know? Lives in a different world. He sees doors you can't.", "tone": "explaining, steady, a little lift on different world"},
+  {"key": "p1", "sec": "body", "text": "A study of 282 workers. The ones hired through a contact? Only one in six saw that person often.", "say": "A study of two hundred eighty two workers. The ones hired through a contact? [short pause] Only one in six saw that person often.", "tone": "matter of fact, like reading evidence"},
+  {"key": "p2", "sec": "body", "text": "LinkedIn tested twenty million people. The best ties for a new job? Not distant contacts. Not best friends. The people in between.", "say": "LinkedIn tested twenty million people. The best ties for a new job? Not distant contacts. Not best friends. [short pause] The people in between.", "tone": "matter of fact, like reading evidence"},
+  {"key": "o1", "sec": "body", "text": "So keep your boys. But text the guy from the gym.", "say": "So keep your boys. [short pause] But text the guy from the gym.", "tone": "direct, talking to one person"},
+  {"key": "e1", "sec": "end", "text": "Strong ties produce belonging. Weak ties produce mobility.", "tone": "slow, weighty, landing each half"},
+  {"key": "e2", "sec": "end", "text": "Build both.", "say": "[short pause] Build both.", "tone": "shouting, final"}
+ ]
+}

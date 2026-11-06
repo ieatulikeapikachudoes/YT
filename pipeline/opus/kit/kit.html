@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="vendor/gsap.min.js"></script>
+<script src="assets/timing.js"></script>
+<style>
+ @font-face { font-family: "Geist"; src: url("fonts/geist.woff2") format("woff2"); font-weight: 100 900; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #120e2e; }
+ #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Geist", sans-serif; }
+ .clip { position: absolute; inset: 0; }
+ .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+ .bg { position: absolute; inset: -80px; }
+ .cam { position: absolute; inset: 0; transform-origin: 50% 46%; }
+ .scene > .cam > svg, #fx > svg { position: absolute; left: 0; top: 0; overflow: visible; }
+ .hid { opacity: 0; }
+ #caps .c { position: absolute; left: 70px; right: 70px; top: 1400px; text-align: center; font-weight: 900; font-size: 86px; line-height: 1.04; color: #fff; letter-spacing: -0.02em;
+   -webkit-text-stroke: 14px #0b0820; paint-order: stroke fill; text-shadow: 0 10px 28px rgba(0,0,0,0.55); opacity: 0; }
+ #caps .c b { color: #ffd23f; font-weight: 900; }
+ #law { position: absolute; left: 64px; top: 250px; opacity: 0; transform-origin: 0 0; }
+ #rw { position: absolute; inset: 0; opacity: 0; }
+ #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 100%); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+ <audio id="vo" src="assets/mix.wav" data-start="0" data-duration="__TOTAL__"></audio>
+ <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0"></div>
+ <div id="fx" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"></div>
+ <div id="ui" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="2">
+  <div id="law"></div>
+  <div id="caps"></div>
+ </div>
+</div>
+<script>
+const VERSION = "__VERSION__", CAPS = __CAPS__, LAW = "__LAW__";
+const T = window.__T, E = window.__E, W = window.__W;
+const WT = (k, w) => { const f = w.toLowerCase().replace(/[^a-z0-9]/g, ""); const h = W.find(x => x[1] >= T[k] - 0.15 && x[1] <= E[k] + 0.15 && (x[0] === f || (f.length >= 4 && x[0].startsWith(f.slice(0, 4))))); if (!h) console.error("WT miss", k, w); return h ? h[1] : T[k]; };
+const C = { bg: "#120e2e", fg: "#f6f4ff", ink: "#0e1530", panel: "#1d2a5a", muted: "#8a8fb5", ground: "#1a1446", skin: "#f4c7a1", cyan: "#4fd8ff", gold: "#ffd23f", red: "#ff3b5c", purple: "#7b5cff", teal: "#2fb5a6", navy: "#262c57" };
+const BG = { day: "radial-gradient(ellipse at 50% 40%, #4a3a8c 0%, #241c52 55%, #120e2e 100%)", warm: "radial-gradient(ellipse at 50% 38%, #6a4a9c 0%, #3a2466 50%, #160f36 100%)",
+  dark: "radial-gradient(ellipse at 50% 40%, #232048 0%, #121030 60%, #07061a 100%)", holy: "radial-gradient(ellipse at 50% 42%, #8a5a2a 0%, #4a2a5a 45%, #140e30 100%)", night: "linear-gradient(180deg, #0c0b26 0%, #1b1848 60%, #2a2160 100%)" };
+let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+
+/* ---------- drawing kit (strings) ---------- */
+const G = (id, inner, x = 0, y = 0, s = 1, cls = "", flip = false) => `<g ${id ? `id="${id}"` : ""} class="${cls}" transform="translate(${x} ${y}) scale(${flip ? -s : s} ${s})"><g class="in">${inner}</g></g>`;
+const GLOW = (x, y, r, col, op = 0.25) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op}" filter="url(#glow)"/>`;
+const STARS = (n = 26, maxY = 1100) => { let s = ""; for (let i = 0; i < n; i++) s += `<circle cx="${(rnd() * 1080).toFixed(0)}" cy="${(120 + rnd() * maxY).toFixed(0)}" r="${(1.5 + rnd() * 2.5).toFixed(1)}" fill="#fff" opacity="${(0.15 + rnd() * 0.45).toFixed(2)}"/>`; return s; };
+const GROUND = (y = 1300, col = C.ground) => `<path d="M-100 ${y} Q300 ${y - 40} 600 ${y - 10} T1180 ${y - 20} L1180 2000 L-100 2000 Z" fill="${col}"/>`;
+const TXT = (x, y, t, size = 48, col = C.fg, w = 900, extra = "") => `<text x="${x}" y="${y}" text-anchor="middle" font-family="Geist" font-weight="${w}" font-size="${size}" fill="${col}" ${extra}>${t}</text>`;
+const FACES = {
+ neutral: c => `<circle cx="-18" cy="-6" r="7" fill="${c}"/><circle cx="18" cy="-6" r="7" fill="${c}"/><path d="M-14 22 L14 22" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`,
+ happy: c => `<circle cx="-18" cy="-6" r="7" fill="${c}"/><circle cx="18" cy="-6" r="7" fill="${c}"/><path d="M-20 14 Q0 38 20 14" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`,
+ joy: c => `<path d="M-28 -4 Q-18 -16 -8 -4 M8 -4 Q18 -16 28 -4" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/><path d="M-22 12 Q0 44 22 12 Z" fill="${c}"/>`,
+ sad: c => `<path d="M-28 -8 L-12 -16 M28 -8 L12 -16" stroke="${c}" stroke-width="5" stroke-linecap="round"/><circle cx="-18" cy="2" r="6" fill="${c}"/><circle cx="18" cy="2" r="6" fill="${c}"/><path d="M-16 32 Q0 18 16 32" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`,
+ shocked: c => `<circle cx="-18" cy="-6" r="10" fill="none" stroke="${c}" stroke-width="5"/><circle cx="18" cy="-6" r="10" fill="none" stroke="${c}" stroke-width="5"/><circle cx="-18" cy="-6" r="4" fill="${c}"/><circle cx="18" cy="-6" r="4" fill="${c}"/><ellipse cx="0" cy="28" rx="10" ry="13" fill="${c}"/>`,
+ smug: c => `<path d="M-28 -6 L-10 -6 M10 -6 L28 -6" stroke="${c}" stroke-width="6" stroke-linecap="round"/><path d="M-14 20 Q6 30 22 12" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`,
+ fierce: c => `<path d="M-32 -24 L-8 -14 M32 -24 L8 -14" stroke="${c}" stroke-width="7" stroke-linecap="round"/><circle cx="-18" cy="-2" r="7" fill="${c}"/><circle cx="18" cy="-2" r="7" fill="${c}"/><path d="M-22 18 Q0 36 22 18 Z" fill="${c}"/>`,
+};
+const POSE = { down: [[-60, 150], [60, 150]], up: [[-90, -70], [90, -70]], point: [[-55, 150], [160, 0]], shrug: [[-110, 20], [110, 20]], hold: [[-40, 90], [40, 90]], cross: [[40, 80], [-40, 80]], wave: [[-55, 150], [100, -90]], preach: [[-60, 150], [70, -150]], hugL: [[-40, 100], [150, 30]], hugR: [[-150, 30], [40, 100]], phone: [[-55, 150], [10, -40]] };
+/* PERSON: feet at (x,y), ~430*s tall. o: {shirt, pants, hair, face, pose, tie, cap, robe, id, cls, flip} */
+const PERSON = (x, y, s = 1, o = {}) => { const sh = o.shirt || C.cyan, pa = o.pants || C.ink, ha = o.hair || "#20183a", [l, r] = POSE[o.pose || "down"];
+ const robe = o.robe ? `<path d="M-74 -170 L74 -170 L118 0 L-118 0 Z" fill="${o.robe}"/><path d="M-30 -330 L-22 0 M30 -330 L22 0" stroke="${C.gold}" stroke-width="14"/>` : "";
+ const tie = o.tie ? `<path d="M-30 -330 L0 -290 L30 -330 Z" fill="#fff"/><path d="M0 -300 L-13 -280 L0 -190 L13 -280 Z" fill="${o.tie}"/>` : "";
+ const band = o.band ? `<path d="M-66 -38 Q0 -60 66 -38 L64 -20 Q0 -42 -64 -20 Z" fill="${o.band}"/>` : "";
+ const cap = o.cap ? `<path d="M-64 -24 Q-60 -78 0 -78 Q60 -78 64 -24 Z" fill="${o.cap}"/><path d="M40 -30 L104 -22 L104 -10 L40 -16 Z" fill="${o.cap}"/>` : "";
+ return G(o.id, `<ellipse cx="0" cy="0" rx="92" ry="15" fill="#000" opacity="0.28"/>
+  <rect x="-44" y="-170" width="38" height="170" rx="18" fill="${pa}"/><rect x="6" y="-170" width="38" height="170" rx="18" fill="${pa}"/>${robe}
+  <path d="M-62 -300 L${-62 + l[0]} ${-300 + l[1]}" stroke="${sh}" stroke-width="36" stroke-linecap="round"/><path d="M62 -300 L${62 + r[0]} ${-300 + r[1]}" stroke="${sh}" stroke-width="36" stroke-linecap="round"/>
+  <circle cx="${-62 + l[0]}" cy="${-300 + l[1]}" r="19" fill="${C.skin}"/><circle cx="${62 + r[0]}" cy="${-300 + r[1]}" r="19" fill="${C.skin}"/>
+  <path d="M-72 -312 Q-72 -334 -40 -334 L40 -334 Q72 -334 72 -312 L68 -150 L-68 -150 Z" fill="${sh}"/><path d="M0 -334 L40 -334 Q72 -334 72 -312 L68 -150 L0 -150 Z" fill="#000" opacity="0.13"/>${tie}
+  <g transform="translate(0 -405)"><circle r="64" fill="${C.skin}"/><path d="M-64 -6 Q-68 -72 0 -72 Q68 -72 64 -10 Q40 -46 0 -44 Q-36 -46 -64 -6 Z" fill="${ha}"/>${cap}${band}${FACES[o.face || "neutral"](C.ink)}</g>`, x, y, s, o.cls || "", o.flip); };
+const YOU = (x, y, s, o = {}) => PERSON(x, y, s, { shirt: C.cyan, ...o });
+const HIM = (x, y, s, o = {}) => PERSON(x, y, s, { shirt: C.teal, cap: "#1a7a70", hair: "#3a2a1a", ...o });
+const BOSS = (x, y, s, o = {}) => PERSON(x, y, s, { shirt: C.navy, tie: C.red, hair: "#cfc8e8", face: "smug", ...o });
+const CAR = (id, x, y, s, broken = false, col = "#ff8a3d") => G(id, `<ellipse cx="0" cy="4" rx="170" ry="16" fill="#000" opacity="0.3"/>
+  <path d="M-160 -40 Q-160 -80 -120 -84 L-70 -86 L-30 -140 Q-20 -150 0 -150 L80 -150 Q100 -150 112 -136 L140 -90 Q168 -86 168 -50 L168 -24 Q168 -6 150 -6 L-150 -6 Q-160 -6 -160 -24 Z" fill="${col}"/>
+  <path d="M-20 -134 L0 -96 L60 -96 L60 -138 Z M74 -138 L74 -96 L128 -96 L106 -134 Z" fill="#9fe6ff" opacity="0.85"/>
+  <circle cx="-96" cy="-6" r="34" fill="#141026"/><circle cx="-96" cy="-6" r="14" fill="#8a8fb5"/><circle cx="104" cy="-6" r="34" fill="#141026"/><circle cx="104" cy="-6" r="14" fill="#8a8fb5"/>
+  <rect x="150" y="-66" width="18" height="16" rx="4" fill="${broken ? "#555" : "#fff6b0"}"/>
+  ${broken ? `<path d="M-160 -84 L-60 -86 L-90 -150 Z" fill="${col}" stroke="#000" stroke-opacity="0.15" stroke-width="3"/>` : ""}`, x, y, s);
+const SMOKE = (id, x, y, s = 1) => `<g id="${id}" transform="translate(${x} ${y}) scale(${s})">${[0, 1, 2, 3, 4].map(i => `<circle class="puff" cx="${(i % 2 ? 18 : -12)}" cy="${-i * 46}" r="${30 + i * 9}" fill="#c9c6dc" opacity="${0.75 - i * 0.12}"/>`).join("")}</g>`;
+const HAZARD = (id, x, y, s = 1) => G(id, `<path d="M0 -80 L72 50 L-72 50 Z" fill="${C.red}" stroke="#fff" stroke-width="10" stroke-linejoin="round"/><rect x="-7" y="-36" width="14" height="48" rx="6" fill="#fff"/><circle cx="0" cy="30" r="8" fill="#fff"/>`, x, y, s);
+const PHONEBOX = (id, x, y, s, screen, cls = "") => G(id, `<rect x="-200" y="-370" width="400" height="740" rx="54" fill="#0b0920" stroke="#3c3670" stroke-width="8"/>
+  <svg x="-176" y="-346" width="352" height="692" viewBox="0 0 352 692" overflow="hidden"><rect width="352" height="692" rx="34" fill="#171338"/>${screen}</svg>
+  <rect x="-60" y="-356" width="120" height="22" rx="11" fill="#0b0920"/>`, x, y, s, cls);
+const AVATAR = (x, y, r, shirt = C.teal) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${shirt}"/><circle cx="${x}" cy="${y - r * 0.15}" r="${r * 0.48}" fill="${C.skin}"/><path d="M${x - r * 0.5} ${y - r * 0.25} Q${x} ${y - r * 1.05} ${x + r * 0.5} ${y - r * 0.25} Z" fill="#1a7a70"/>`;
+const STORY = () => `<rect width="352" height="692" fill="#2a1e4a"/>
+  <rect y="0" width="352" height="300" fill="#1a1440"/>${[60, 150, 240, 300].map(x => `<circle cx="${x}" cy="${70 + (x % 3) * 18}" r="38" fill="#fff6c8" opacity="0.18" filter="url(#glow)"/>`).join("")}
+  <path d="M0 430 L352 400 L352 692 L0 692 Z" fill="#d98a3c"/><path d="M0 470 L352 440 M120 692 Q170 560 352 540" stroke="#fff" stroke-width="4" opacity="0.6" fill="none"/>
+  <g transform="translate(176 0)">${PERSON(-60, 520, 0.42, { shirt: C.teal, cap: "#1a7a70", hair: "#3a2a1a", face: "joy", pose: "up" })}${PERSON(64, 520, 0.42, { shirt: C.navy, tie: C.red, hair: "#cfc8e8", face: "smug", pose: "cross" })}</g>
+  <circle cx="290" cy="360" r="26" fill="#ff7a1a"/><path d="M264 360 L316 360 M290 334 L290 386" stroke="#3a1a00" stroke-width="3"/>
+  ${[0, 1, 2].map(i => `<rect x="${14 + i * 110}" y="16" width="102" height="6" rx="3" fill="#fff" opacity="${i ? 0.4 : 1}"/>`).join("")}
+  ${AVATAR(36, 58, 20)}<text x="66" y="66" font-family="Geist" font-weight="800" font-size="22" fill="#fff">him</text>`;
+const CHAT = () => `<rect width="352" height="692" fill="#120f2c"/><rect width="352" height="96" fill="#1d1846"/>${AVATAR(46, 52, 26)}<text x="84" y="62" font-family="Geist" font-weight="800" font-size="26" fill="#fff">him</text>
+  <g id="f1-sent"><rect x="96" y="150" width="236" height="74" rx="30" fill="#4fd8ff"/><text x="214" y="196" text-anchor="middle" font-family="Geist" font-weight="700" font-size="26" fill="#0e1530">car died. help?</text></g>
+  <g id="f1-reply" class="hid"><rect x="20" y="250" width="250" height="74" rx="30" fill="#3a3466"/><text x="145" y="296" text-anchor="middle" font-family="Geist" font-weight="700" font-size="26" fill="#fff">can't today bro</text></g>`;
+const RING = (id, x, y, s = 1) => G(id, `${[0, 1, 2].map(i => `<path d="M${-150 - i * 30} ${-60 - i * 20} Q${-180 - i * 40} 0 ${-150 - i * 30} ${60 + i * 20} M${150 + i * 30} ${-60 - i * 20} Q${180 + i * 40} 0 ${150 + i * 30} ${60 + i * 20}" fill="none" stroke="${C.gold}" stroke-width="10" stroke-linecap="round" opacity="${0.9 - i * 0.25}"/>`).join("")}`, x, y, s);
+const BOX = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-70" y="-110" width="140" height="110" rx="8" fill="#c98a4a"/><rect x="-70" y="-110" width="140" height="22" fill="#a96a32"/><rect x="-14" y="-110" width="28" height="60" fill="#e8c27a"/></g>`;
+const CLOCK = (x, y, r, col = C.gold) => `<g transform="translate(${x} ${y})"><circle r="${r}" fill="#fff8e0" stroke="${col}" stroke-width="${r * 0.14}"/><path d="M0 0 L0 ${-r * 0.62}" stroke="#0e1530" stroke-width="${r * 0.11}" stroke-linecap="round"/><path d="M0 0 L${-r * 0.52} ${r * 0.3}" stroke="#0e1530" stroke-width="${r * 0.11}" stroke-linecap="round"/><circle r="${r * 0.08}" fill="${C.red}"/></g>`;
+const MOON = (x, y, r) => `<path d="M${x} ${y - r} A${r} ${r} 0 1 0 ${x + r * 0.9} ${y + r * 0.45} A${r * 0.8} ${r * 0.8} 0 1 1 ${x} ${y - r} Z" fill="#fff3b0"/>`;
+const CASE = (x, y, s = 1, check = true) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-40" y="-130" width="80" height="34" rx="12" fill="none" stroke="#5a3a1a" stroke-width="14"/><rect x="-110" y="-104" width="220" height="150" rx="18" fill="#8a5a2a"/><rect x="-110" y="-50" width="220" height="10" fill="#6a4220"/>${check ? `<circle cx="96" cy="-104" r="40" fill="#3ddc84" stroke="#fff" stroke-width="7"/><path d="M76 -104 L91 -88 L116 -120" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>` : ""}</g>`;
+const HEART = (id, x, y, s = 1, col = C.red) => `<g id="${id}" transform="translate(${x} ${y}) scale(${s})"><g class="in"><path d="M0 40 C-70 -10 -60 -70 -20 -70 C-5 -70 0 -58 0 -50 C0 -58 5 -70 20 -70 C60 -70 70 -10 0 40 Z" fill="${col}"/></g></g>`;
+const XMARK = (id, x, y, s = 1) => G(id, `<path d="M-60 -60 L60 60 M60 -60 L-60 60" stroke="${C.red}" stroke-width="26" stroke-linecap="round"/>`, x, y, s, "hid");
+const STAMP = (id, x, y, t, s = 1, rot = -14) => `<g id="${id}" class="hid" transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><g class="in"><rect x="${-t.length * 34 - 30}" y="-62" width="${t.length * 68 + 60}" height="124" rx="16" fill="none" stroke="${C.red}" stroke-width="14"/>${TXT(0, 34, t, 96, C.red, 900, 'letter-spacing="6"')}</g></g>`;
+const IOU = (id, x, y, s = 1) => G(id, `<path d="M-230 -420 L230 -420 L230 400 ${Array.from({ length: 12 }, (_, i) => `L${230 - (i + 0.5) * 38.3} ${i % 2 ? 400 : 430}`).join(" ")} L-230 400 Z" fill="#fbf7ec"/>
+  ${TXT(0, -300, "IOU", 120, "#0e1530", 900, 'letter-spacing="10"')}<path d="M-170 -250 L170 -250" stroke="#0e1530" stroke-width="6"/>
+  ${[0, 1, 2, 3].map(i => `<g transform="translate(0 ${-160 + i * 120})"><rect x="-170" y="-30" width="54" height="54" rx="10" fill="none" stroke="#0e1530" stroke-width="6"/><path d="M-160 -4 L-146 12 L-122 -18" fill="none" stroke="${C.teal}" stroke-width="9" stroke-linecap="round"/><rect x="-90" y="-12" width="${220 - i * 30}" height="18" rx="9" fill="#c9c3d9"/></g>`).join("")}`, x, y, s);
+const PULPIT = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-170 -260 L170 -260 L140 0 L-140 0 Z" fill="#5a3418"/><path d="M-170 -260 L170 -260 L160 -230 L-160 -230 Z" fill="#7a4a24"/><path d="M-60 -200 L60 -200 L50 -60 L-50 -60 Z" fill="${C.gold}" opacity="0.85"/><path d="M0 -190 L0 -80 M-34 -150 L34 -150" stroke="#5a3418" stroke-width="14" stroke-linecap="round"/>
+  <path d="M-110 -262 L0 -290 L110 -262 L0 -248 Z" fill="#fff6dd"/><path d="M0 -290 L0 -250" stroke="#c9b48a" stroke-width="4"/></g>`;
+const RAYS = (id, x, y, n = 16, len = 900, col = C.gold) => `<g id="${id}" transform="translate(${x} ${y})"><g class="in">${Array.from({ length: n }, (_, i) => `<path d="M0 0 L${len * Math.cos((i / n) * 6.283 - 0.08)} ${len * Math.sin((i / n) * 6.283 - 0.08)} L${len * Math.cos((i / n) * 6.283 + 0.08)} ${len * Math.sin((i / n) * 6.283 + 0.08)} Z" fill="${col}" opacity="0.13"/>`).join("")}</g></g>`;
+const TABLET = (id, x, y, s = 1) => G(id, `<path d="M-250 320 L-250 -170 Q-250 -330 0 -330 Q250 -330 250 -170 L250 320 Z" fill="url(#gold)" stroke="#fff3b0" stroke-width="10"/>
+  <path d="M-206 290 L-206 -160 Q-206 -286 0 -286 Q206 -286 206 -160 L206 290 Z" fill="none" stroke="#8a5a10" stroke-width="5" opacity="0.6"/>
+  ${TXT(0, -60, "LAW", 130, "#4a2a00", 900, 'letter-spacing="14"')}${TXT(0, 170, LAW, 260, "#4a2a00", 900)}`, x, y, s, "hid");
+const ARROWR = (id, x, y, s, col, cls = "") => G(id, `<path d="M-170 -40 L60 -40 L60 -110 L190 0 L60 110 L60 40 L-170 40 Z" fill="${col}"/>`, x, y, s, cls);
+const CHIP = (x, y, col) => `<g transform="translate(${x} ${y})"><ellipse rx="70" ry="22" fill="${col}"/><ellipse rx="70" ry="22" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="18 18"/></g>`;
+const CHIPS = (id, x, y, s = 1) => G(id, [[-90, C.gold], [0, C.cyan], [90, C.red]].map(([dx, col]) => Array.from({ length: 6 }, (_, i) => CHIP(dx, -i * 20, col)).join("")).join(""), x, y, s, "hid");
+const CHART = (id, x, y, s = 1) => G(id, `<rect x="-200" y="-260" width="400" height="320" rx="24" fill="#1d2a5a" stroke="${C.cyan}" stroke-width="8"/>
+  ${[0, 1, 2, 3].map(i => `<rect class="bar" x="${-150 + i * 80}" y="${40 - (60 + i * 55)}" width="56" height="${60 + i * 55}" rx="8" fill="${i === 3 ? C.gold : C.cyan}"/>`).join("")}
+  <path d="M-160 -20 L-60 -80 L20 -120 L150 -220" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M150 -220 L110 -214 M150 -220 L144 -180" stroke="#fff" stroke-width="10" stroke-linecap="round"/>`, x, y, s, "hid");
+
+/* ---------- SCENES (per short: defines S, ORDER, HARD) ---------- */
+/*SCENES*/
+
+const stage = document.getElementById("stage");
+stage.insertAdjacentHTML("beforeend", `<svg width="0" height="0" style="position:absolute"><defs>
+ <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="28"/></filter>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe680"/><stop offset="0.55" stop-color="#ffc83a"/><stop offset="1" stop-color="#d98a10"/></linearGradient>
+ <linearGradient id="dial" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff3b5c"/><stop offset="0.5" stop-color="#ffd23f"/><stop offset="1" stop-color="#4fd8ff"/></linearGradient></defs></svg>`);
+ORDER.forEach(([s]) => stage.insertAdjacentHTML("beforeend", `<div class="scene" id="sc-${s}"><div class="bg" style="background:${S[s][0]}"></div><div class="cam" id="cam-${s}"><svg viewBox="0 0 1080 1920" width="1080" height="1920">${S[s][1]}</svg></div></div>`));
+document.getElementById("fx").innerHTML = `<svg viewBox="0 0 1080 1920" width="1080" height="1920">${Array.from({ length: 30 }, () => `<circle class="du" cx="${(rnd() * 1080).toFixed(0)}" cy="${(400 + rnd() * 1500).toFixed(0)}" r="${(1.5 + rnd() * 2.5).toFixed(1)}" fill="#fff" opacity="${(0.06 + rnd() * 0.12).toFixed(2)}"/>`).join("")}</svg>
+ <div id="rw"><svg viewBox="0 0 1080 1920" width="1080" height="1920"><rect width="1080" height="1920" fill="#0b0820" opacity="0.55"/>${Array.from({ length: 24 }, (_, i) => `<rect y="${i * 80 + 10}" width="1080" height="${6 + (i % 3) * 4}" fill="#fff" opacity="0.08"/>`).join("")}
+ <g transform="translate(540 820)"><path d="M10 -110 L-150 0 L10 110 Z M170 -110 L10 0 L170 110 Z" fill="#fff"/></g></svg></div><div id="vig"></div>`;
+if (LAW) document.getElementById("law").innerHTML = `<svg width="170" height="150" viewBox="0 0 170 150"><path d="M10 145 L10 55 Q10 8 85 8 Q160 8 160 55 L160 145 Z" fill="url(#gold)" stroke="#fff3b0" stroke-width="5"/><text x="85" y="72" text-anchor="middle" font-family="Geist" font-weight="900" font-size="34" fill="#4a2a00" letter-spacing="3">LAW</text><text x="85" y="128" text-anchor="middle" font-family="Geist" font-weight="900" font-size="58" fill="#4a2a00">${LAW}</text></svg>`;
+
+/* ---------- timeline ---------- */
+const tl = gsap.timeline({ paused: true });
+const pop = (sel, t, from = 0.25, ease = "back.out(2.2)") => { tl.set(sel, { opacity: 1 }, t); tl.fromTo(`${sel} .in`, { scale: from, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.4, ease, immediateRender: false }, t); };
+const show = (sel, t) => tl.set(sel, { opacity: 1 }, t), hide = (sel, t, d = 0.2) => tl.to(sel, { opacity: 0, duration: d }, t);
+const fade = (sel, t, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d, immediateRender: false }, t);
+const punch = (sel, t, k = 1.15) => { tl.fromTo(`${sel} .in`, { scale: 1 }, { scale: k, duration: 0.1, transformOrigin: "50% 50%", immediateRender: false }, t); tl.to(`${sel} .in`, { scale: 1, duration: 0.35, ease: "power2.out" }, t + 0.1); };
+const shake = (sel, t, a = 8) => tl.fromTo(`${sel} .in`, { x: -a }, { x: a, duration: 0.05, yoyo: true, repeat: 7, ease: "none", immediateRender: false }, t);
+const bob = (sel, t, dur, a = 10) => tl.fromTo(`${sel} .in`, { y: 0 }, { y: -a, duration: 0.5, yoyo: true, repeat: Math.max(1, Math.floor(dur / 0.5)), ease: "sine.inOut", immediateRender: false }, t);
+const slam = (sel, t) => { tl.set(sel, { opacity: 1 }, t); tl.fromTo(`${sel} .in`, { scale: 2.6, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 1, duration: 0.22, ease: "power3.in", immediateRender: false }, t); };
+const swap = (a, b, t) => { tl.set(a, { opacity: 0 }, t); tl.set(b, { opacity: 1 }, t); };
+
+ORDER.forEach(([s, k], i) => { const on = i === 0 ? 0 : T[k] - (HARD.includes(s) ? 0.02 : 0.12); const nx = ORDER[i + 1]; const off = nx ? T[nx[1]] - (HARD.includes(nx[0]) ? 0.02 : 0.12) : T.end;
+ if (i === 0) tl.set(`#sc-${s}`, { opacity: 1 }, 0); else if (HARD.includes(s)) tl.set(`#sc-${s}`, { opacity: 1 }, on); else tl.fromTo(`#sc-${s}`, { opacity: 0 }, { opacity: 1, duration: 0.18, immediateRender: false }, on);
+ if (nx) tl.set(`#sc-${s}`, { opacity: 0 }, off + (HARD.includes(nx[0]) ? 0 : 0.18));
+ tl.fromTo(`#cam-${s}`, { scale: 1.0 }, { scale: 1.07, duration: Math.max(0.6, off - on + 0.2), ease: "none", immediateRender: false }, on); });
+tl.set("#cam-hk", { scale: 1.0 }, 0);
+
+function D(k) { return E[k] - T[k]; }
+/* rewind(t): VHS rewind flash from t until t+dur */
+const rewind = (t, dur = 0.6) => { tl.fromTo("#rw", { opacity: 0 }, { opacity: 1, duration: 0.06, immediateRender: false }, t - 0.05); tl.to("#rw", { opacity: 0, duration: 0.2 }, t + dur); tl.fromTo("#rw svg", { x: -30 }, { x: 30, duration: 0.06, yoyo: true, repeat: 5, immediateRender: false }, t); };
+
+/* ---------- BEATS (per short) ---------- */
+/*BEATS*/
+
+/* captions */
+const capRoot = document.getElementById("caps");
+CAPS.forEach((c, i) => { capRoot.insertAdjacentHTML("beforeend", `<div class="c" id="cp${i}">${c.html}</div>`);
+ if (i === 0) tl.set(`#cp${i}`, { opacity: 1 }, 0); else tl.fromTo(`#cp${i}`, { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.09, ease: "back.out(3)", immediateRender: false }, c.t0);
+ tl.set(`#cp${i}`, { opacity: 0 }, c.t1); });
+window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl; tl.seek(0);
+</script>
+</body>
+</html>

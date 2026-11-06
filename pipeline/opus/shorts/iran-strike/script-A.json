@@ -1,0 +1,73 @@
+{
+ "lines": [
+  {
+   "key": "hk",
+   "sec": "hook",
+   "text": "Trump just lost Congress. Now he might go back to war with Iran."
+  },
+  {
+   "key": "c1",
+   "sec": "body",
+   "text": "The war started in February. Since summer, it's a standoff."
+  },
+  {
+   "key": "c2",
+   "sec": "body",
+   "text": "Hormuz is mostly closed. US ships blockade Iran's ports."
+  },
+  {
+   "key": "c3",
+   "sec": "body",
+   "text": "Three US carrier groups are moving in."
+  },
+  {
+   "key": "s1",
+   "sec": "payoff",
+   "text": "Now imagine he gives the order.",
+   "say": "[whispering] Now imagine he gives the order."
+  },
+  {
+   "key": "s2",
+   "sec": "body",
+   "text": "US jets hit missile bases along Iran's coast."
+  },
+  {
+   "key": "s3",
+   "sec": "body",
+   "text": "Iran warns the era of proportionate responses is over."
+  },
+  {
+   "key": "s4",
+   "sec": "body",
+   "text": "So it hits Gulf energy again. Qatar's biggest gas plant. A giant Saudi oil terminal.",
+   "say": "So it hits Gulf energy again. Kuh-tar's biggest gas plant. A giant Saudi oil terminal."
+  },
+  {
+   "key": "s5",
+   "sec": "body",
+   "text": "Hormuz goes fully dark. A fifth of the world's oil flows through it."
+  },
+  {
+   "key": "s6",
+   "sec": "body",
+   "text": "The Houthis, already hitting Saudi oil, go harder.",
+   "say": "The Hoo-thees, already hitting Saudi oil, go harder."
+  },
+  {
+   "key": "e1",
+   "sec": "end",
+   "text": "Oil is around ninety-five dollars today. One scenario says two hundred."
+  },
+  {
+   "key": "e2",
+   "sec": "end",
+   "text": "This hasn't happened. In January, Democrats plan a vote to limit his war powers."
+  },
+  {
+   "key": "e3",
+   "sec": "end",
+   "text": "Asked about new strikes, Trump says, maybe I will, maybe I won't.",
+   "say": "[short pause] Asked about new strikes, Trump says, maybe I will, maybe I won't."
+  }
+ ]
+}

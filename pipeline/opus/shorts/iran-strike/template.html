@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="vendor/gsap.min.js"></script>
+<script src="assets/timing.js"></script>
+<style>
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-800-normal.woff2") format("woff2"); font-weight: 800; }
+ @font-face { font-family: "Mont"; src: url("fonts/montserrat-latin-900-normal.woff2") format("woff2"); font-weight: 900; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #050b14; }
+ #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Mont", sans-serif; }
+ .clip { position: absolute; inset: 0; }
+ svg { position: absolute; left: 0; top: 0; overflow: visible; }
+ .hid { opacity: 0; }
+ #tagrow { position: absolute; top: 120px; left: 0; right: 0; display: flex; justify-content: center; gap: 14px; }
+ .tag { font-weight: 900; font-size: 34px; letter-spacing: 0.1em; padding: 10px 22px; border-radius: 8px; color: #fff; }
+ #hypo { background: rgba(140, 16, 20, 0.92); box-shadow: 0 0 30px rgba(255, 40, 40, 0.35); }
+ #mode { background: rgba(255, 255, 255, 0.12); border: 2px solid rgba(255, 255, 255, 0.35); }
+ #title { position: absolute; top: 215px; left: 0; right: 0; text-align: center; }
+ #title span { display: inline-block; font-weight: 900; font-size: 112px; color: #fff; line-height: 1.04; text-shadow: 0 6px 30px rgba(0,0,0,0.8); }
+ #title b { color: #ff4d3d; }
+ .card { position: absolute; left: 70px; right: 70px; text-align: center; opacity: 0; }
+ .card .box { display: inline-block; background: rgba(5, 8, 13, 0.88); border: 3px solid #ff3b2f; border-radius: 22px; padding: 26px 38px; box-shadow: 0 0 60px rgba(255, 40, 40, 0.3); }
+ .card .k { font-weight: 800; font-size: 34px; letter-spacing: 0.12em; color: #ff8a7c; }
+ .card .v { font-weight: 900; font-size: 78px; color: #fff; line-height: 1.05; margin-top: 8px; }
+ .card .v b { color: #ff3b2f; }
+ #oil .box { border-color: #ffb02e; box-shadow: 0 0 60px rgba(255, 176, 46, 0.3); }
+ #oil .k { color: #ffcf7a; }
+ #oil .v { font-size: 120px; font-variant-numeric: tabular-nums; }
+ #jan .box { border-color: #5fb7ff; box-shadow: 0 0 60px rgba(95, 183, 255, 0.3); }
+ #jan .k { color: #9fd3ff; }
+ #caps .c { position: absolute; left: 60px; right: 60px; top: 1380px; text-align: center; font-weight: 900; font-size: 82px; color: #fff; line-height: 1.04;
+   -webkit-text-stroke: 14px #05080d; paint-order: stroke fill; text-shadow: 0 8px 24px rgba(0,0,0,0.6); opacity: 0; }
+ #caps .c b { color: #ff4d3d; font-weight: 900; }
+ #flash { position: absolute; inset: 0; background: radial-gradient(circle at 60% 50%, #ffffff 0%, #ff3b2f 30%, #5a0505 70%, #000 100%); opacity: 0; mix-blend-mode: screen; }
+ #dark { position: absolute; inset: 0; background: #000; opacity: 0; }
+ #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 44%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.72) 100%); }
+ #grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay; }
+ .lbl { font-family: "Mont"; font-weight: 900; fill: #fff; paint-order: stroke; stroke: #05080d; }
+ .sub { font-family: "Mont"; font-weight: 800; fill: #c8ced8; paint-order: stroke; stroke: #05080d; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__TOTAL__" data-width="1080" data-height="1920">
+ <audio id="vo" src="assets/mix.wav" data-start="0" data-duration="__TOTAL__"></audio>
+ <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0">
+  <svg id="world" viewBox="0 0 1080 1920" width="1080" height="1920"><g id="cam"></g></svg>
+  <div id="dark"></div>
+  <div id="vig"></div>
+  <img id="grain" src="assets/grain.png" width="1080" height="1920">
+ </div>
+ <div id="ui" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+  <div id="tagrow"><div class="tag" id="hypo">HYPOTHETICAL SCENARIO</div><div class="tag" id="mode">TODAY</div></div>
+  <div id="title"><span>Back to <b>war?</b></span></div>
+  <div class="card" id="mid" style="top:1040px"><div class="box"><div class="k">NOV 3 MIDTERMS</div><div class="v">DEMOCRATS WIN<br><b>HOUSE + SENATE</b></div></div></div>
+  <div class="card" id="since" style="top:1040px"><div class="box"><div class="k">US-ISRAEL WAR ON IRAN</div><div class="v">SINCE FEB 28<br><b>NOW: STANDOFF</b></div></div></div>
+  <div class="card" id="quote" style="top:230px"><div class="box"><div class="k">IRAN'S PARLIAMENT SPEAKER</div><div class="v">"The era of proportionate responses is <b>over</b>"</div></div></div>
+  <div class="card" id="oil" style="top:240px"><div class="box"><div class="k">BRENT CRUDE, $ PER BARREL</div><div class="v" id="oilv">$95</div></div></div>
+  <div class="card" id="jan" style="top:240px"><div class="box"><div class="k">JAN 3, 2027 · NEW CONGRESS</div><div class="v">WAR POWERS<br>VOTE</div></div></div>
+  <div class="card" id="maybe" style="top:240px"><div class="box"><div class="k">TRUMP, NOV 4</div><div class="v">"Maybe I will,<br><b>maybe I won't</b>"</div></div></div>
+  <div id="caps"></div>
+  <div id="flash"></div>
+ </div>
+</div>
+<script>
+const GEO = __GEO__, RF = __RF__, CAPS = __CAPS__;
+const T = window.__T, E = window.__E, W = window.__W;
+const WT = (k, w) => { const f = w.toLowerCase().replace(/[^a-z0-9]/g, ""); const h = W.find(x => x[1] >= T[k] - 0.15 && x[1] <= E[k] + 0.15 && (x[0] === f || (f.length >= 4 && x[0].startsWith(f.slice(0, 4))))); if (!h) console.error("WT miss", k, w); return h ? h[1] : T[k]; };
+const C = GEO.cities, L = GEO.lines;
+const NS = 'vector-effect="non-scaling-stroke"';
+const RED = "#ff3b2f", DRED = "#7a0c10", ICE = "#5fb7ff", AMBER = "#ffb02e";
+const label = (id, [x, y], t, size, dx = 0, dy = 0, cls = "hid", anchor = "start", klass = "lbl") => `<g id="${id}" class="${cls}"><text x="${x + dx}" y="${y + dy}" text-anchor="${anchor}" class="${klass}" font-size="${size}" stroke-width="${size * 0.18}">${t}</text></g>`;
+const dot = (id, [x, y], r, col, cls = "hid") => `<g id="${id}" class="${cls}" transform="translate(${x} ${y})"><g class="in"><circle r="${r * 2.4}" fill="${col}" opacity="0.25"/><circle r="${r}" fill="${col}" stroke="#fff" stroke-width="1.5" ${NS}/></g></g>`;
+// a missile arc from a to b, bowed sideways by `bow`
+const arc = (id, a, b, bow, col, w) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], n = Math.hypot(dx, dy);
+  const cx = mx - dy / n * bow, cy = my + dx / n * bow;
+  return `<g id="${id}" class="hid"><path id="${id}-p" d="M${a[0]} ${a[1]} Q${cx} ${cy} ${b[0]} ${b[1]}" pathLength="1" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)"/></g>`; };
+const boom = (id, [x, y], r) => `<g id="${id}" class="hid" transform="translate(${x} ${y})"><g class="in"><circle r="${r}" fill="url(#fire)"/><circle r="${r * 1.6}" fill="none" stroke="#ffcf7a" stroke-width="3" ${NS} opacity="0.8"/></g></g>`;
+const carrier = (id, [x, y], s) => `<g id="${id}" class="hid" transform="translate(${x} ${y})"><g class="in"><g transform="scale(${s}) rotate(-35)"><path d="M-14 -3 L10 -3 L15 0 L10 3 L-14 3 Z" fill="${ICE}" stroke="#fff" stroke-width="1.2" ${NS}/><rect x="2" y="-5" width="4" height="3" fill="#fff"/></g><circle r="${s * 22}" fill="none" stroke="${ICE}" stroke-width="2" stroke-dasharray="5 5" opacity="0.6" ${NS}/></g></g>`;
+const others = Object.entries(GEO.countries).filter(([k]) => k !== "364").map(([, c]) => c.d).join(" ");
+const cd = id => GEO.countries[id] ? GEO.countries[id].d : "";
+
+document.getElementById("cam").innerHTML = `
+ <defs>
+  <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  <radialGradient id="fire"><stop offset="0" stop-color="#fff6d0"/><stop offset="0.35" stop-color="#ffb02e"/><stop offset="0.7" stop-color="#ff3b2f" stop-opacity="0.7"/><stop offset="1" stop-color="#ff3b2f" stop-opacity="0"/></radialGradient>
+  <radialGradient id="nearfade"><stop offset="0.55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+  <mask id="nearmask" maskUnits="userSpaceOnUse" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}"><rect x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" fill="url(#nearfade)"/></mask>
+ </defs>
+ <image href="assets/relief-wide.jpg" x="${RF.wide.X0}" y="${RF.wide.Y0}" width="${RF.wide.W}" height="${RF.wide.H}" preserveAspectRatio="none"/>
+ <image mask="url(#nearmask)" href="assets/relief-near.jpg" x="${RF.near.X0}" y="${RF.near.Y0}" width="${RF.near.W}" height="${RF.near.H}" preserveAspectRatio="none"/>
+ <path d="${others}" fill="none" stroke="#3a4352" stroke-width="1" ${NS}/>
+ <path id="gulfhit" class="hid" d="${cd(634)} ${cd(682)}" fill="${AMBER}" fill-opacity="0.06" stroke="${AMBER}" stroke-width="2.5" ${NS}/>
+ <path id="yemen" class="hid" d="${cd(887)}" fill="#8b1a1a" fill-opacity="0.35" stroke="${RED}" stroke-width="2.5" ${NS}/>
+ <path id="ir-fill" d="${GEO.ir}" fill="#4a0d10" opacity="0.55"/>
+ <g id="ir-glow"><path d="${GEO.ir}" fill="none" stroke="${RED}" stroke-width="8" opacity="0.4" filter="url(#glow2)" ${NS}/><path d="${GEO.ir}" fill="none" stroke="#ff7a6e" stroke-width="2" ${NS}/></g>
+ <path id="lane" d="${L.lane}" fill="none" stroke="#8fd0ff" stroke-width="3" stroke-dasharray="8 8" opacity="0.55" ${NS}/>
+ <path id="lane-red" class="hid" d="${L.lane}" fill="none" stroke="${RED}" stroke-width="5" stroke-dasharray="8 8" filter="url(#glow1)" ${NS}/>
+ <path id="blockade" class="hid" d="M${C.blkA[0]} ${C.blkA[1]} Q${(C.blkA[0] + C.blkB[0]) / 2 + 30} ${(C.blkA[1] + C.blkB[1]) / 2 + 20} ${C.blkB[0]} ${C.blkB[1]}" pathLength="1" fill="none" stroke="${ICE}" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" filter="url(#glow1)"/>
+ <path id="pipe" class="hid" d="${L.pipeline}" pathLength="1" fill="none" stroke="${AMBER}" stroke-width="3" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1"/>
+ ${carrier("cv1", C.cv1, 2.5)}${carrier("cv2", C.cv2, 2.5)}${carrier("cv3", C.cv3, 2.5)}
+ ${[["s-ba", "cv1", "bandarabbas", 30], ["s-ja", "cv1", "jask", -20], ["s-qe", "cv2", "qeshm", 40], ["s-ch", "cv2", "chabahar", -25], ["s-bu", "cv3", "bushehr", 70]].map(([id, a, b, bow]) => arc(id, C[a], C[b], bow, ICE, 1.8)).join("")}
+ ${["bandarabbas", "jask", "qeshm", "chabahar", "bushehr"].map(c => boom(`b-${c}`, C[c], 10)).join("")}
+ ${[["r-rl", "bandarabbas", "raslaffan", -40], ["r-rt", "bushehr", "rastanura", 25], ["r-ud", "bandarabbas", "udeid", 30], ["r-ab", "bushehr", "abqaiq", -30], ["r-du", "qeshm", "dubai", -15]].map(([id, a, b, bow]) => arc(id, C[a], C[b], bow, RED, 0.9)).join("")}
+ ${["raslaffan", "rastanura", "udeid", "abqaiq", "dubai"].map(c => boom(`b-${c}`, C[c], 7)).join("")}
+ ${[["h-1", "sanaa", "abqaiq", -60], ["h-2", "sanaa", "yanbu", 50], ["h-3", "hodeidah", "riyadh", 40]].map(([id, a, b, bow]) => arc(id, C[a], C[b], bow, RED, 2.6)).join("")}
+ ${boom("b-yanbu", C.yanbu, 14)}${boom("b-riyadh", C.riyadh, 12)}${boom("b-abq2", C.abqaiq, 12)}
+ ${label("l-iran", [640, 720], "IRAN", 46, 0, 0, "hid", "middle")}${label("l-saudi", [420, 1100], "SAUDI ARABIA", 30, 0, 0, "hid", "middle", "sub")}
+ ${label("l-hormuz", C.hormuz, "STRAIT OF HORMUZ", 7.5, 2, -12, "hid", "middle")}
+ ${label("l-block", [(C.blkA[0] + C.blkB[0]) / 2 - 2, (C.blkA[1] + C.blkB[1]) / 2 + 26], "US BLOCKADE", 15, 0, 0, "hid", "start")}
+ ${label("l-cv", [C.cv2[0] - 30, C.cv2[1] + 66], "3 US CARRIER GROUPS", 22, 0, 0, "hid", "middle")}
+ ${label("l-rl", C.raslaffan, "QATAR GAS", 10, 0, 12, "hid", "middle")}${label("l-rt", C.rastanura, "SAUDI OIL", 10, 0, -7, "hid", "middle")}
+ ${dot("d-rl", C.raslaffan, 1.0, AMBER)}${dot("d-rt", C.rastanura, 1.0, AMBER)}
+ ${label("stamp", [C.hormuz[0] - 2, C.hormuz[1] + 2], "HORMUZ: CLOSED", 15, 0, 0, "hid", "middle")}${[0.2, 0.5, 0.8].map((f, i) => dot(`bs${i}`, [C.blkA[0] + (C.blkB[0] - C.blkA[0]) * f + 12, C.blkA[1] + (C.blkB[1] - C.blkA[1]) * f + 8], 2.2, ICE)).join("")}${label("l-fifth", [C.hormuz[0] + 4, C.hormuz[1] + 34], "~20% OF WORLD OIL", 16, 0, 0, "hid", "middle")}
+ ${label("l-yemen", [C.sanaa[0] + 10, C.sanaa[1] + 40], "HOUTHIS · YEMEN", 30, 0, 0, "hid", "middle")}${label("l-pipe", [300, 1000], "EAST-WEST PIPELINE", 24, 0, 0, "hid", "middle", "sub")}
+`;
+
+/* ---------- camera ---------- */
+const tl = gsap.timeline({ paused: true });
+const cam = document.getElementById("cam");
+const apply = o => cam.setAttribute("transform", `translate(540 820) rotate(${o.r}) scale(${o.s}) translate(${-o.x} ${-o.y})`);
+const SEG = []; const move = (a, b, t0, t1, ease = "power2.inOut") => SEG.push([t0, t1, a, b, gsap.parseEase(ease)]);
+const camAt = t => { let cur = SEG[0][2]; for (const [t0, t1, a, b, e] of SEG) { if (t < t0) break; const kk = t >= t1 ? 1 : e((t - t0) / (t1 - t0)); cur = {}; for (const q in a) cur[q] = a[q] + (b[q] - a[q]) * kk; } return cur; };
+const V = (x, y, s, r = 0) => ({ x, y, s, r });
+const H0 = V(650, 800, 1.25, -2), H1 = V(620, 820, 1.45, 0), WIDE = V(600, 900, 1.0, 0), HZ = V(C.hormuz[0] + 6, C.hormuz[1] + 8, 4.2, 0), HZ2 = V(855, 1000, 2.8, 0),
+  CV = V(860, 1010, 2.2, 0), STR = V(760, 930, 1.9, 0), STR2 = V(740, 900, 2.1, 0), GULF = V(588, 968, 5.2, 0), GULF2 = V(590, 972, 5.8, 0), DARK = V(C.hormuz[0] + 2, C.hormuz[1] + 10, 4.6, 0),
+  YEM = V(420, 1160, 1.35, 0), OIL = V(640, 930, 1.35, 0), JAN = V(600, 960, 1.15, 0), END = V(640, 820, 1.6, 0);
+move(H0, H1, 0, T.c1, "sine.inOut");
+move(H1, WIDE, T.c1, T.c1 + 1.4); move(WIDE, HZ, T.c2 - 0.2, T.c2 + 1.0); move(HZ, HZ2, WT("c2", "ships") - 0.4, WT("c2", "ships") + 0.6);
+move(HZ2, CV, T.c3, T.c3 + 0.9); move(CV, V(CV.x, CV.y, 2.4, 0), T.c3 + 0.9, T.s1, "sine.inOut");
+move(V(CV.x, CV.y, 2.4, 0), STR, T.s1, T.s2); move(STR, STR2, T.s2, T.s3 + 2, "sine.inOut");
+move(STR2, GULF, T.s4 - 0.2, T.s4 + 1.1); move(GULF, GULF2, T.s4 + 1.1, T.s5, "sine.inOut");
+move(GULF2, DARK, T.s5, T.s5 + 1.0); move(DARK, YEM, T.s6 - 0.1, T.s6 + 1.2); move(YEM, V(YEM.x, YEM.y, 1.5, 0), T.s6 + 1.2, T.e1, "sine.inOut");
+move(V(YEM.x, YEM.y, 1.5, 0), OIL, T.e1, T.e1 + 1.0); move(OIL, JAN, T.e2, T.e2 + 1.2); move(JAN, END, T.e3, T.end, "power1.inOut");
+SEG.sort((a, b) => a[0] - b[0]); apply(H0);
+const CLK = { t: 0 }; tl.fromTo(CLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { apply(camAt(+v)); return v; } } }, 0);
+
+/* ---------- helpers ---------- */
+const show = (s, t) => tl.set(s, { opacity: 1 }, t), hide = (s, t, d = 0.3) => tl.to(s, { opacity: 0, duration: d }, t);
+const fade = (s, t, d = 0.35) => tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: d, immediateRender: false }, t);
+const pop = (s, t) => { tl.set(s, { opacity: 1 }, t); tl.fromTo(`${s} .in`, { scale: 0.2, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.42, ease: "back.out(2.4)", immediateRender: false }, t); };
+const draw = (s, t, d = 0.8) => tl.fromTo(s, { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: d, ease: "power2.in", immediateRender: false }, t);
+const pulse = (s, t, n = 3, k = 1.35) => tl.fromTo(`${s} .in`, { scale: 1, transformOrigin: "50% 50%" }, { scale: k, duration: 0.45, yoyo: true, repeat: n * 2 - 1, ease: "sine.inOut", immediateRender: false }, t);
+const fire = (id, t, d = 0.7) => { show(`#${id}`, t); draw(`#${id}-p`, t, d); };
+const bang = (id, t, keep = 1.6) => { show(id, t); tl.fromTo(`${id} .in`, { scale: 0.1, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.35, ease: "expo.out", immediateRender: false }, t); tl.to(id, { opacity: 0.35, duration: 0.8 }, t + keep); };
+const card = (s, t0, t1) => { tl.fromTo(s, { opacity: 0, y: 30, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false }, t0); tl.to(s, { opacity: 0, y: -20, duration: 0.25 }, t1); };
+const flash = (t, k = 0.5) => { tl.fromTo("#flash", { opacity: 0 }, { opacity: k, duration: 0.1, immediateRender: false }, t - 0.05); tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, t + 0.06); };
+const shake = (t, a = 10) => tl.fromTo("#world", { x: 0, y: 0 }, { keyframes: [{ x: a, y: -a * 0.6 }, { x: -a * 0.8, y: a * 0.5 }, { x: a * 0.5, y: a * 0.4 }, { x: 0, y: 0 }], duration: 0.36, immediateRender: false }, t);
+// mode chip: driven by a modifier so seeking always sets it
+const MODES = [[0, "TODAY", false]]; const modeAt = t => MODES.filter(m => m[0] <= t).pop();
+const MCLK = { t: 0 }; tl.fromTo(MCLK, { t: 0 }, { t: T.end, duration: T.end, ease: "none", immediateRender: false, modifiers: { t: v => { const [, txt, red] = modeAt(+v); const m = document.getElementById("mode"); if (m.textContent !== txt) { m.textContent = txt; m.style.background = red ? "rgba(255,59,47,0.25)" : "rgba(255,255,255,0.12)"; m.style.borderColor = red ? "#ff3b2f" : "rgba(255,255,255,0.35)"; } return v; } } }, 0);
+// oil counter, also seek-safe
+const OILV = { v: 95 }; const oilEl = document.getElementById("oilv");
+tl.fromTo(OILV, { v: 95 }, { v: 200, duration: 1.0, ease: "power2.in", immediateRender: false, modifiers: { v: v => { oilEl.textContent = "$" + Math.round(+v); return v; } } }, WT("e1", "scenario") - 0.3);
+tl.set(OILV, { v: 95 }, 0); tl.call(() => {}, null, 0);
+
+/* ---------- beats ---------- */
+// hook: Iran pulsing red, title, midterm card
+tl.set("#title", { opacity: 1 }, 0); tl.fromTo("#title span", { scale: 0.85 }, { scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false }, 0);
+card("#mid", WT("hk", "congress") - 0.3, T.c1 - 0.15);
+fade("#l-iran", 0.2, 0.4); tl.fromTo("#ir-glow", { opacity: 0.4 }, { opacity: 1, duration: 0.3, yoyo: true, repeat: 5, immediateRender: false }, WT("hk", "war") - 0.2);
+tl.to("#ir-fill", { opacity: 0.9, duration: 0.3 }, WT("hk", "war")); tl.fromTo("#title span", { scale: 1 }, { scale: 1.12, duration: 0.1, yoyo: true, repeat: 1, immediateRender: false }, WT("hk", "war"));
+hide("#title", T.c1 - 0.15);
+// the war since February, standoff
+card("#since", T.c1 + 0.05, T.c2 - 0.1); tl.to("#ir-fill", { opacity: 0.55, duration: 0.6 }, T.c1);
+pulse("#ir-glow", WT("c1", "standoff"), 1, 1); tl.fromTo("#ir-glow", { opacity: 1 }, { opacity: 0.35, duration: 0.2, yoyo: true, repeat: 3, immediateRender: false }, WT("c1", "standoff"));
+// Hormuz closed, blockade
+hide("#l-saudi", T.c2 - 0.1); hide("#l-iran", T.c2 - 0.1); fade("#l-hormuz", WT("c2", "hormuz") + 0.2, 0.3);
+show("#lane-red", WT("c2", "closed")); pop("#stamp", WT("c2", "closed")); hide("#stamp", T.c3); [0, 1, 2].forEach(i => fade(`#bs${i}`, WT("c2", "blockade") + i * 0.15, 0.2)); tl.fromTo("#lane-red", { opacity: 0 }, { opacity: 1, duration: 0.25, immediateRender: false }, WT("c2", "closed")); tl.to("#lane", { opacity: 0.15, duration: 0.3 }, WT("c2", "closed"));
+show("#blockade", WT("c2", "blockade") - 0.3); draw("#blockade", WT("c2", "blockade") - 0.3, 0.9); fade("#l-block", WT("c2", "blockade") + 0.3, 0.3);
+hide("#l-hormuz", WT("c2", "ships") - 0.3); hide("#l-block", T.c3 + 0.6);
+// carriers move in
+["cv1", "cv2", "cv3"].forEach((c, i) => { const t = WT("c3", "three") + i * 0.18; show(`#${c}`, t); tl.fromTo(`#${c} .in`, { x: 30, y: 60, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, t); });
+fade("#l-cv", WT("c3", "carrier"), 0.3); pulse("#cv2", WT("c3", "moving"), 1, 1.2);
+// the order
+const O = WT("s1", "order"); MODES.push([O - 0.05, "WHAT IF", true]); hide("#l-cv", T.s1 - 0.45, 0.2);
+tl.to("#dark", { opacity: 0.55, duration: 0.6 }, T.s1); tl.to("#dark", { opacity: 0, duration: 0.25 }, O + 0.05); flash(O + 0.1, 0.55); shake(O + 0.1, 8);
+// US strikes on the coast
+[["s-ba", "bandarabbas"], ["s-ja", "jask"], ["s-qe", "qeshm"], ["s-ch", "chabahar"], ["s-bu", "bushehr"]].forEach(([a, c], i) => { const t = T.s2 + 0.1 + i * 0.28; fire(a, t, 0.55); bang(`#b-${c}`, t + 0.55); });
+shake(WT("s2", "missile"), 6); tl.to("#ir-fill", { fill: "#7a1014", opacity: 0.8, duration: 0.4 }, WT("s2", "bases"));
+["s-ba", "s-ja", "s-qe", "s-ch", "s-bu"].forEach(a => hide(`#${a}`, T.s3 + 0.4, 0.5));
+// Iran: proportionate responses are over
+card("#quote", T.s3 + 0.05, T.s4 - 0.1); pulse("#ir-glow", WT("s3", "over"), 1, 1); tl.fromTo("#ir-glow", { opacity: 1 }, { opacity: 0.3, duration: 0.15, yoyo: true, repeat: 3, immediateRender: false }, WT("s3", "over"));
+// counter-salvo on Gulf energy
+[["r-rl", "raslaffan"], ["r-rt", "rastanura"], ["r-ud", "udeid"], ["r-ab", "abqaiq"], ["r-du", "dubai"]].forEach(([a, c], i) => { const t = T.s4 - 0.2 + i * 0.22; fire(a, t, 0.75); bang(`#b-${c}`, t + 0.75, 3); });
+fade("#gulfhit", WT("s4", "energy"), 0.4); shake(WT("s4", "energy"), 7);
+fade("#d-rl", WT("s4", "qatars") - 0.2, 0.2); fade("#l-rl", WT("s4", "qatars") - 0.1, 0.25); pulse("#b-raslaffan", WT("s4", "plant"), 1, 1.4);
+fade("#d-rt", WT("s4", "saudi") - 0.2, 0.2); fade("#l-rt", WT("s4", "saudi") - 0.1, 0.25); pulse("#b-rastanura", WT("s4", "terminal"), 1, 1.4);
+hide("#l-rl", T.s5); hide("#l-rt", T.s5); ["r-rl", "r-rt", "r-ud", "r-ab", "r-du"].forEach(a => hide(`#${a}`, T.s5, 0.4));
+// Hormuz goes dark
+const D = WT("s5", "dark"); tl.to("#dark", { opacity: 0.3, duration: 0.5 }, D - 0.3); show("#stamp", D); tl.fromTo("#stamp", { scale: 1.6, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false }, D); hide("#stamp", T.s6); tl.to("#lane-red", { attr: { "stroke-width": 9 }, duration: 0.3 }, D); ["#cv1", "#cv2", "#cv3", "#bs0", "#bs1", "#bs2"].forEach(c => hide(c, T.s5, 0.3)); ["#cv1", "#cv2", "#cv3"].forEach(c => fade(c, T.e2, 0.4));
+fade("#l-fifth", WT("s5", "fifth"), 0.3); tl.fromTo("#lane-red", { opacity: 1 }, { opacity: 0.3, duration: 0.25, yoyo: true, repeat: 5, immediateRender: false }, WT("s5", "fifth"));
+tl.to("#dark", { opacity: 0, duration: 0.4 }, T.s6 - 0.1); hide("#l-hormuz", T.s6); hide("#l-fifth", T.s6);
+// Houthis
+fade("#yemen", T.s6, 0.3); fade("#l-yemen", WT("s6", "houthis"), 0.3); show("#pipe", WT("s6", "saudi") - 0.6); draw("#pipe", WT("s6", "saudi") - 0.6, 0.6); fade("#l-pipe", WT("s6", "saudi") - 0.2, 0.3);
+[["h-1", "#b-abq2"], ["h-2", "#b-yanbu"], ["h-3", "#b-riyadh"]].forEach(([a, b], i) => { const t = WT("s6", "already") + i * 0.35; fire(a, t, 0.8); bang(b, t + 0.8, 1.6); });
+shake(WT("s6", "harder"), 8); tl.to("#pipe", { stroke: RED, duration: 0.3 }, WT("s6", "harder"));
+// oil
+["h-1", "h-2", "h-3"].forEach(a => hide(`#${a}`, T.e1, 0.4)); hide("#l-yemen", T.e1); hide("#l-pipe", T.e1);
+card("#oil", T.e1 + 0.05, T.e2 - 0.1); tl.to("#dark", { opacity: 0.4, duration: 0.4 }, T.e1); tl.to("#dark", { opacity: 0, duration: 0.4 }, T.e2); tl.fromTo("#oil .box", { scale: 1 }, { scale: 1.08, duration: 0.15, yoyo: true, repeat: 1, immediateRender: false }, WT("e1", "200") + 0.6);
+// back to today, January vote
+const H = WT("e2", "hasnt"); MODES.push([H - 0.05, "TODAY", false]);
+["#b-bandarabbas", "#b-jask", "#b-qeshm", "#b-chabahar", "#b-bushehr", "#b-raslaffan", "#b-rastanura", "#b-udeid", "#b-abqaiq", "#b-dubai", "#b-yanbu", "#b-riyadh", "#b-abq2", "#gulfhit", "#yemen", "#pipe", "#d-rl", "#d-rt"].forEach(s => hide(s, H, 0.5));
+tl.to("#ir-fill", { fill: "#4a0d10", opacity: 0.55, duration: 0.5 }, H);
+card("#jan", WT("e2", "january") - 0.1, T.e3 - 0.1); pulse("#cv1", WT("e2", "vote"), 1, 1.1);
+// maybe I will, maybe I won't
+card("#maybe", WT("e3", "trump") - 0.2, T.end + 1);
+tl.fromTo("#ir-glow", { opacity: 1 }, { opacity: 0.3, duration: 0.3, yoyo: true, repeat: 3, immediateRender: false }, WT("e3", "maybe"));
+tl.fromTo("#maybe .box", { scale: 1 }, { scale: 1.07, duration: 0.15, yoyo: true, repeat: 1, immediateRender: false }, WT("e3", "wont"));
+
+/* captions */
+const capRoot = document.getElementById("caps");
+CAPS.forEach((c, i) => { capRoot.insertAdjacentHTML("beforeend", `<div class="c" id="cp${i}">${c.html}</div>`);
+ if (i === 0) tl.set(`#cp${i}`, { opacity: 1 }, 0); else { tl.set(`#cp${i}`, { opacity: 1 }, c.t0); tl.fromTo(`#cp${i}`, { scale: 0.86 }, { scale: 1, duration: 0.09, ease: "back.out(3)", immediateRender: false }, c.t0); }
+ tl.set(`#cp${i}`, { opacity: 0 }, c.t1); });
+window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl; tl.seek(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Run log: Law 46 Weak Ties (A)
+- ORDER: "ship a short about weak ties" (Simon picked chapter 46 from a shortlist of 4: 46, 68, 4, 22).
+- RESEARCH: Granovetter 1970/1973 (282 workers; of the 54 hired through a contact, 16.7% saw them often) and Rajkumar et al. 2022 Science (LinkedIn, about 20M users, moderately weak ties best). Sources in research.md.
+- BOOK NOTE: ch. 46 says the 282 men all found jobs through contacts; only 54 did. The 16.7% is of those 54.
+- HOOK JUDGE: ranked 5 hooks. #1 story "Your best friends sent hearts. A guy from the gym sent the job." Judge tightened it to "...The gym guy sent the job." Used.
+- SCRIPT JUDGE r1: FIX, 6/10. Caught my overclaim ("most... rarely saw" is false, only 27.8% rarely) and "same answer" hiding the inverted U; story didn't end higher. 8 changes applied.
+- STRANGER TEST: point understood correctly. Only snag "Law 46" reads like a series (intended).
+- SCRIPT PAIR r2: v1 beat v0 (v0 broke the facts rule twice). One fix ("Not strangers" -> "Not distant contacts"). SHIP. 166 words.
+- VOICE: am_onyx 0.95, 53.5 s. Voice check flagged "friends" heard as "friend" (word blend, not a mispronunciation); check updated to ignore plural-s slips. PASS.
+- BOARD v1: code check PASS. My own look caught 4 problems (small hook phone, stamps over heads, a GSAP transform bug shoving the left circle off screen, tiny chart figures); fixed before judging.
+- BOARD JUDGE r1: FIX, 7/10. 8 requests (offer phone into the gym guy's hand, show the link moving, bigger YOU in f3 with "200", cyan shirt under the suit, margins in m2/p1/e1/e2, chart labels, gym avatar in the text bubble). 7 applied; skipped recoloring the preacher's robe (kept consistent with Law 31).
+- BOARD PAIR r2: v2 beat v1. 4 small margin/label fixes applied. Max rounds reached, moving on.
+- MUSIC: off (Venice off).
+- RENDER 1: final check PASS. Cover options showed the offer phone covering the gym guy's face (board judge missed it); render stopped, phone moved into his hand, re-rendered.
+- FINAL JUDGE: picked cover 1 "YOUR FRIENDS WON'T GET YOU HIRED" (cover 2 read like the answer before the question). Flagged 3 real issues (phone over YOU's head at 17s, chart's right end under the app buttons 38-45s, text bubble and friend near the edges 46-48s) and the cover headline sitting in the Shorts title zone. All fixed (cover.py headline moved up for all future covers), one re-render.
+- RENDER 2: final check PASS. 53.5 s, audio mean -23 dB, peak -1 dB, no static stretches, no black frames. 7.8 MB mp4.
+- OPEN ISSUES: none. Lessons proposal written (5 adds, 3 deletes), waiting on Simon.

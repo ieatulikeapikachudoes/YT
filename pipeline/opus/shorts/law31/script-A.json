@@ -1,0 +1,88 @@
+{
+ "title": "Gratitude Is a Meme (A)",
+ "voice": "am_onyx",
+ "lines": [
+  {
+   "key": "hk",
+   "sec": "hook",
+   "text": "Your car's dead on the highway. He's courtside with his boss."
+  },
+  {
+   "key": "r1",
+   "sec": "body",
+   "text": "Rewind. You were his guy."
+  },
+  {
+   "key": "r2",
+   "sec": "body",
+   "text": "Two moves. A five a.m. airport run. The interview that got him hired.",
+   "say": "Two moves. A five A M airport run. The interview that got him hired."
+  },
+  {
+   "key": "r3",
+   "sec": "body",
+   "text": "He hugged you. \"Bro, I owe you my life.\""
+  },
+  {
+   "key": "f1",
+   "sec": "body",
+   "text": "Then your car dies. One text. \"Can't today, bro.\""
+  },
+  {
+   "key": "f2",
+   "sec": "body",
+   "text": "Then you see his story. Courtside. With his new boss."
+  },
+  {
+   "key": "f3",
+   "sec": "body",
+   "text": "After everything?"
+  },
+  {
+   "key": "g1",
+   "sec": "payoff",
+   "text": "Here is the gospel."
+  },
+  {
+   "key": "g2",
+   "sec": "payoff",
+   "text": "Law 31. Gratitude is a meme.",
+   "say": "Law thirty one. Gratitude is a meme."
+  },
+  {
+   "key": "m1",
+   "sec": "body",
+   "text": "It doesn't look back. It looks forward."
+  },
+  {
+   "key": "m2",
+   "sec": "body",
+   "text": "People show up for whoever matters next."
+  },
+  {
+   "key": "m3",
+   "sec": "body",
+   "text": "His boss can make him. You already did. Your favors are spent."
+  },
+  {
+   "key": "o1",
+   "sec": "body",
+   "text": "So stop pointing at the past. Show them what's coming."
+  },
+  {
+   "key": "o2",
+   "sec": "body",
+   "text": "The day you're worth betting on, your phone rings again."
+  },
+  {
+   "key": "e1",
+   "sec": "end",
+   "text": "People don't owe you for what you did."
+  },
+  {
+   "key": "e2",
+   "sec": "end",
+   "text": "They calibrate you for what you will do."
+  }
+ ]
+}
