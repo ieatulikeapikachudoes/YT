@@ -1,9 +1,747 @@
 {
  "_note": "USD per million tokens (in/out). TTS models use per_m_chars (USD per million characters). Run `python3 pipeline/costs.py prices` to refresh the Venice rows from the API; the Claude rows are set by hand.",
- "claude-opus-5-5": {"in": 4.0, "out": 20.0, "source": "anthropic list price, Nov 2026"},
- "claude-sonnet-5-5": {"in": 0.0, "out": 0.0, "source": "set me: check anthropic.com/pricing"},
- "deepseek-v4-flash": {"in": 0.0, "out": 0.0, "source": "set me: run costs.py prices"},
- "deepseek-v4-pro": {"in": 0.0, "out": 0.0, "source": "set me: run costs.py prices"},
- "deepseek-v4-1-flash": {"in": 0.0, "out": 0.0, "source": "set me: run costs.py prices"},
- "gemini-3-1-flash-tts": {"per_m_chars": 0.0, "source": "set me: run costs.py prices (voice.py knows the exact Venice id)"}
+ "abliteration-abliterated-model-large-flash": {
+  "in": 1.25,
+  "out": 2.5,
+  "source": "venice"
+ },
+ "abliteration-abliterated-model-large-v2": {
+  "in": 3,
+  "out": 5,
+  "source": "venice"
+ },
+ "aion-labs-aion-3-0": {
+  "in": 3.75,
+  "out": 7.5,
+  "source": "venice"
+ },
+ "aion-labs-aion-3-0-mini": {
+  "in": 0.875,
+  "out": 1.75,
+  "source": "venice"
+ },
+ "aion-labs-aion-3-5": {
+  "in": 3.75,
+  "out": 7.5,
+  "source": "venice"
+ },
+ "aion-labs-aion-3-5-mini": {
+  "in": 0.875,
+  "out": 1.75,
+  "source": "venice"
+ },
+ "claude-fable-5": {
+  "in": 10,
+  "out": 50,
+  "source": "venice"
+ },
+ "claude-fable-5-1": {
+  "in": 10,
+  "out": 50,
+  "source": "venice"
+ },
+ "claude-haiku-5-5": {
+  "in": 0.1,
+  "out": 0.5,
+  "source": "venice"
+ },
+ "claude-opus-4-5": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "claude-opus-4-6": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "claude-opus-4-7": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "claude-opus-4-8": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "claude-opus-4-8-fast": {
+  "in": 10,
+  "out": 50,
+  "source": "venice"
+ },
+ "claude-opus-5": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "claude-opus-5-5": {
+  "in": 4,
+  "out": 20,
+  "source": "venice"
+ },
+ "claude-opus-5-5-fast": {
+  "in": 8,
+  "out": 40,
+  "source": "venice"
+ },
+ "claude-opus-5-fast": {
+  "in": 10,
+  "out": 50,
+  "source": "venice"
+ },
+ "claude-sonnet-4-6": {
+  "in": 3,
+  "out": 15,
+  "source": "venice"
+ },
+ "claude-sonnet-5": {
+  "in": 2,
+  "out": 10,
+  "source": "venice"
+ },
+ "claude-sonnet-5-5": {
+  "in": 2,
+  "out": 10,
+  "source": "venice"
+ },
+ "deepseek-v3.2": {
+  "in": 0.33,
+  "out": 0.48,
+  "source": "venice"
+ },
+ "deepseek-v4-1-flash": {
+  "in": 0.3,
+  "out": 1.2,
+  "source": "venice"
+ },
+ "deepseek-v4-1-flash-1017": {
+  "in": 0.3,
+  "out": 1.2,
+  "source": "venice"
+ },
+ "deepseek-v4-1-flash-1017-uncensored": {
+  "in": 0.33,
+  "out": 1.32,
+  "source": "venice"
+ },
+ "deepseek-v4-1-flash-uncensored": {
+  "in": 0.33,
+  "out": 1.32,
+  "source": "venice"
+ },
+ "deepseek-v4-flash": {
+  "in": 0.138,
+  "out": 0.275,
+  "source": "venice"
+ },
+ "deepseek-v4-flash-0731": {
+  "in": 0.13,
+  "out": 0.26,
+  "source": "venice"
+ },
+ "deepseek-v4-flash-0731-fast": {
+  "in": 0.35,
+  "out": 0.7,
+  "source": "venice"
+ },
+ "deepseek-v4-pro": {
+  "in": 1.65,
+  "out": 3.301,
+  "source": "venice"
+ },
+ "deepseek-v4-pro-0813": {
+  "in": 1.65,
+  "out": 4.95,
+  "source": "venice"
+ },
+ "e2ee-deepseek-v4-1-flash-1017-abliterated": {
+  "in": 0.375,
+  "out": 1.5,
+  "source": "venice"
+ },
+ "e2ee-deepseek-v4-flash": {
+  "in": 0.182,
+  "out": 0.373,
+  "source": "venice"
+ },
+ "e2ee-gemma-4-26b-a4b-uncensored-p": {
+  "in": 0.19,
+  "out": 0.88,
+  "source": "venice"
+ },
+ "e2ee-glm-5-2-p": {
+  "in": 1.75,
+  "out": 5.75,
+  "source": "venice"
+ },
+ "e2ee-glm-5-3-flash": {
+  "in": 0.16,
+  "out": 0.54,
+  "source": "venice"
+ },
+ "e2ee-glm-5-3-p": {
+  "in": 1.75,
+  "out": 5.5,
+  "source": "venice"
+ },
+ "e2ee-gpt-oss-120b-p": {
+  "in": 0.13,
+  "out": 0.65,
+  "source": "venice"
+ },
+ "e2ee-kimi-k2-6": {
+  "in": 0.87,
+  "out": 4.12,
+  "source": "venice"
+ },
+ "e2ee-kimi-k3-p": {
+  "in": 3.75,
+  "out": 18.75,
+  "source": "venice"
+ },
+ "e2ee-qwen-2-5-7b-p": {
+  "in": 0.05,
+  "out": 0.13,
+  "source": "venice"
+ },
+ "e2ee-qwen3-6-35b-a3b": {
+  "in": 0.182,
+  "out": 1.18,
+  "source": "venice"
+ },
+ "e2ee-qwen3-8-27b": {
+  "in": 0.47,
+  "out": 3.53,
+  "source": "venice"
+ },
+ "e2ee-qwen3-vl-30b-a3b-p": {
+  "in": 0.25,
+  "out": 0.9,
+  "source": "venice"
+ },
+ "gemini-3-1-pro-preview": {
+  "in": 2.5,
+  "out": 15,
+  "source": "venice"
+ },
+ "gemini-3-5-flash": {
+  "in": 1.55,
+  "out": 9.45,
+  "source": "venice"
+ },
+ "gemini-3-5-flash-lite": {
+  "in": 0.375,
+  "out": 3.125,
+  "source": "venice"
+ },
+ "gemini-3-6-flash": {
+  "in": 0.9375,
+  "out": 4.6875,
+  "source": "venice"
+ },
+ "gemini-3-7-flash": {
+  "in": 0.9375,
+  "out": 4.6875,
+  "source": "venice"
+ },
+ "gemini-3-8-flash": {
+  "in": 0.9375,
+  "out": 4.6875,
+  "source": "venice"
+ },
+ "gemini-3-flash-preview": {
+  "in": 0.7,
+  "out": 3.75,
+  "source": "venice"
+ },
+ "gemini-4-argon": {
+  "in": 2.5,
+  "out": 12.5,
+  "source": "venice"
+ },
+ "gemma-4-uncensored": {
+  "in": 0.1625,
+  "out": 0.5,
+  "source": "venice"
+ },
+ "google-gemma-3-27b-it": {
+  "in": 0.12,
+  "out": 0.2,
+  "source": "venice"
+ },
+ "google-gemma-4-26b-a4b-it": {
+  "in": 0.13,
+  "out": 0.4,
+  "source": "venice"
+ },
+ "google-gemma-4-31b-it": {
+  "in": 0.12,
+  "out": 0.36,
+  "source": "venice"
+ },
+ "grok-4-20": {
+  "in": 1.42,
+  "out": 2.83,
+  "source": "venice"
+ },
+ "grok-4-20-multi-agent": {
+  "in": 1.42,
+  "out": 2.83,
+  "source": "venice"
+ },
+ "grok-4-3": {
+  "in": 1.42,
+  "out": 2.83,
+  "source": "venice"
+ },
+ "grok-4-5": {
+  "in": 2.27,
+  "out": 6.8,
+  "source": "venice"
+ },
+ "grok-4-6": {
+  "in": 2.27,
+  "out": 6.8,
+  "source": "venice"
+ },
+ "grok-4-7": {
+  "in": 2.27,
+  "out": 6.8,
+  "source": "venice"
+ },
+ "grok-build-0-1": {
+  "in": 1,
+  "out": 2,
+  "source": "venice"
+ },
+ "hy4-preview": {
+  "in": 1.0425,
+  "out": 3.12625,
+  "source": "venice"
+ },
+ "kimi-k2-5": {
+  "in": 0.56,
+  "out": 3.5,
+  "source": "venice"
+ },
+ "kimi-k2-6": {
+  "in": 0.75,
+  "out": 3.5,
+  "source": "venice"
+ },
+ "kimi-k2-7-code": {
+  "in": 0.75,
+  "out": 3.5,
+  "source": "venice"
+ },
+ "kimi-k3": {
+  "in": 3.75,
+  "out": 18.75,
+  "source": "venice"
+ },
+ "kimi-k3-1-pro": {
+  "in": 2,
+  "out": 10,
+  "source": "venice"
+ },
+ "kimi-k3-1-pro-highspeed": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "kimi-k3-fast-api": {
+  "in": 4.5,
+  "out": 22.5,
+  "source": "venice"
+ },
+ "llama-3.2-3b": {
+  "in": 0.15,
+  "out": 0.6,
+  "source": "venice"
+ },
+ "llama-3.3-70b": {
+  "in": 0.7,
+  "out": 2.8,
+  "source": "venice"
+ },
+ "mercury-2": {
+  "in": 0.3125,
+  "out": 0.9375,
+  "source": "venice"
+ },
+ "mercury-2-5": {
+  "in": 0.25,
+  "out": 0.9375,
+  "source": "venice"
+ },
+ "mercury-3": {
+  "in": 0.1,
+  "out": 0.35,
+  "source": "venice"
+ },
+ "minimax-m25": {
+  "in": 0.27,
+  "out": 0.95,
+  "source": "venice"
+ },
+ "minimax-m27": {
+  "in": 0.375,
+  "out": 1.5,
+  "source": "venice"
+ },
+ "minimax-m3-1-flash": {
+  "in": 0.1875,
+  "out": 0.75,
+  "source": "venice"
+ },
+ "minimax-m3-preview": {
+  "in": 0.3,
+  "out": 1.2,
+  "source": "venice"
+ },
+ "mistral-small-3-2-24b-instruct": {
+  "in": 0.09375,
+  "out": 0.25,
+  "source": "venice"
+ },
+ "muse-spark-open": {
+  "in": 1.5625,
+  "out": 5.3125,
+  "source": "venice"
+ },
+ "muse-wonder": {
+  "in": 5,
+  "out": 25,
+  "source": "venice"
+ },
+ "nvidia-nemotron-3-5-super-vl-120b-a12b": {
+  "in": 0.2,
+  "out": 0.5,
+  "source": "venice"
+ },
+ "nvidia-nemotron-3-nano-30b-a3b": {
+  "in": 0.075,
+  "out": 0.3,
+  "source": "venice"
+ },
+ "nvidia-nemotron-3-ultra-550b-a55b": {
+  "in": 0.625,
+  "out": 3.125,
+  "source": "venice"
+ },
+ "olafangensan-glm-4.7-flash-heretic": {
+  "in": 0.07,
+  "out": 0.4,
+  "source": "venice"
+ },
+ "openai-gpt-4o-2024-11-20": {
+  "in": 2.5,
+  "out": 10,
+  "source": "venice"
+ },
+ "openai-gpt-4o-mini-2024-07-18": {
+  "in": 0.15,
+  "out": 0.6,
+  "source": "venice"
+ },
+ "openai-gpt-52": {
+  "in": 1.75,
+  "out": 14,
+  "source": "venice"
+ },
+ "openai-gpt-53-codex": {
+  "in": 1.75,
+  "out": 14,
+  "source": "venice"
+ },
+ "openai-gpt-54": {
+  "in": 2.5,
+  "out": 15,
+  "source": "venice"
+ },
+ "openai-gpt-54-mini": {
+  "in": 0.75,
+  "out": 4.5,
+  "source": "venice"
+ },
+ "openai-gpt-54-pro": {
+  "in": 30,
+  "out": 180,
+  "source": "venice"
+ },
+ "openai-gpt-55": {
+  "in": 5,
+  "out": 30,
+  "source": "venice"
+ },
+ "openai-gpt-55-pro": {
+  "in": 30,
+  "out": 180,
+  "source": "venice"
+ },
+ "openai-gpt-56-luna": {
+  "in": 0.2,
+  "out": 1.2,
+  "source": "venice"
+ },
+ "openai-gpt-56-luna-pro": {
+  "in": 0.2,
+  "out": 1.2,
+  "source": "venice"
+ },
+ "openai-gpt-56-sol": {
+  "in": 4,
+  "out": 20,
+  "source": "venice"
+ },
+ "openai-gpt-56-sol-pro": {
+  "in": 4,
+  "out": 20,
+  "source": "venice"
+ },
+ "openai-gpt-56-terra": {
+  "in": 2,
+  "out": 12,
+  "source": "venice"
+ },
+ "openai-gpt-56-terra-pro": {
+  "in": 2,
+  "out": 12,
+  "source": "venice"
+ },
+ "openai-gpt-6-astra": {
+  "in": 10,
+  "out": 50,
+  "source": "venice"
+ },
+ "openai-gpt-6-astra-pro": {
+  "in": 10,
+  "out": 50,
+  "source": "venice"
+ },
+ "openai-gpt-6-luna": {
+  "in": 0.1,
+  "out": 0.5,
+  "source": "venice"
+ },
+ "openai-gpt-6-sol": {
+  "in": 2,
+  "out": 10,
+  "source": "venice"
+ },
+ "openai-gpt-61-sol": {
+  "in": 2,
+  "out": 10,
+  "source": "venice"
+ },
+ "openai-gpt-61-sol-ultrafast": {
+  "in": 12,
+  "out": 60,
+  "source": "venice"
+ },
+ "openai-gpt-61-terra": {
+  "in": 1,
+  "out": 5,
+  "source": "venice"
+ },
+ "openai-gpt-oss-120b": {
+  "in": 0.07,
+  "out": 0.3,
+  "source": "venice"
+ },
+ "qwen-3-6-plus": {
+  "in": 0.625,
+  "out": 3.75,
+  "source": "venice"
+ },
+ "qwen-3-7-max": {
+  "in": 2.7,
+  "out": 8.05,
+  "source": "venice"
+ },
+ "qwen-3-7-plus": {
+  "in": 0.5,
+  "out": 2,
+  "source": "venice"
+ },
+ "qwen-3-8-2-4t-a95b": {
+  "in": 2.5,
+  "out": 7.5,
+  "source": "venice"
+ },
+ "qwen-3-8-27b": {
+  "in": 0.45,
+  "out": 3.2,
+  "source": "venice"
+ },
+ "qwen-3-8-flash": {
+  "in": 0.14,
+  "out": 0.49,
+  "source": "venice"
+ },
+ "qwen-3-8-max": {
+  "in": 2.5,
+  "out": 7.5,
+  "source": "venice"
+ },
+ "qwen3-235b-a22b-instruct-2507": {
+  "in": 0.15,
+  "out": 0.75,
+  "source": "venice"
+ },
+ "qwen3-235b-a22b-thinking-2507": {
+  "in": 0.45,
+  "out": 3.5,
+  "source": "venice"
+ },
+ "qwen3-5-35b-a3b": {
+  "in": 0.15,
+  "out": 1,
+  "source": "venice"
+ },
+ "qwen3-5-397b-a17b": {
+  "in": 0.75,
+  "out": 4.5,
+  "source": "venice"
+ },
+ "qwen3-6-27b": {
+  "in": 0.325,
+  "out": 3.25,
+  "source": "venice"
+ },
+ "qwen3-6-35b-a3b": {
+  "in": 0.1,
+  "out": 1,
+  "source": "venice"
+ },
+ "qwen3-coder-480b-a35b-instruct-turbo": {
+  "in": 0.35,
+  "out": 1.5,
+  "source": "venice"
+ },
+ "qwen3-next-80b": {
+  "in": 0.35,
+  "out": 1.9,
+  "source": "venice"
+ },
+ "qwen3-vl-235b-a22b": {
+  "in": 0.21,
+  "out": 1.9,
+  "source": "venice"
+ },
+ "seed-2-1-turbo": {
+  "in": 0.625,
+  "out": 3.125,
+  "source": "venice"
+ },
+ "tts-chatterbox-hd": {
+  "per_m_chars": 50,
+  "source": "venice (per character)"
+ },
+ "tts-elevenlabs-turbo-v2-5": {
+  "per_m_chars": 62.5,
+  "source": "venice (per character)"
+ },
+ "tts-gemini-3-1-flash": {
+  "per_m_chars": 187.5,
+  "source": "venice (per character)"
+ },
+ "tts-gradium-v1": {
+  "per_m_chars": 47.5,
+  "source": "venice (per character)"
+ },
+ "tts-inworld-1-5-max": {
+  "per_m_chars": 12.5,
+  "source": "venice (per character)"
+ },
+ "tts-kokoro": {
+  "per_m_chars": 3.5,
+  "source": "venice (per character)"
+ },
+ "tts-minimax-speech-02-hd": {
+  "per_m_chars": 125,
+  "source": "venice (per character)"
+ },
+ "tts-orpheus": {
+  "per_m_chars": 62.5,
+  "source": "venice (per character)"
+ },
+ "tts-qwen3-0-6b": {
+  "per_m_chars": 87.5,
+  "source": "venice (per character)"
+ },
+ "tts-qwen3-1-7b": {
+  "per_m_chars": 112.5,
+  "source": "venice (per character)"
+ },
+ "tts-xai-v1": {
+  "per_m_chars": 18.75,
+  "source": "venice (per character)"
+ },
+ "venice-uncensored-1-2": {
+  "in": 0.2,
+  "out": 0.9,
+  "source": "venice"
+ },
+ "venice-uncensored-role-play": {
+  "in": 0.5,
+  "out": 2,
+  "source": "venice"
+ },
+ "xiaomi-mimo-v2-5": {
+  "in": 0.4,
+  "out": 2,
+  "source": "venice"
+ },
+ "xiaomi-mimo-v2-6-flash": {
+  "in": 0.175,
+  "out": 0.35,
+  "source": "venice"
+ },
+ "z-ai-glm-5-3": {
+  "in": 1.75,
+  "out": 5.5,
+  "source": "venice"
+ },
+ "z-ai-glm-5-3-flash": {
+  "in": 0.15,
+  "out": 0.5,
+  "source": "venice"
+ },
+ "z-ai-glm-5-turbo": {
+  "in": 1.2,
+  "out": 4,
+  "source": "venice"
+ },
+ "z-ai-glm-5v-turbo": {
+  "in": 1.5,
+  "out": 5,
+  "source": "venice"
+ },
+ "zai-org-glm-4.6": {
+  "in": 0.43,
+  "out": 1.75,
+  "source": "venice"
+ },
+ "zai-org-glm-4.7": {
+  "in": 0.55,
+  "out": 2.65,
+  "source": "venice"
+ },
+ "zai-org-glm-5": {
+  "in": 1,
+  "out": 3.2,
+  "source": "venice"
+ },
+ "zai-org-glm-5-1": {
+  "in": 1.54,
+  "out": 4.84,
+  "source": "venice"
+ },
+ "zai-org-glm-5-2": {
+  "in": 1.4,
+  "out": 4.4,
+  "source": "venice"
+ }
 }

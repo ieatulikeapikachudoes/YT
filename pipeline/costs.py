@@ -121,11 +121,13 @@ def refresh_venice_prices():
         for m in r.json()["data"]:
             pr = m.get("model_spec", {}).get("pricing", {}) or {}
             entry = {"source": "venice"}
-            if "input" in pr or "output" in pr:
+            if kind == "tts":
+                # Venice lists TTS "input" per million characters, not tokens
+                entry["per_m_chars"] = (pr.get("characters") or pr.get("input") or {}).get("usd", 0)
+                entry["source"] = "venice (per character)"
+            elif "input" in pr or "output" in pr:
                 entry["in"] = pr.get("input", {}).get("usd", 0)
                 entry["out"] = pr.get("output", {}).get("usd", 0)
-            if "characters" in pr:
-                entry["per_m_chars"] = pr["characters"].get("usd", 0)
             if len(entry) > 1:
                 prices[m["id"]] = entry
                 n += 1
